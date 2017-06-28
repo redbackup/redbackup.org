@@ -4,15 +4,12 @@ node_js:
     - 7
 services:
   - docker
-before_install:
-  - sudo apt-get -qq update
-  - sudo npm install -g yarn
 cache:
   directories:
     - website/node_modules
 
 script:
-  - cd website && yarn --silent install
+  - cd website && npm install
   - cd website && node build.js
 
 deploy:
