@@ -17,7 +17,7 @@ echo "$FQDN" > CNAME
 git add .
 git commit -m "Deployment" --author="Deployment <no-reply@redbackup.org>"
 git remote add origin "$TARGET"
-git push --set-upstream origin master
+git push --set-upstream origin ${BRANCH}
 git push -f
 
 echo "Website deployed."
