@@ -1,3 +1,10 @@
+.jumbotron .empty-title{
+    font-size: 1.8rem;
+}
+.jumbotron {
+    margin-bottom: 2rem;    
+}
+
 .logo {
     max-height: 3em;
 }
@@ -28,6 +35,9 @@
     padding-right: 1rem;
 }
 
+.navbar .btn-link{
+    font-size: 1.6rem;
+}
 header {
     margin-top: 2rem;
     margin-bottom: 2rem;
