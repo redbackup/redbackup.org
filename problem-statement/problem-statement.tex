@@ -1,0 +1,143 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper]{geometry}
+\geometry{verbose, marginparwidth=15mm, marginparsep=3mm, tmargin=25mm}
+\usepackage{tabulary}
+\usepackage{enumitem}
+
+\usepackage{url}
+\title{redbackup: a redundant distributed backup system prototype}
+\author{
+		Fabian Hauser \\
+		Raphael Zimmermann
+}
+\date{\today}
+
+
+\begin{document}
+\maketitle
+
+\section{Client and Supervisor}
+\begin{description}
+	\item [Supervisor:] Prof. Dr. Farhad Mehta, HSR Rapperswil
+	\item [Client:] IFS (Institut für Software), HSR
+\end{description}
+
+
+\section{Students}
+\begin{itemize}
+	\item Raphael Zimmermann, rzimmerm@hsr.ch
+	\item Fabian Hauser, fhauser@hsr.ch
+\end{itemize}
+
+\section{Setting}
+
+Today, most individuals, as well as small and medium enterprises (SME), create backups with local devices (mostly external hard disks), which are not physically distributed\footnote{The issue of local backups was brought to broad public attention in may 2017 due to wide spread infections of the ransomware ''WannaCry'' that also encrypted files on attached devices and network shares. See \cite{guardian_randsomware,nyt_randsomware}}. Alternatively, some SME, and individuals store their data online using cloud storage providers, but legal issues, privacy concerns and the dependency on large providers limit the widespread use of cloud storage. Currently, the security of cloud backups is based solely on the strength of cryptographic algorithms and security measures taken by cloud providers.
+
+Automated backup solutions, which store the data in a decentralised and distributed manner within a trusted network could solve this issue. Today, however, there is no ready to use solution available on the market.
+
+
+\section{Vision}
+A possible solution for a efficient, decentralised and distributed backup could be realised with a combination of two parts,
+
+\begin{enumerate}
+	\item\label{item:distributetsystem} a distributed storage system, which provides redundant, deduplicated storage and
+	\item\label{item:clientsoftware} an easy to use client software, which creates encrypted backups and uploads the data into the distributed system.
+\end{enumerate}
+
+
+To permit a widespread usage of such a solution, it is crucial that both parts are easy to install and configure.
+
+\paragraph{The distributed system} as proposed above (\ref{item:distributetsystem}) should be able to:
+
+\begin{enumerate}[label=\alph*.]
+	\item  build a peer-to-peer network of trusted nodes over the internet.
+	\item handle joining of nodes including authentication.
+	\item  handle planned and unplanned leaving of nodes.
+	\item  store data with a defined degree of redundancy.
+	\item  protect data from being modified or deleted\footnote{The idea of an append only approach prevents accidental or malicious deletion of stored data, for example by randsomware.}. \\The system may discard data after it has reached a specified expiration date.
+	\item  address and retrieve stored data.
+	\item allow access from clients including authentication over an API.
+\end{enumerate}
+
+\paragraph{The client software}as proposed above (\ref{item:clientsoftware}) should be able to:
+
+\begin{enumerate}
+	\item create backups of files and directories (content and metadata).
+	\item compress and encrypt backups.
+	\item upload backups into the distributed system (see \ref{item:distributetsystem}).
+	\item retrieve, decrypt, decompress and recover data from the distributed system (see \ref{item:distributetsystem}).
+\end{enumerate}
+
+\section{Goals}
+
+The goal of the Study Project is to provide a theoretical description of an append only, distributed peer-to-peer data storage as the basis for the described vision, as well as a working prototype.
+
+\paragraph{The theoretical concept} must address the following issues:
+
+\begin{enumerate}[label=\alph*.]
+\item joining of nodes
+\item planned and unplanned leaving of nodes
+\item distribution of data with a defined degree of redundancy
+\item fair distribution of data blocks within the distributed system
+\item uploading data into the distributed system
+\item addressing within the distributed system
+\item retrieving stored data
+\item scalability for up to several 100 nodes where every node can store a data volume of up to 2 terabytes.
+\item detection of inconsistent and unresolvable states (e.g. redundancy failures because there are not enough nodes)	
+\end{enumerate}
+
+All the above problems will be implemented in a prototype to demonstrate the described concepts. It is not intended for production usage.
+The concept, as well as the prototype, assumes that all nodes are addressable by a fixed IP-address and port.
+Encryption and deduplication of data on the client will not be discussed within this study project since it is limited to uploading and retrieval of data.
+
+\section{License}
+The study project is inteded to be free software and will be published under the AGPL-License \cite{agplv3}.
+
+\section{Guidelines}
+
+The students and the supervisor will plan weekly meetings to check and discuss progress.
+
+All meetings are to be prepared by the students with an agenda. The agenda will be sent at least 24h prior to the meeting. The results will be documented in meeting minutes that will be sent to the supervisor.
+
+A project plan must be developed at the beginning of the thesis to promote continuous and visible work progress. For every milestone defined in the project plan, the temporary versions of all artefacts need to be submitted. The students will receive a provisional feedback for the submitted milestone results. The definitive grading is however only based on the final results of the formally submitted report.
+
+\section{Documentation}
+The project must be documented according to the regulations of the Computer Science Department at HSR (see \url{https://www.hsr.ch/Allgemeine-Infos-Bachelor-und.4418.0.html}). All required documents are to be listed in the project plan. All documents must be continuously updated, and should document the project results in a consistent form upon final submission. The documentation has to be completely submitted in 3 copies on CD/DVD. A printed version has to be delivered if requested by the supervisor.
+
+\section{Important Dates}
+Refer to \url{https://www.hsr.ch/Termine-Diplom-Bachelor-und.5142.0.html}.
+
+\section{Workload}
+A successful study project results in 8 ECTS credit points per student. One ECTS points corresponds to a work effort of about 30 hours. All time spent on the project must be recorded and documented.
+
+\section{Grading}
+The HSR supervisor is responsible for grading the study project. The following table gives an overview of the weights used for grading.
+
+\begin{center}
+	\noindent
+	\begin{tabulary}{1.0\textwidth}{| L | R |}
+		\hline
+		Facet & Weight \\ \hline
+		1. Organisation, Execution	& 1/5 \\
+		2. Report	& 1/5 \\
+		3. Content	& 3/5 \\
+		\hline
+	\end{tabulary}
+\end{center}
+
+
+The effective regulations of the HSR and Department of Computer Science apply (see \url{https://www.hsr.ch/Ablaeufe-und-Regelungen-Studie.7479.0.html}).
+
+\noindent
+\vspace{2cm}\\
+Rapperswil, \today\\
+\vspace{1.5cm}\\
+\noindent
+Prof. Dr. Farhad Mehta
+
+
+\bibliographystyle{abbrv}
+\bibliography{refs}
+
+\end{document}
