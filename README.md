@@ -10,12 +10,15 @@ This repository contains the red backup documentation website including the fina
 ## Setup
 
 ```bash
+cd wesite/
 npm install
 ```
 
 ## Building
 
 ```bash
+# in the `website/` directory
+
 # Build the website once
 node build.js
 # Serve the website at localhost:4000
