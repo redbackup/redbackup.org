@@ -1,0 +1,23 @@
+sudo: required
+language: generic
+services:
+  - docker
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y node npm
+  - npm install -g yarn
+cache:
+  directories:
+    - website/node_modules
+
+script:
+  - cd website && yarn --silent install
+  - cd website && node build.js
+
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script: sh website/gh-pages.sh website/output/ git@github.com:redbackup/redbackup.org.git master
+    on:
+      branch: master
+
