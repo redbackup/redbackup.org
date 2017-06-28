@@ -9,8 +9,9 @@ cache:
     - website/node_modules
 
 script:
-  - cd website && npm install
-  - cd website && node build.js
+  - cd website
+  - npm install
+  - node build.js
 
 deploy:
   - provider: script
