@@ -16,7 +16,7 @@ script:
 deploy:
   - provider: script
     skip_cleanup: true
-    script: sh gh-pages.sh output/ git@github.com:redbackup/redbackup.org.git master redbackup.org
+    script: sh gh-pages.sh output/ git@github.com:redbackup/redbackup.org.git gh-pages redbackup.org
     on:
       branch: master
 

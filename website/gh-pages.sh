@@ -12,6 +12,7 @@ chmod -R 700 ~/.ssh/
 
 cd $SOURCE
 git init
+git checkout -B ${BRANCH}
 echo "$FQDN" > CNAME
 git add .
 git commit -m "Deployment" --author="Deployment <no-reply@redbackup.org>"
