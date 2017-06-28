@@ -6,7 +6,6 @@ services:
   - docker
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y node npm
   - sudo npm install -g yarn
 cache:
   directories:
