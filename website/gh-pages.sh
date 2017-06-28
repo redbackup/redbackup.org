@@ -12,12 +12,11 @@ mkdir -p ~/.ssh/ &&
 
 cd $SOURCE
 git init
-git checkout -B "$BRANCH"
-git remote add origin "$TARGET"
-git push --set-upstream origin master
-echo "$FQDN" > ${SOURCE}/CNAME
+echo "$FQDN" > ${SOURCE}CNAME
 git add .
 git commit -m "Deployment" --author="Deployment <no-reply@redbackup.org>"
+git remote add origin "$TARGET"
+git push --set-upstream origin master
 git push -f
 
 echo "Website deployed."
