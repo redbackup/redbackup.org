@@ -15,7 +15,7 @@ git init
 git checkout -B "$BRANCH"
 git remote add origin "$TARGET"
 git push --set-upstream origin master
-echo "$FQDN" > $TARGET/CNAME
+echo "$FQDN" > ${SOURCE}/CNAME
 git add .
 git commit -m "Deployment" --author="Deployment <no-reply@redbackup.org>"
 git push -f
