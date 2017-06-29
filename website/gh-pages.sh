@@ -14,6 +14,7 @@ cd $SOURCE
 git init
 git checkout -B ${BRANCH}
 echo "$FQDN" > CNAME
+touch .nojekyll
 git add .
 git commit -m "Deployment" --author="Deployment <no-reply@redbackup.org>"
 git remote add origin "$TARGET"
