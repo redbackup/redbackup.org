@@ -9,6 +9,8 @@ cache:
     - website/node_modules
 
 script:
+  - docker run -ti --rm --volume `pwd`/:/tectonic:z fabianhauser/tectonic:0.1.6 problem-statement/problem-statement.tex
+  - mv problem-statement/problem-statement.pdf website/src/
   - cd website
   - npm install
   - node build.js
