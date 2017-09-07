@@ -24,3 +24,14 @@ node build.js
 # Serve the website at localhost:4000
 node build.js serve
 ```
+
+### Building - the docker way
+
+```bash
+# in the `website/` directory
+
+# Build the website once
+./build.sh
+# Serve the website at localhost:4000
+node build.js serve
+```

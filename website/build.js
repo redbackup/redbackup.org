@@ -44,7 +44,7 @@ function build() {
 
 function dev() {
     generate(true)
-    .use(serve())
+    .use(serve({host: '0.0.0.0'}))
     .use(watch({
       paths: {
         '${source}/**/*': true, // eslint-disable-line no-template-curly-in-string
