@@ -24,7 +24,7 @@ function generate(isDev) {
       .destination('./output')
       .clean(true)
       .use(markdown())
-      .use(permalinks({ relative: 'off' }))
+      .use(permalinks({ relative: false }))
       .use(rootPath())
       .use(discoverPartials({
           directory: 'layouts/partials',
