@@ -7,8 +7,8 @@ minute-taker: rzimmerm
 
 ## Attendees
 
-* Fabian Hauser, fhauser
-* Raphael Zimmermann, rzimmerm
+- Fabian Hauser, fhauser
+- Raphael Zimmermann, rzimmerm
 
 ## Agenda
 
@@ -17,16 +17,20 @@ minute-taker: rzimmerm
 
 ## Decisions
 
-* ...
-* ...
+- ...
+- ...
 
 ## Open issues
 
 _open issues must be completed before the next meeting_
 
-* ...
-* ...
+- ...
 
-## Upcomming absences
+## Upcoming absences
+
+- ...
 
 ## Next Meeting
+
+- ...
+
