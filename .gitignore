@@ -1,7 +1,12 @@
 /website/output/
 /website/node_modules/
+
 /project-plan/project-plan.pdf
 /problem-statement/problem-statement.pdf
+
+*.tex.diff.pdf
+*.tex.diff.tex
+*.tex.prev
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
