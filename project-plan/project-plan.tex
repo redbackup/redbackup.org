@@ -32,6 +32,30 @@ The project setting, vision, goals, as well as all other project boundaries, are
 
 \section{Infrastructure}
 
+
+\subsection{Project Management and Development}
+
+For our project management, document \& code storage and continuous integration/deployment we utilize an Atlassian stack (JIRA, BitBucket, Bamboo, Crowd)\cite{atlassian-opensource}.
+
+These applications are hosted on the HSR project server \textit{sinv-56017.edu.hsr.ch}, which runs a standard Ubuntu Linux 17.04.
+
+The project documents are written in LaTeX and versioned with git.
+
+\subsubsection{Development Tools}
+
+\begin{itemize}
+	\item Git $\geq 2.0$, \url{https://git-scm.com/}
+	\item to be defined. %TODO: Add project tools when the programming language is defined
+\end{itemize}
+
+\subsection{Backup and Data Safety}
+
+An incremental backup of the project server \textit{sinv-56017.edu.hsr.ch} including our project code and documentation is created on the independent system \textit{pin1262031.hsr.ch} every night.
+
+As our documents and code are stored within a git repository, they are also available locally on all development systems.
+
+
+
 \section{Quality Measures}
 
 \bibliographystyle{abbrv}
