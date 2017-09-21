@@ -3,7 +3,9 @@
 \usepackage[a4paper]{geometry}
 \geometry{verbose, marginparwidth=15mm, marginparsep=3mm, tmargin=25mm}
 \usepackage{tabulary}
+\usepackage{tabu}
 \usepackage{enumitem}
+\usepackage{rotating}
 
 \usepackage{url}
 \title{Redbackup: Projectplan}
@@ -29,6 +31,61 @@ The project setting, vision, goals, as well as all other project boundaries, are
 
 
 \section{Risk Management}
+An assessment of our specific project risks is visible in Table \ref{tbl:project-risks}.
+
+\begin{sidewaystable}
+	\centering
+	\caption{Risk assessment table.}
+	\label{tbl:project-risks}
+	\begin{tabu}{r l X X r r}
+		\hline
+		\# & Title & Description & Prevention / Reaction & Risk[h] & Probab. \\ \hline
+		
+		%Infrastructure
+		1 & Problems with project infrastructure
+		  & The used project infrastructure is not or only partially available. Data loss within management software.
+		  & Clean tool setup, self hosting of tools to prevent third-party dependencies
+		  & 30 & 30\% \\
+		
+		%Planning
+		2 & Communication errors
+		  & Errors due to miscommunication or misapprehension
+		  & Maintain a high level of interaction, clear specification of tasks responsibilities, conduct meeting if ambiguities
+		  & 10 & 40\% \\
+
+		3 & Scope creep
+		  & The project's scope is extended over the project course
+		  & Clear and tought trough definition of the project scope and limitations. Discuss changes with supervisor.
+		  & 30 & 30\% \\
+		
+		%Paper / Architecture
+		4 & Architecture does not scale
+		  & The choosen architecture does not scale to the expected data volume or node size
+		  & Invest more time in architecture design
+		  & 30 & 40\% \\
+
+		5 & Missing architecture aspects
+		  & The architecture-whitepaper does not cover certain aspects necessary concepts of the prototype
+		  & Invest more time in architecture design
+		  & 15 & 60\% \\
+		
+		%Prototype
+		6 & Dependency Errors
+		  & There are errors/bugs in dependencies i.e. libraries.
+		  & Carefully select libraries, limit libraries to minimum
+		  & 20 & 30\% \\
+
+		7 & Missing dependency documentation
+		  & Selected libraries are lacking good documentation
+		  & The documentation should be a library selection criterion
+		  & 15 & 40\% \\
+		
+		\hline
+		& Total weighted risk & & & ? &\\%TODO: If table filled, calculate total weighted risk
+		\hline
+	\end{tabu}
+\end{sidewaystable}
+
 
 \section{Infrastructure}
 
