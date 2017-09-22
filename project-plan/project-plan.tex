@@ -31,57 +31,63 @@ The project setting, vision, goals, as well as all other project boundaries, are
 
 
 \section{Risk Management}
-An assessment of our specific project risks is visible in Table \ref{tbl:project-risks}.
+
+An assessment of our specific project risks is visible in Table \ref{tbl:project-risks}. To account for these risks, we reduce our weekly sprint time by the total weighted risk applicable to the planned task topics (on average approximately 20\%).
 
 \begin{sidewaystable}
 	\centering
 	\caption{Risk assessment table.}
 	\label{tbl:project-risks}
-	\begin{tabu}{r l X X r r}
+	\begin{tabu}{r l X X r r r}
 		\hline
-		\# & Title & Description & Prevention / Reaction & Risk[h] & Probab. \\ \hline
-		
+		\# & Title & Description & Prevention / Reaction & Risk [h] & Probab. & = [h] \\ \hline
+
 		%Infrastructure
 		1 & Problems with project infrastructure
-		  & The used project infrastructure is not or only partially available. Data loss within management software.
+		  & The used project infrastructure is not or only partially available, or data loss occurs within management software
 		  & Clean tool setup, self hosting of tools to prevent third-party dependencies
-		  & 30 & 30\% \\
-		
+		  & 30 & 30\% & 9 \\
+
 		%Planning
 		2 & Communication errors
 		  & Errors due to miscommunication or misapprehension
-		  & Maintain a high level of interaction, clear specification of tasks responsibilities, conduct meeting if ambiguities
-		  & 10 & 40\% \\
+		  & Maintain a high level of interaction, clear specification of tasks responsibilities, conduct meetings if ambiguities exist
+		  & 10 & 40\% & 4\\
 
 		3 & Scope creep
 		  & The project's scope is extended over the project course
-		  & Clear and tought trough definition of the project scope and limitations. Discuss changes with supervisor.
-		  & 30 & 30\% \\
-		
+		  & Clear definition of the project scope and limitations. Discuss changes with supervisor.
+		  & 30 & 30\% & 9\\
+
 		%Paper / Architecture
 		4 & Architecture does not scale
-		  & The choosen architecture does not scale to the expected data volume or node size
+		  & The chosen architecture does not scale to the expected data volume or node size
 		  & Invest more time in architecture design
-		  & 30 & 40\% \\
+		  & 30 & 40\% & 12\\
 
 		5 & Missing architecture aspects
 		  & The architecture-whitepaper does not cover certain aspects necessary concepts of the prototype
 		  & Invest more time in architecture design
-		  & 15 & 60\% \\
-		
+		  & 15 & 60\% & 9\\
+
 		%Prototype
+		6 & Problems with technology stack
+		  & Parts of the selected technology stack are not well suited, incomplete or immature
+		  & Reflect technology suitability during the architecture draft
+		  & 60 & 60\% & 36\\
+
 		6 & Dependency Errors
 		  & There are errors/bugs in dependencies i.e. libraries.
-		  & Carefully select libraries, limit libraries to minimum
-		  & 20 & 30\% \\
+		  & Carefully select libraries, limit dependencies to a minimum
+		  & 20 & 30\% & 6\\
 
 		7 & Missing dependency documentation
 		  & Selected libraries are lacking good documentation
 		  & The documentation should be a library selection criterion
-		  & 15 & 40\% \\
-		
+		  & 15 & 40\% & 6\\
+
 		\hline
-		& Total weighted risk & & & ? &\\%TODO: If table filled, calculate total weighted risk
+		& Total weighted risk & & & & & 91\\
 		\hline
 	\end{tabu}
 \end{sidewaystable}
