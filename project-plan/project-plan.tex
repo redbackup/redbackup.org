@@ -74,7 +74,6 @@ To maintain a high standard of quality, we take the following measures:
 
 \begin{multicols}{2}
 	\begin{itemize}
-		\item short sprint reviews
 	    \item short sprint reviews
 	    \item three extended retrospectives
 	    \item code reviews
@@ -85,35 +84,31 @@ To maintain a high standard of quality, we take the following measures:
 \end{multicols}
 
 \subsection{Documentation}
-The official documents such as the final submission document, the theoretical concept as well as this project plan are written in Latex and published on the project website as pdf documents.
+The official documents such as the final submission document, the theoretical concept as well as this project plan are written in Latex and published on the project website as pdf documents. All other documents such as meeting minutes are written in markdown and made available in HTML on the website as well.
 
-All other documents such as meeting minutes are written in markdown and made available in HTML on the website as well.
-
-The sources are in both cases kept in version control in the same repository, which allows us to use the same tools and processes for documentation and code. The continuous integration server builds and publishes the website whenever new changes are pushed to the repository.
+The sources are in both cases kept under version control in the same repository, which allows us to use the same tools and processes for documentation and code. The continuous integration server builds and publishes the website whenever new changes are pushed to the repository.
 
 \subsection{Project Management}
-Because the project plan allows for an iterative process, we use JIRA with its SCRUM-Features, such as Sprint creation or boards, for project management. 
+Because the project plan allows for an iterative process, we use JIRA with its SCRUM-Features (such as sprint creation or boards) for project management.
 
 \subsubsection{Sprint Planning}
-Each sprint is mapped in JIRA which allows the project advisor to trace the project progress.
-
-Each sprint has a board on which one can easily see the current state of any issue ("To Do", "In Progress", "Review", "Done").
+Each sprint is mapped to JIRA, which allows the project advisor to trace the project progress. Sprints are represented as boards on which the current state of any issue is easily visible ("To Do", "In Progress", "Review", "Done").
 
 
 \subsubsection{Definition of Done}
-Ein Issue can be closed if all of the following conditions are met:
+An issue may be closed if \emph{all} of the following conditions are met:
 
 \begin{itemize}
-	\item functionality conforms to the specified functionality. Any deviations must be discussed and decided by the team.
-	\item the source code is reasonably documented
-	\item no code is commented out
-	\item No warnings and errors by the compiler and any other quality tool.
+	\item All functionality conforms to the specification. Any deviations must be discussed and decided by the team.
+	\item The source code is reasonably documented.
+	\item No code is commented out.
+	\item No warnings and errors by the compiler or any other quality tool.
 	\item A review is performed and accepted in a pull request.
-	\item the corresponding branch is merged into the stable branch (e.g. master)
-	\item All documents are up to date
-	\item reasonable unit and integration tests exist and pass
-	\item the complete continuous integration pipeline works.
-	\item All spent time is logged
+	\item The corresponding branch is merged into the stable branch (e.g. master).
+	\item All documents are up to date.
+	\item Reasonable unit and integration tests exist and pass.
+	\item The complete continuous integration pipeline works.
+	\item All time spent on the issue is logged.
 \end{itemize}
 
 \subsection{Development}
