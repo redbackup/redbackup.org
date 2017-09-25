@@ -4,6 +4,8 @@
 \geometry{verbose, marginparwidth=15mm, marginparsep=3mm, tmargin=25mm}
 \usepackage{tabulary}
 \usepackage{enumitem}
+\usepackage{multicol}
+
 
 \usepackage{url}
 \title{Redbackup: Projectplan}
@@ -33,6 +35,65 @@ The project setting, vision, goals, as well as all other project boundaries, are
 \section{Infrastructure}
 
 \section{Quality Measures}
+To maintain a high standard of quality, we take the following measures:
+
+\begin{multicols}{2}
+	\begin{itemize}
+		\item short sprint reviews
+	    \item short sprint reviews
+	    \item three extended retrospectives
+	    \item code reviews
+	    \item automated unit and integration testing
+	    \item publish all documentation on the project website using continuous integration/delivery.
+	    \item using continuous integration for source code
+	\end{itemize}
+\end{multicols}
+
+\subsection{Documentation}
+The official documents such as the final submission document, the theoretical concept as well as this project plan are written in Latex and published on the project website as pdf documents.
+
+All other documents such as meeting minutes are written in markdown and made available in HTML on the website as well.
+
+The sources are in both cases kept in version control in the same repository, which allows us to use the same tools and processes for documentation and code. The continuous integration server builds and publishes the website whenever new changes are pushed to the repository.
+
+\subsection{Project Management}
+Because the project plan allows for an iterative process, we use JIRA with its SCRUM-Features, such as Sprint creation or boards, for project management. 
+
+\subsubsection{Sprint Planning}
+Each sprint is mapped in JIRA which allows the project advisor to trace the project progress.
+
+Each sprint has a board on which one can easily see the current state of any issue ("To Do", "In Progress", "Review", "Done").
+
+
+\subsubsection{Definition of Done}
+Ein Issue can be closed if all of the following conditions are met:
+
+\begin{itemize}
+	\item functionality conforms to the specified functionality. Any deviations must be discussed and decided by the team.
+	\item the source code is reasonably documented
+	\item no code is commented out
+	\item No warnings and errors by the compiler and any other quality tool.
+	\item A review is performed and accepted in a pull request.
+	\item the corresponding branch is merged into the stable branch (e.g. master)
+	\item All documents are up to date
+	\item reasonable unit and integration tests exist and pass
+	\item the complete continuous integration pipeline works.
+	\item All spent time is logged
+\end{itemize}
+
+\subsection{Development}
+
+Since we are in a very early and agile phase we decided to use "Github flow", a straightforward development workflow.
+
+Since the effective technology will be fixed later in the project, concrete coding guidelines, tools, metrics and an error policy will be defined when appropriate.
+
+
+\subsection{Testing}
+All functionality must be testable automatically in continuous integration. Any non-trivial method must be verified with unit tests.
+
+Integration tests verify extended test scenarios.
+
+A minimal performance analysis will be carried out at the end of the project.
 
 \bibliographystyle{abbrv}
 \bibliography{refs}
