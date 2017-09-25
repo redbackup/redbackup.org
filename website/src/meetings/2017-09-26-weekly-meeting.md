@@ -17,6 +17,7 @@ minute-taker: rzimmerm
 - Presentation of the first implementation drafts
 - Updates concerning the revised Project Plan
 - What Kind of JIRA-Reports (Timerecords) must we provide?
+- Date and time for next meeting
 
 ## Open issues
 
