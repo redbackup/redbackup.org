@@ -3,7 +3,10 @@
 \usepackage[a4paper]{geometry}
 \geometry{verbose, marginparwidth=15mm, marginparsep=3mm, tmargin=25mm}
 \usepackage{tabulary}
+\usepackage{tabu}
 \usepackage{enumitem}
+\usepackage{rotating}
+\usepackage{diagbox}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{multicol}
@@ -86,7 +89,7 @@ Due to the explorative nature of the project, we decided on a sprint duration of
 
 The goals and documents resulting from each sprint is shown in Figure \ref{fig:sprint-details}.
 
-\begin{figure}[h!]
+\begin{figure}[h]
 	\begin{sideways}
 	\includegraphics[scale=0.75]{resources/sprint_details}
 	\end{sideways}
@@ -120,6 +123,84 @@ Regular Meetings with the project advisor take usually place on Friday in Prof. 
 Raphael Zimmermann will take meeting notes for every meeting. Meeting minutes are published on the project website afterwards.
 
 \section{Risk Management}
+
+An assessment of the project-specific risks is carried out in table \ref{tbl:project-risks} as time loss during the whole project. The risk matrix table \ref{tbl:risk-matrix} provides an overview of the risk weighting.
+
+To account for these risks, we reduce our weekly sprint time by the total weighted risk applicable to the planned task topics (on average approximately 20\%). We also review the risk assessment after every sprint, adapt it and take measures if necessary.
+
+
+\begin{table}
+	\centering
+	\caption[Risk matrix]{The risk matrix. Numbers reference to the risk assessment table \ref{tbl:project-risks}}
+	\label{tbl:risk-matrix}
+	\begin{tabu}{|l|c|c|c|}
+		\hline
+		\diagbox[width=9em,height=2.5em]{Probability}{Severity}
+		  & High ($\geq 5d$) & Medium (2-5$d$) & Low ($\leq 2d$) \\ \hline
+		High ($\geq 60\%$)
+	      & 1 & & 6\\ \hline
+		Medium (30-60\%)
+		  & 8 & 2, 3 &  \\ \hline
+		Low ($\leq 30\%$)
+		  & & 4, 5, 7 & \\ \hline
+	\end{tabu}
+\end{table}
+
+
+\begin{sidewaystable}
+	\centering
+	\caption[Risk assessment]{Risk assessment table. Time in hours over the total project duration.}
+	\label{tbl:project-risks}
+	\begin{tabu}{r l X X r r r}
+		\hline
+		\# & Title & Description & Prevention / Reaction & Risk [h] & Probability & = [h] \\ \hline
+
+		1 & Problems with technology stack
+		  & Parts of the selected technology stack are not well suited, incomplete or immature.
+		  & Reflect the suitability of the chosen technology during the architecture draft.
+		  & 60 & 60\% & 36\\
+
+		2 & The Architecture does not scale.
+		  & The chosen architecture does not scale to the expected data volume or node size
+		  & Invest an adequate amount of time in architecture design.
+		  & 30 & 40\% & 12\\
+
+		3 & Communication errors
+		  & Errors due to miscommunication or misapprehension.
+		  & Maintain a high level of interaction, precise specification of tasks responsibilities, conduct meetings if ambiguities exist.
+		  & 20 & 50\% & 10\\
+
+		4 & Problems with project infrastructure
+		  & The used project infrastructure is not or only partially available, or data loss occurs within management software.
+		  & Clean setup and self-hosting of the tools to prevent third-party dependencies.
+		  & 30 & 30\% & 9 \\
+
+		5 & Scope creep
+		  & The project's scope is extended over the project course.
+		  & Define the project scope and limitations precisely. Discuss changes with the project advisor.
+		  & 30 & 30\% & 9\\
+
+		6 & Missing architecture aspects
+		  & The architecture-whitepaper does not fully cover all necessary aspects of the prototype.
+		  & Invest an adequate amount of time in architecture design.
+		  & 15 & 60\% & 9\\
+
+		7 & Dependency Errors
+		  & There are errors/bugs in third-party dependencies, i.e. libraries.
+		  & Carefully select libraries and limit thid-party dependency to a minimum.
+		  & 20 & 30\% & 6\\
+
+		8 & Missing dependency documentation
+		  & Selected libraries are lacking proper documentation
+		  & The documentation quality of a library should be a selection criterion.
+		  & 15 & 40\% & 6\\
+
+		 \hline
+		& Total weighted risk & & & & & 97\\
+		\hline
+	\end{tabu}
+\end{sidewaystable}
+
 
 \section{Infrastructure}
 
