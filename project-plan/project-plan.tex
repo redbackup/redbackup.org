@@ -69,6 +69,27 @@ Due to the small team size, most roles are performed by both team members.
 
 \section{Infrastructure}
 
+
+\subsection{Project Management and Development}
+
+For project management, document/code storage and continuous integration/deployment we utilise the corresponding products by Atlassian (JIRA, BitBucket, Bamboo, Crowd)\cite{atlassian-opensource}.
+
+These applications are hosted on our HSR project server \textit{sinv-56017.edu.hsr.ch}, which runs a standard Ubuntu Linux 17.04.
+
+The formal project documents are written in LaTeX and versioned with git. Other documentation (e.g. Meeting Minutes) are written in Markdown and published on the project website.
+
+\subsubsection{Development Tools}
+
+Since most development tools depend on the chosen technology and might change in the future, they are maintained separately on the project website \footnote{\url{https://www.redbackup.org/development/}}.
+
+\subsection{Backup and Data Safety}
+
+An incremental backup of the project server \textit{sinv-56017.edu.hsr.ch} including the source code and documentation is created on an independent system (\textit{pin1262031.hsr.ch}) every night.
+
+As our documents and code is stored in a git repository, they are also distributed on all development systems.
+
+
+
 \section{Quality Measures}
 To maintain a high standard of quality, we take the following measures:
 
