@@ -6,6 +6,7 @@
 \usepackage{tabu}
 \usepackage{enumitem}
 \usepackage{rotating}
+\usepackage{diagbox}
 
 \usepackage{url}
 \title{Redbackup: Projectplan}
@@ -32,12 +33,32 @@ The project setting, vision, goals, as well as all other project boundaries, are
 
 \section{Risk Management}
 
-An assessment of the project-specific risks is carried out in Table \ref{tbl:project-risks}. To account for these risks, we reduce our weekly sprint time by the total weighted risk applicable to the planned task topics (on average approximately 20\%). We also review the risk assessment after every sprint, adapt it and take measures if necessary.
+An assessment of the project-specific risks is carried out in table \ref{tbl:project-risks} as time loss during the whole project. The risk matrix table \ref{tbl:risk-matrix} provides an overview of the risk weighting.
+
+To account for these risks, we reduce our weekly sprint time by the total weighted risk applicable to the planned task topics (on average approximately 20\%). We also review the risk assessment after every sprint, adapt it and take measures if necessary.
+
+
+\begin{table}
+	\centering
+	\caption[Risk matrix]{The risk matrix. Numbers reference to the risk assessment table \ref{tbl:project-risks}}
+	\label{tbl:risk-matrix}
+	\begin{tabu}{|l|c|c|c|}
+		\hline
+		\diagbox[width=9em,height=2.5em]{Probability}{Severity}
+		  & High ($\geq 5d$) & Medium (2-5$d$) & Low ($\leq 2d$) \\ \hline
+		High ($\geq 60\%$)
+	      & 1 & & 6\\ \hline
+		Medium (30-60\%)
+		  & 8 & 2, 3 &  \\ \hline
+		Low ($\leq 30\%$)
+		  & & 4, 5, 7 & \\ \hline
+	\end{tabu}
+\end{table}
 
 
 \begin{sidewaystable}
 	\centering
-	\caption{Risk assessment table.}
+	\caption[Risk assessment]{Risk assessment table. Time in hours over the duration of the whole project.}
 	\label{tbl:project-risks}
 	\begin{tabu}{r l X X r r r}
 		\hline
