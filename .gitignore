@@ -3,6 +3,7 @@
 
 /project-plan/project-plan.pdf
 /problem-statement/problem-statement.pdf
+/final-submission/final-submission.pdf
 
 *.tex.diff.pdf
 *.tex.diff.tex

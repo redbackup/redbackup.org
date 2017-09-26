@@ -123,23 +123,6 @@ consistentlayout, % Uncomment to change the layout of the declaration, abstract 
 \end{titlepage}
 
 %----------------------------------------------------------------------------------------
-%	DECLARATION PAGE
-%----------------------------------------------------------------------------------------
-
-\begin{declaration}
-\addchaptertocentry{\authorshipname} % Add the declaration to the table of contents
-\noindent We, \authorname, declare that this thesis and the work presented in it are our own, original work.  All the sources we consulted and cited are clearly attributed. We have acknowledged all main sources of help. \\
-
-\noindent Fabian Hauser\\[2em]
-\rule[0.5em]{25em}{0.5pt}\\ % This prints a line for the signature
-\noindent Raphael Zimmermann\\[2em]
-\rule[0.5em]{25em}{0.5pt}\\ % This prints a line for the signature 
-\noindent Rapperswil, \today
-\end{declaration}
-
-\cleardoublepage
-
-%----------------------------------------------------------------------------------------
 %	QUOTATION PAGE
 %----------------------------------------------------------------------------------------
 
@@ -159,6 +142,14 @@ consistentlayout, % Uncomment to change the layout of the declaration, abstract 
 \addchaptertocentry{\abstractname} % Add the abstract to the table of contents
 \emph{The Thesis Abstract is written here (and usually kept to just this page). The page is kept centered vertically so can expand into the blank space above the title too\ldots}
 \end{abstract}
+
+%----------------------------------------------------------------------------------------
+%	MANAGEMENT SUMMARY
+%----------------------------------------------------------------------------------------
+
+\chapter{Management Summary}
+\addchaptertocentry{\abstractname} % Add the abstract to the table of contents
+\emph{The Thesis Abstract is written here (and usually kept to just this page). The page is kept centered vertically so can expand into the blank space above the title too\ldots}
 
 %----------------------------------------------------------------------------------------
 %	ACKNOWLEDGEMENTS
@@ -193,19 +184,15 @@ We would like to thank our advisor, Prof.Dr. Farhad Mehta, for his continuous su
 \include{chapters/chapter1}
 %\include{chapters/chapter2}
 
-
+\subsubsection*{} %This is needed, so that not the next page is referenced.
 \label{lastpage}
-%----------------------------------------------------------------------------------------
-%	THESIS CONTENT - APPENDICES
-%----------------------------------------------------------------------------------------
 
-\appendix % Cue to tell LaTeX that the following "chapters" are Appendices
-
-%\include{appendices/appendix_a}
-
+\cleardoublepage
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
+
+\pagenumbering{Roman}
 
 \bibliographystyle{abbrv}
 \bibliography{references}
@@ -230,6 +217,34 @@ We would like to thank our advisor, Prof.Dr. Farhad Mehta, for his continuous su
 \textbf{WSF} & \textbf{W}hat (it) \textbf{S}tands \textbf{F}or\\
 
 \end{abbreviations}
+
+
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - APPENDICES
+%----------------------------------------------------------------------------------------
+
+\appendix % Cue to tell LaTeX that the following "chapters" are Appendices
+
+%\include{appendices/appendix_a}
+
+
+%----------------------------------------------------------------------------------------
+%	DECLARATION PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{declaration}
+\addchaptertocentry{\authorshipname} % Add the declaration to the table of contents
+\noindent We, \authorname, declare that this thesis and the work presented in it are our own, original work.  All the sources we consulted and cited are clearly attributed. We have acknowledged all main sources of help. \\
+
+\noindent Fabian Hauser\\[2em]
+\rule[0.5em]{25em}{0.5pt}\\ % This prints a line for the signature
+\noindent Raphael Zimmermann\\[2em]
+\rule[0.5em]{25em}{0.5pt}\\ % This prints a line for the signature 
+\noindent Rapperswil, \today
+\end{declaration}
+
+\cleardoublepage
+
 
 %----------------------------------------------------------------------------------------
 
