@@ -196,7 +196,7 @@
 \RequirePackage{siunitx} % Required for \SI commands
 
 \RequirePackage{graphicx} % Required to include images
-\graphicspath{{Figures/}{./}} % Specifies where to look for included images
+\graphicspath{{resources/}{./}} % Specifies where to look for included images
 
 \RequirePackage{booktabs} % Required for better table rules
 
@@ -280,7 +280,13 @@
 	\clearpairofpagestyles%
 	\automark[chapter]{chapter}
 	\ihead{\headmark}% Inner header
-	\ohead[\pagemark]{\pagemark~\normalfont/\textcolor{black}{\pageref*{lastpage}}}% Outer header
+	\ohead[\pagemark]{%
+		\if@mainmatter
+		   \pagemark~\normalfont/\textcolor{black}{\pageref*{lastpage}}
+		\else
+		   \pagemark
+		\fi
+	}% Outer header
 }
 \ifoot{}% Inner footer
 \ofoot{}% Outer footer
@@ -487,7 +493,7 @@ bookmarksopenlevel=0,
 hypertexnames=false,
 colorlinks=true,% Set to false to disable coloring links
 citecolor=magenta,% The color of citations
-linkcolor=red,% The color of references to document elements (sections, figures, etc)
+linkcolor=black,% The color of references to document elements (sections, figures, etc)
 urlcolor=mdtRed,% The color of hyperlinks (URLs)
 pdfstartview={FitV},
 unicode,
