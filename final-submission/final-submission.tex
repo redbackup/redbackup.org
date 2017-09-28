@@ -1,0 +1,211 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Masters/Doctoral Thesis 
+% LaTeX Template
+% Version 2.5 (27/8/17)
+%
+% This template was downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Version 2.x major modifications by:
+% Vel (vel@latextemplates.com)
+%
+% This template is based on a template by:
+% Steve Gunn (http://users.ecs.soton.ac.uk/srg/softwaretools/document/templates/)
+% Sunil Patel (http://www.sunilpatel.co.uk/thesis-template/)
+%
+% Template license:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{../latex_template}
+
+\begin{document}
+
+\frontmatter % Use roman page numbering style (i, ii, iii, iv...) for the pre-content pages
+\pagestyle{plain} % Default to the plain heading style until the thesis style is called for the body content
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{titlepage}
+\begin{center}
+
+\vspace*{.06\textheight}
+{\scshape\LARGE \univname\par} % University name
+
+{\scshape\large Department of Computer Science\par}\vspace{1.2cm} % University name
+\textsc{\Large Study Project}\\[0.5cm] % Thesis type
+
+\HRule \\[0.4cm] % Horizontal line
+{\huge \bfseries \ttitle\par}\vspace{0.4cm} % Thesis title
+\HRule \\[1.5cm] % Horizontal line
+ 
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Authors:}\\
+\authorname % Author name - remove the \href bracket to remove the link
+\end{flushleft}
+\end{minipage}
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushright} \large
+\emph{Advisor:} \\
+\supname \\[1cm]
+\emph{Examiner:} \\
+\examname
+\end{flushright}
+\end{minipage}\\[3cm]
+ 
+\vfill
+
+{\large Autumn Term 2017}\\[4cm] % Date
+\includegraphics{resources/logo_hsr} % University/department logo - uncomment to place it
+ 
+\vfill
+\end{center}
+\end{titlepage}
+
+%----------------------------------------------------------------------------------------
+%	QUOTATION PAGE
+%----------------------------------------------------------------------------------------
+
+\vspace*{0.1\textheight}
+
+{\noindent\huge\textit{DON'T PANIC}\par\vspace{10pt}}
+
+\noindent\enquote{\itshape It looked insanely complicated, and this was one of the reasons why the snug plastic cover it fitted into had the words DON’T PANIC printed on it in large friendly letters.}\bigbreak
+
+\hfill The Hitchhiker's Guide to the Galaxy
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{abstract}
+\addchaptertocentry{\abstractname} % Add the abstract to the table of contents
+\begin{itemize}
+	\item Main Idea
+	\item Brief description of what is done
+	\item  Brief description of the results
+	\item  Remember: Abstract = decision aid.
+	\item  No References
+	\item  Present Tense
+	\item  See HSR-Module RKI
+	\item  See Chapter 2.3 in \url{https://wiki.hsr.ch/FarhadMehta/files/Writing_Scientific_Papers.pdf}
+\end{itemize}
+\end{abstract}
+
+%----------------------------------------------------------------------------------------
+%	MANAGEMENT SUMMARY
+%----------------------------------------------------------------------------------------
+
+\chapter{Management Summary}
+\addchaptertocentry{\abstractname} % Add the abstract to the table of contents
+\emph{The Thesis Management is written here (and usually kept to just this page).}
+
+%----------------------------------------------------------------------------------------
+%	ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+
+\begin{acknowledgements}
+\addchaptertocentry{\acknowledgementname} % Add the acknowledgements to the table of contents
+We would like to thank our advisor, Prof.Dr. Farhad Mehta, for his continuous support.
+
+\begin{itemize}
+	\item we might want to use author-date citations over plain numbering.
+	\item Acknowledge HSR and reviewers...
+\end{itemize}
+\end{acknowledgements}
+
+%----------------------------------------------------------------------------------------
+%	LIST OF CONTENTS PAGES
+%----------------------------------------------------------------------------------------
+
+\tableofcontents % Prints the main table of contents
+
+%----------------------------------------------------------------------------------------
+%	DEDICATION
+%----------------------------------------------------------------------------------------
+
+%TODO
+%\dedicatory{For/Dedicated to/To my\ldots}
+
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - CHAPTERS
+%----------------------------------------------------------------------------------------
+
+\mainmatter % Begin numeric (1,2,3...) page numbering
+
+\pagestyle{thesis} % Return the page headers back to the "thesis" style
+
+\include{chapters/1_introduction}
+\include{chapters/2_background}
+\include{chapters/3_our_approach}
+\include{chapters/4_discussion_and_conclusion}
+\include{chapters/chapter1}
+
+\subsubsection*{} %This is needed, so that not the next page is referenced.
+\label{lastpage} %TODO: This label should be positioned below above the last paragraph
+
+\cleardoublepage
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+\backmatter
+\pagenumbering{Roman}
+
+\bibliographystyle{abbrv}
+\bibliography{references}
+\addcontentsline{toc}{chapter}{Bibliography}
+
+
+%----------------------------------------------------------------------------------------
+%	LIST OF FIGURES/TABLES PAGES
+%----------------------------------------------------------------------------------------
+
+\listoffigures % Prints the list of figures
+
+\listoftables % Prints the list of tables
+
+%----------------------------------------------------------------------------------------
+%	ABBREVIATIONS
+%----------------------------------------------------------------------------------------
+
+\begin{abbreviations}{ll} % Include a list of abbreviations (a table of two columns)
+
+%\textbf{LAH} & \textbf{L}ist \textbf{A}bbreviations \textbf{H}ere\\
+%\textbf{WSF} & \textbf{W}hat (it) \textbf{S}tands \textbf{F}or\\
+
+\end{abbreviations}
+
+
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - APPENDICES
+%----------------------------------------------------------------------------------------
+
+\appendix % Cue to tell LaTeX that the following "chapters" are Appendices
+
+%\include{appendices/appendix_a}
+
+
+%----------------------------------------------------------------------------------------
+%	DECLARATION PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{declaration}
+\addchaptertocentry{\authorshipname} % Add the declaration to the table of contents
+\noindent We, \authorname, declare that this thesis and the work presented in it are our own, original work.  All the sources we consulted and cited are clearly attributed. We have acknowledged all main sources of help. \\
+
+\noindent Fabian Hauser\\[2em]
+\rule[0.5em]{25em}{0.5pt}\\ % This prints a line for the signature
+\noindent Raphael Zimmermann\\[2em]
+\rule[0.5em]{25em}{0.5pt}\\ % This prints a line for the signature 
+\noindent Rapperswil, \today
+\end{declaration}
+
+\cleardoublepage
+
+
+%----------------------------------------------------------------------------------------
+
+\end{document}  
