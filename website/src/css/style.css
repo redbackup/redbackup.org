@@ -22,29 +22,47 @@
   font-size: 0.8em;
 }
 
-.navbar-section > a {
-    color: black;
-}
-
 .red{
     color: #dd3131;
 }
 
+.navbar ul {
+    margin: 0;
+}
+
+.navbar li {
+    margin: 0;
+    list-style: none;
+}
+
 .navbar .navbar-brand{
     font-size: 2rem;
-    padding-right: 1rem;
 }
 
 .navbar .btn-link{
     font-size: 1.6rem;
     margin-left: 0.6rem;
 }
-header {
+
+.navbar-banner {
     margin-top: 2rem;
     margin-bottom: 2rem;
 }
+
+@media only screen and (max-width: 480px) {
+    .navbar-banner {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+header a {
+    color: black;
+}
+
 footer {
     margin-top: 4rem;
     margin-bottom: 1rem;
     padding-top: 0.5rem;
     border-top: solid 1px #f8f9fa;
+}

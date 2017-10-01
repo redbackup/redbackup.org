@@ -10,15 +10,25 @@
 </head>
 <body>
     <header class="container grid-960 navbar">
-      <section class="navbar-section">
+      <section class="navbar-banner column col-1 col-md-2 col-xs-12">
         <a class="navbar-brand" href="{{rootPath}}"><img src="{{rootPath}}images/redback.png" class="logo"/></a>
+      </section>
+      <section class="navbar-banner column col-5 col-md-10 col-xs-12">
         <a href="{{rootPath}}" class="navbar-brand"><span class="red">red</span>backup <span class="sub">{{slogan}}</span></a>
       </section>
-      <section class="navbar-section">
-          <a href="{{rootPath}}index.html" class="btn btn-link">🏠 Home</a>
-          <a href="https://git.redbackup.org/projects/RED" class="btn btn-link">📄 Source Code</a>
-          <a href="https://project.redbackup.org/projects/REDPRO" class="btn btn-link">🗃 Project Tracker</a>
-          <a href="{{rootPath}}overview/index.html" class="btn btn-link">🔭 Overview</a>
+      <section class="column col-3 col-md-6 col-xs-12">
+          <ul>
+              <li><a href="{{rootPath}}index.html" class="btn btn-link">🏠 Home</a></li>
+              <li><a href="{{rootPath}}overview/index.html" class="btn btn-link">🔭 Overview</a></li>
+              <li><a href="{{rootPath}}development/index.html" class="btn btn-link">⚙️ Development</a></li>
+              <li>
+          </ul>
+      </section>
+      <section class="column col-3 col-md-6 col-xs-12">
+          <ul>
+              <li><a href="https://project.redbackup.org/projects/REDPRO" class="btn btn-link">🗃 Project Tracker</a></li>
+              <li><a href="https://git.redbackup.org/projects/RED" class="btn btn-link">📄 Source Code</a></li>
+          </ul>
       </section>
     </header>
   <section class="container grid-960">
