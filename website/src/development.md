@@ -19,3 +19,16 @@ In order to have a consistent style of writing, we defined the following guideli
 - When a gender-specific pronoun is required, use "he/she".
 - Use present tense except for the description of (our) completed work.
 
+## Definition of Done
+To maintain our high quality needs, we determined following definition of done guidelines:
+
+- All functionality conforms to the specification. Any deviations must be discussed and decided by the team.
+- The source code is reasonably documented.
+- No code is commented out.
+- No warnings and errors by the compiler or any other quality tool.
+- A review is performed and accepted in a pull request.
+- The corresponding branch is merged into the stable branch (e.g. master).
+- All documents are up to date including the project website.
+- Reasonable unit and integration tests exist and pass.
+- The complete continuous integration pipeline works.
+- All time is logged.
