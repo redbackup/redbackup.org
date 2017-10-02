@@ -163,11 +163,11 @@ To account for these risks, we reduce our weekly sprint time by the total weight
 		\diagbox[width=9em,height=2.5em]{Probability}{Severity}
 		  & High ($\geq 5d$) & Medium (2-5$d$) & Low ($\leq 2d$) \\ \hline
 		High ($\geq 60\%$)
-	      & 1 & & 6\\ \hline
+	      & 1 & 2 & \\ \hline
 		Medium (30-60\%)
-		  & 8 & 2, 3 &  \\ \hline
+		  & 8 & 3, 4 &  \\ \hline
 		Low ($\leq 30\%$)
-		  & & 4, 5, 7 & \\ \hline
+		  & & 5, 6, 7 & \\ \hline
 	\end{tabu}
 	\caption[Risk matrix]{The risk matrix. Numbers reference to the risk assessment Table \ref{tbl:project-risks}}
 	\label{tbl:risk-matrix}
@@ -187,30 +187,30 @@ To account for these risks, we reduce our weekly sprint time by the total weight
 		  & Reflect the suitability of the chosen technology during the architecture draft.
 		  & 60 & 60\% & 36\\
 
-		2 & The architecture/concept does not scale.
+		2 & Missing aspects in concept paper
+		  & The concept paper does not fully cover all necessary aspects of the prototype.
+		  & Invest an adequate amount of time in architecture design.
+		  & 30 & 60\% & 18\\
+
+		3 & The architecture/concept does not scale.
 		  & The chosen architecture/concept does not scale to the expected data volume or node size
 		  & Invest an adequate amount of time in architecture design.
 		  & 30 & 40\% & 12\\
 
-		3 & Communication errors
+		4 & Communication errors
 		  & Errors due to miscommunication or misapprehension.
 		  & Maintain a high level of interaction, precise specification of tasks responsibilities, conduct meetings if ambiguities exist.
 		  & 20 & 50\% & 10\\
 
-		4 & Problems with project infrastructure
+		5 & Problems with project infrastructure
 		  & The used project infrastructure is not or only partially available, or data loss occurs within management software.
 		  & Clean setup and self-hosting of the tools to prevent third-party dependencies.
 		  & 30 & 30\% & 9 \\
 
-		5 & Scope creep
+		6 & Scope creep
 		  & The project's scope is extended over the project course.
 		  & Define the project scope and limitations precisely. Discuss changes with the project advisor.
 		  & 30 & 30\% & 9\\
-
-		6 & Missing aspects in concept paper
-		  & The concept paper does not fully cover all necessary aspects of the prototype.
-		  & Invest an adequate amount of time in architecture design.
-		  & 15 & 60\% & 9\\
 
 		7 & Dependency errors
 		  & There are errors/bugs in third-party dependencies, i.e. libraries.
@@ -223,7 +223,7 @@ To account for these risks, we reduce our weekly sprint time by the total weight
 		  & 15 & 40\% & 6\\
 
 		 \hline
-		& Total weighted risk & & & & & 97\\
+		& Total weighted risk & & & & & 106\\
 		\hline
 	\end{tabu}
 \end{sidewaystable}
