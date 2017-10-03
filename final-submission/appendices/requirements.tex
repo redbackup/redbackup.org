@@ -1,0 +1,127 @@
+\chapter{Requirements}
+
+The System knows two roles: Users and Administrators.
+
+A typical user does not want to interact with the system at any time.
+All he/she wants is to be sure that all his/her data is safely backed
+up.
+
+An Administrator wants to interact with the system as less as possible.
+He wants to be sure that the system runs smoothly. If something goes
+wrong, he wants to be able to fix it within a few minutes.
+
+
+The requirements are defined in the following sections in the form of user stories.
+Not all requirements must be met within the study project but the might
+impact architectural decisions and are therefore listed here.
+
+\section{Requirements of a User}
+As a user, \ldots{}
+
+\begin{enumerate}
+	\item
+	I want my backup data to be encrypted so that only I can restore it.
+	\item
+	I want my backups to take place automatically, silently and
+	continuously so that I won't forget it
+	\item
+	I want that the creation of a backup does not impact the performance
+	of my device noticeably (CPU, RAM, Network etc)
+	\item
+	I want to be able to stop/restart/suspend my device at any time even
+	if a new backup is in the process of being created.
+	\item
+	I want the backup software to use as less space on the disk as
+	possible because I want to use it for my data.
+	\item
+	I want to be able to restore a deleted file within less than five
+	minutes.
+	\item
+	I want to be able to restore a previous version of a file within less
+	than five minutes.
+	\item
+	I want to see the progress when I restore data so that I can estimate
+	when it is done.
+	\item
+	I want to install and use the software within one minute.
+	\item
+	I want to exclude certain files from being backed up, for example,
+	downloads.
+	\item
+	I want to pay as less as possible for the storage of my data
+	\item
+	I don't care where my data is backed up to as long the creation and
+	restore of backups is not significantly slower.
+	\item
+	I want to create backups of quickly. The acceptable duration depends
+	on the amount of new and modified data.
+	\item
+	I want my backups to be space efficient to safe cost.
+	\item
+	I want to get notified if the creation of a backup fails
+	\item
+	I want to get notified if I have not created a new backup for a
+	suspicious amount of time (e.g. usually daily but suddenly no backups
+	for a week)
+	\item
+	I want to create backups from everywhere (especially not just from
+	home)
+	\item
+	I don't want to perform updates manually.
+	\item
+	I want to define how long backups are stored or use a reasonable
+	default.
+	\item
+	I want my data to be stored with a defined degree of redundancy so
+	that it does not get lost
+	\item
+	I don't know or want to know where my data is replicated to as long as
+	it stays safe.
+	\item
+	I want my data to be replicated to different buildings in case one of
+	them is subject to a catastrophic event (e.g. an earthquake).
+	\item
+	I want that my data is intact, safe and secure.
+\end{enumerate}
+
+\section{Requirements an Administrator}
+
+As an administrator, \ldots{}
+
+\begin{enumerate}
+	\item
+	I want to receive notifications immediately when a Disk or Node in the
+	System fails
+	\item
+	I want to receive notifications within an hour if a Disk or Node might
+	fail soon (e.g. SMART-Results indicate that a Disk will fail)
+	\item
+	I want to extend the storage capacity by plugging in a new Disk and
+	starting a new server.
+	\item
+	I want to perform updates including reboots without impacting the
+	performance of the System (e.g. if data must be copied around)
+	\item
+	I want to be informed if a certain replication-degree cannot be met.
+	\item
+	I want to scale the system up to 100 Nodes and down to 2.
+	\item
+	I want to put large disks into a node so that I do not have to
+	maintain an unjustifiably high number of nodes.
+	\item
+	I want to grant new users access to the backup system.
+	\item
+	I want to add new nodes to the system.
+	\item
+	I want to limit the capacity per user
+	\item
+	I want to define default profiles on how long to keep backups for new
+	users.
+	\item
+	I want to update the management node (including restart) without
+	impacting the system (except for the configuration part)
+	\item
+	I want the system to operate properly if the management node is down
+	(no single point of failure).
+\end{enumerate}
+
