@@ -11,3 +11,40 @@
     \item Keep in mind what aspects we tackle and highlight these here.
     \item See Chapter 2.5 in \url{https://wiki.hsr.ch/FarhadMehta/files/Writing_Scientific_Papers.pdf}
 \end{itemize}
+
+\section{Problem}\label{sec:problem}
+
+%TODO: Describe the original problem, like in the problem statement but with more graphics.
+%      Also, explain the parts split and our main Focus in this paper
+
+\section{Functional Requirements}
+
+A solution to solve the problems described in section \ref{sec:problem} must not only fulfill the functional requirements as described hereafter, but also several non functional quality of service attributes as described in \ref{sec:non-functional-requirements}.
+
+%TODO: Describe the functionality, that might solve the problem from \ref{sec:problem}
+
+\section{Non-Functional Requirements and Quality of Service}\label{sec:non-functional-requirements}
+
+\subsection{Client}
+
+\subsection{Management}
+
+\subsection{Distribution}
+\begin{description}
+	\item[Redundancy]
+		Data must be replicated to other nodes inside the system by a redundancy degree defined by the user (but may be limited to certain degrees). Data must not be stored multiple times on the same host and should not be stored within the same host-zone as defined in the management layer.
+
+		Beside the redundancy degree, the system might support different replication strategies.
+	\item[Scalability]
+		The distribution layer must permit a reasonable high number of nodes, i.e. at least 100 nodes (as per problem statement). %TODO: Note in "Our Solution" section: = no broadcasts.
+	\item[Availability]
+		Inconsistent system states (e.g. data that is not replicated as defined, failing nodes) must be detected within 1 hour and resolved as fast as possible.
+	\item[Decentralisation]
+		The system may not have centralised parts, that lead the system to cease functioning.
+\end{description}
+
+\subsection{Storage}
+\begin{description}
+\item[Storage sizes]
+	The storage system must be able to address at least 2 terrabytes of data blocks (as per problem statment). The underlying storage device may be of smaller size, hence setting a lesser size limit.
+\end{description}
