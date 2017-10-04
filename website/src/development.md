@@ -6,6 +6,7 @@ layout: main.hbs
 ## Tools
 
 - [Git](https://git-scm.com/) >= 2.0 for version control
+- [draw.io](https://www.draw.io) for documentation grapics
 
 ## Writing Guidelines
 In order to have a consistent style of writing, we defined the following guidelines. These guidelines apply to all documents related to the redbackup project.
