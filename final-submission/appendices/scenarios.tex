@@ -1,0 +1,160 @@
+% !TeX spellcheck = en_GB
+
+\newenvironment{scenario}[2]{%
+	\newcommand{\case}[2]{%
+			\paragraph{Beaviour in case ##1} \hfill \\
+			##2
+	}%
+	\subsection{#2}\label{scenario:#1}
+}{
+}
+
+\section{Scenarios}
+This document describes various scenarios of system usage and possible failures.
+
+\begin{scenario}{backup-first}{First time backup}
+	The client wants to create a backup for the first time and does not know any nodes.
+	
+	Note: Also see Scenario \ref{scenario:backup-recurring}
+
+	\case{everything works as expected}{
+		Client receives a list of nodes and successfully connects to one of them. The backup succeeds as in scenario \ref{scenario:backup-recurring}.
+	}
+	
+	\case{the management is down}{
+		Client prints error message and discontinues with backup
+	}
+\end{scenario}
+
+
+\begin{scenario}{backup-recurring}{Recurring backup}
+    The client wants to create a backup for the n-th time.
+    
+    \case{everything works as expected}{
+    	The backup data is stored deduplicated on the node. The node starts network replication process to satisfy redundancy expectations.
+    }
+    
+    \case{the known host is down}{
+    	Client contacts management to get another backup node
+    }
+    \case{the management is down}{
+    	Has no effect, except if the known host is down, then the clients prints error message and discontinues with backup.
+    }
+    \case{the client is disconnected / suspended while running}{
+    	Client resumes backup process on next occasion. Possible problem: changed data/times.
+   	}
+    \case{the node goes away (disconnects/crashes/shuts down}{
+    	The client prints an error message.
+    }
+    \case{the node receives corrupted data during a backup (e.g. bit flip)}{
+    	Node does not acknowledge receive but sends an error
+    }
+    \case{the client's time is off by much in comparison to the backup node}{
+    	If the node receives data with a creation timestamp that is differing much (e.g. an hour) to the local node's time, the node should refuse the the data to prevent data loss.
+    }
+    \case{a node runs out of capacity during the creation of a backup}{
+    	The node does not accept any more data and therefore the client lists the backup as failed.
+    }
+\end{scenario}
+
+
+\begin{scenario}{backup-restore}{Backup Restore}
+	The client wants to restore specific data.
+	
+	\case{everything works as expected}{
+		The queried node returns the demanded data to the client.
+	}
+
+	\case{the queried node does not hold the requested data (anymore)}{
+		The node returns an error, which the client reflects.
+	}
+	\case{restore stops because client disconnects / restarts / suspends}{
+    	Client resumes backup process on next occasion. Possible problem: changed data/times.
+	}
+    \case{restore stops because the node crashes/shuts down}{
+    	Client tries to resume the backup until a timeout (e.g. at least 5 minutes) or on failure, return an error message.
+    }
+\end{scenario}
+
+
+\begin{scenario}{node-join}{Node joining}
+    A new node joins the system
+    
+   	\case{everything works as expected}{
+   		Data should also be replicated to the new node and data from the new nodes should be accepted.
+   	}
+    
+    \case{a previously left node rejoins the system}{
+    	The node should be acknowledged by all nodes.
+    }
+\end{scenario}
+
+\begin{scenario}{node-leave-planned}{Node leaving planned}
+    A node leaves the system planned
+\end{scenario}
+
+\begin{scenario}{node-leave-unplanned}{Node leaving unplanned}
+    A node leaves the system unexpectedly.
+    
+    \case{it never comes back again}{
+    	The management sends out a notification.
+    }
+    \case{it comes back after 1 minute/hour/day/month}{
+    	(might have missed new nodes joining/leaving?)
+    	The node should always first check for new network configurations, clean up expired data and thereafter start with the usual replication processing.
+    }
+\end{scenario}
+
+\begin{scenario}{data-replication}{Data is replicated}
+	The network distributes backup data.
+	
+	\case{everything works as expected}{
+		The network is eventually redundant.
+	}
+ 
+
+    \case{a node runs out of capacity receiving replicated data from another node}{
+    	The receiving node must notify the sending node, so that the sending node can choose a different storage node to satisfy redundancy needs.
+    }
+    \case{a node receives corrupted replicated data from another node (permanently and only once)}{
+    	The receiving node must not acknowledge data retrieval and notify the sending node.
+    }
+    \case{a node is receiving data from another one, the sending node goes down}{
+    	(and never comes back again or comes back after 1 minute/ 1 hour / 1 day / 1 month etc.?)
+    	The receiving node should store all data that it has retrieve.
+    }
+    \case{a nodes time is off by one second/minute/hour/day/month/year}{
+    	See scenario \ref{scenario:data-expiration}
+    }
+\end{scenario}
+
+\begin{scenario}{data-expiration}{Data has expired lifetime}
+    A node wants to delete data associated with an expired backup/snapshot.
+    
+    \case{a nodes time is off by one second/minute/hour/day/month/year}{
+    	All other nodes replicating this data must be informed, so that they might take measures. After a certain hold down time (e.g. 1 hour), the data may be deleted.
+    }
+    \case{the time changes on a given node (via NTP)}{
+    	(by less than one second/minute/hour/day/month/year etc.?)
+    	
+    	In case a node time is changed, the normal deletion procedure should take place.
+    }
+\end{scenario}
+
+\begin{scenario}{storage-errors}{Data Storage has errors}
+    The storage layer notifies the node that some of the data stored on it is corrupt.
+\end{scenario}
+
+\begin{scenario}{network-erros}{Network availability problems}
+   	\case{a node can reach only some nodes directly}{
+   		The still available nodes should try to satisfy redundancy needs as good as possible. Unavailable nodes should still be listed as data-holders. This may lead to over-replicated data.
+   	}
+    \case{the network gets partitioned}{
+    	(, and the nodes in each partition can only reach each other and not the other ones.)
+    	
+    	See first case in \ref{scenario:network-errors}
+   	}
+    \case{the management wants to update the configuration but can't reach certain nodes?}{
+    	The management changes should be queried by the host by a certain time.
+    }
+\end{scenario}
