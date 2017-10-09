@@ -1,7 +1,15 @@
 % !TeX spellcheck = en_GB
 \section{Language Evaluation}
 
+Based on the Requirements described in Appendix \ref{requirements}, we compared three languages/technologies.
 
+We heard of \textbf{Rust} as being a modern language as an alternative to the traditional "low-level" languages C and C++.
+
+\textbf{Erlang} was the second candidate of which we heard that it is well suited for distributed, fault-tolerant systems. It is also a functional programming language, with which we both do not have much experience but share an interest in it.
+
+\textbf{Go} came up when researching for distributed systems in rust. Friends, as well as various blog posts, suggested Go is established in the field of distributed systems, has a diverse eco-system and is therefore well suited for the job.
+
+We grouped the criterions for our comparison into three groups: Client (See Table \ref{language-comparison-client}), Distributed System  (See Table \ref{language-comparison-ds}) and Eco System  (See Table \ref{language-comparison-eco-system}). The assessment is not entirely objective and based on a brief research as well as personal impressions.
 
 \begin{table}[h]
 	\centering
@@ -141,3 +149,14 @@
 		& Yes, Linter, Coverage Tools etc.
 	\end{tabu}
 \end{table}
+
+\subsection{Decision}
+We decided to use Rust. Although it is still a very young language, it has a very enthusiastic and welcoming community.
+
+The main reason we settled for Rust was its type system as well as the concept of Ownership and Borrowing as, which enables so many of Rusts features.
+
+The most significant downside to Rust for us is the limited amount of high-quality libraries. We hope this will improve in the future.
+
+We ruled out Erlang because we are afraid of too slow progress since we do not have any experience with functional programming languages. Also, we think that we do not need most of Erlangs key features such as Hot Swapping and strong process isolation.
+
+In comparison to Rust, go did not seem as elegant as rust, for example, the lack of generics, having a garbage collector and pointers.
