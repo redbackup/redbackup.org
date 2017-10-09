@@ -11,7 +11,7 @@ We heard of \textbf{Rust} as being a modern language as an alternative to the tr
 
 We grouped the criterions for our comparison into three groups: Client (See Table \ref{language-comparison-client}), Distributed System  (See Table \ref{language-comparison-ds}) and Eco System  (See Table \ref{language-comparison-eco-system}). The assessment is not entirely objective and based on a brief research as well as personal impressions.
 
-\begin{table}[h]
+\begin{sidewaystable}
 	\centering
 	\caption{Language and Ecosystem Comparison for the Client}
 	\label{language-comparison-client}
@@ -42,9 +42,9 @@ We grouped the criterions for our comparison into three groups: Client (See Tabl
 		& Yes, See \url{https://github.com/avelino/awesome-go\#gui}
 		\\
 	\end{tabu}
-\end{table}
+\end{sidewaystable}
 
-\begin{table}[h]
+\begin{sidewaystable}
 	\centering
 	\caption{Language and Ecosystem Comparison for the Distributed System}
 	\label{language-comparison-ds}
@@ -63,7 +63,7 @@ We grouped the criterions for our comparison into three groups: Client (See Tabl
 		\\
 		
 		fast / efficient
-		& Yes, "zero cost abstraction" and "minimal runtime" \cite{rustlang-org}, LLVM optimizer \cite{rust-blog-introducing-mir}
+		& Yes, ''zero cost abstraction'' and ''minimal runtime'' \cite{rustlang-org}, LLVM optimizer \cite{rust-blog-introducing-mir}
 		& Yes, using the Actor Model \cite{hebert_learn_you_some_erlang}
 		& Yes, using the Goroutines \cite{doxsey_introduction_2012}
 		\\
@@ -87,9 +87,9 @@ We grouped the criterions for our comparison into three groups: Client (See Tabl
 		\\
 		
 	\end{tabu}
-\end{table}
+\end{sidewaystable}
 
-\begin{table}[h]
+\begin{sidewaystable}
 	\centering
 	\caption{Language and Ecosystem Comparison for the Eco System}
 	\label{language-comparison-eco-system}
@@ -108,7 +108,7 @@ We grouped the criterions for our comparison into three groups: Client (See Tabl
 		\\
 		
 		Stability
-		& "stability without stagnation" \cite{rust-blog-stability}
+		& ''stability without stagnation'' \cite{rust-blog-stability}
 		& Yes, first release in 1986 \cite{erlang-org}
 		& Stabile, release every 6 months \cite{go-github-release-cycle}
 		\\
@@ -148,7 +148,7 @@ We grouped the criterions for our comparison into three groups: Client (See Tabl
 		& Yes, Linter, Coverage Tools etc.
 		& Yes, Linter, Coverage Tools etc.
 	\end{tabu}
-\end{table}
+\end{sidewaystable}
 
 \subsection{Decision}
 We decided to use Rust. Although it is still a rather young language, it has a very enthusiastic and welcoming community, stable releases and an excellent documentation.
