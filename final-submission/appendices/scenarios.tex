@@ -16,18 +16,18 @@ This document describes various scenarios of system usage and possible failures.
     The client wants to create a backup.
     
     \begin{enumerate}
-    	\item Client asks the management for a list of nodes in it's host net with it's key. The management response lists hostnames, ip's and host keys and storage meta information.
+    	\item Client asks the management for a list of nodes in its host network. The management response lists hostnames, ip's and storage meta information.
     		\begin{itemize}
-    			\item If the management is down and this is a first time backup, client throws error message.
+    			\item If the management is down and this is a first time backup, client throws error message and aborts.
    				\item If the management is down, client tries the same host configuration as last time, if the data is not too old (e.g. older than 1w).
    				\item If the cached configuration does not work or is too old, the client throws an error message.
    			\end{itemize}
-   		\item Client tries to contact a node in it's zone, which is best suited to take the backup (as per storage meta information)
-   		\item If the contact was established, the client starts creating and sending backup chunks combined with a validity date. Chunks are created with a rolling hash\footnote{\url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html\#chunks}}. The node acknowledges received chunks.
+   		\item Client tries to contact a node in its zone, which is best suited to take the backup (as per storage meta information)
+   		\item If the contact was established, the client starts creating and sending backup chunks combined with a validity date. Chunks are created with a rolling hash\footnote{Similar to \url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html\#chunks}}. The node acknowledges received chunks.
    			%TODO: This could be done with a sliding window for QoS/memory usage?
 	   		 \begin{itemize}
 	   			\item If client is disconnected / suspended while running, it tries to resume the connection as soon as possible. After a certain time, an error message is thrown.
-	   			\item If the node goes away (disconnects/crashes/shuts down) during the backup, the node tries to resume the process. After a certain time (e.g. 15m), the node gives up and restarts the backup process.
+	   			\item If the node goes away (disconnects/crashes/shuts down) during the backup, the node tries to resume the process. After a certain time (e.g. 15m), the client gives up and restarts the backup process (with a new node).
 	   			\item The node must reject (i.e. not acknowledge) a chunk, if the creation date is more than e.g. an hour in the future or past to prevent data loss on bad synchronized clocks.
 	   			\item If the node receives a corrupted chunk (e.g. bit flip), it does not acknowledge.
 	   			\item If the node runs out of storage capacity, it does reject further data chunks. After a timeout, the client tries to put this data onto another node.
@@ -35,6 +35,7 @@ This document describes various scenarios of system usage and possible failures.
 	   	\item The node stores the data chunk deduplicated by its hash.
 	   	\item The node starts the replication process to satisfy redundancy requirements.
     \end{enumerate}
+    %TODO: How do we handle metadata (like snapshots, file names, chunk order etc.)?
 \end{scenario}
 
 
@@ -44,18 +45,18 @@ This document describes various scenarios of system usage and possible failures.
 	\begin{enumerate}
 		\item The client requests one or multiple data chunks from a node.
 			\begin{itemize}
-				\item In case the node does not have the data, it requests it from a node that has it. %TODO: Broadcast? Rumour? How to know who has what?
+				\item In case the node does not have the chunk, it requests the chunk recursively from a node that has it. %TODO: Broadcast? Rumour? How to know who has what?
 			\end{itemize}
 		\item The node returns this data chunks to the client.
 			\begin{itemize}
-				\item If the client disconnects / restarts / suspends, the node logs a sending error. The client may request the data later.
+				\item If the client disconnects / restarts / suspends, the node logs a sending error. The client may request the data again at a later time.
 				\item If the node crashes/shuts down, the client can request the data from another node.
 			\end{itemize}
 	\end{enumerate}
     
 	\subsubsection{Possible simplifications in this study project}
 	\begin{description}
-	 	\item[1)] The client must request a node that has the data available already (possibly the node where the backup was created).
+	 	\item[1)] The client must request a node that has the data already available (possibly the node where the backup was created).
 	\end{description}
 \end{scenario}
 
@@ -64,18 +65,17 @@ This document describes various scenarios of system usage and possible failures.
     A new node joins the system
     
     \begin{enumerate}
-    	\item The node is registered by an administrator in the managment with a home zone.
-    	\item The new node queries information on himself and other nodes from the network from the management.
+    	\item The node is registered by an administrator in the managment with a home zone and network.
+    	\item The new node queries information on himself and other nodes from his network from the management.
     	\item Other nodes learn about the new node, as soon as they update their managment information.
     		\begin{enumerate}
-    			\item If the new host contacts a existing node, before the existing node updates its configuration, the existing node should query the management.
+    			\item If the new host contacts an existing node, before the existing node updates its configuration, the existing node should query the management.
     		\end{enumerate}
     	\item The new node starts to send rumour/information on his state to the existing nodes.
     \end{enumerate}
     
 	\subsubsection{Possible simplifications in this study project}
 	\begin{description}
-		 \item[1)] The client must request a node that has the data available already (possibly the node where the backup was created).
 		 \item[4)] The rumour data is centralised on the management.
 	\end{description}
 \end{scenario}
@@ -86,7 +86,7 @@ This document describes various scenarios of system usage and possible failures.
     	\item The node is removed from the management and disconnected from the network.
     	\item Nodes must start the redundancy recovery process without this node.
     		Also see \ref{scenario:data-replication}.4
-    	\item Trough rumour or management updates, all hosts may be informed that this host is currently unavailable.
+    	\item Trough rumour or management updates, all hosts will be informed that this host is currently unavailable.
     \end{enumerate}
     
 	\subsubsection{Possible simplifications in this study project}
@@ -106,68 +106,62 @@ This document describes various scenarios of system usage and possible failures.
 \begin{scenario}{data-replication}{Data is replicated}
 	The network distributes backup data.
    	\begin{enumerate}
-   		\item If the node has no recent (<1h) list, it tries to update it from the management. If that fails, continue with old node list.
-   		\item Choose best suited node(s) for replication (not same zone, weighting factors as capacity. This data is exchanged in a rumour like manner.)
+   		\item If the node has no recent (<1h) network information, it tries to update it from the management. If that fails, continue with already known nodes and information from rumour.
+   		\item Choose best suited node(s) for replication (not same zone, weighting factors as capacity and zone. This data is exchanged in a rumour like manner.)
    		\item Ask peer node, if he already has data chunks (by hash) and keep date.
-   		\begin{itemize} %TODO: This could be done more space efficiently.
-   				\item If the node has it, it must update its keep date and acknowledge.
-   				\item If the node doesn't have the chunk, it must notify the requesting node, which sends the chunk and keep date.
+   			\begin{itemize} %TODO: This could be done more space efficiently.
+   				\item If the peer node has the chunk, it must update its keep date and acknowledge.
+   				\item If the peer node doesn't have the chunk, it must notify the requesting node, which sends the chunk and keep date.
+   				\item If the peer node receives a incomplete or currupted chunk, it must not acknowledge the chunk and notify the sending node.
+   				\item If the peer node runs out of capacity while receiving a chunk, it must not acknowledge the chunk and notify the sending node.
    			\end{itemize}
    		\item Every node that has a chunk, must periodically assure that all hosts have it (that should).
    			\begin{itemize}
 	   			\item If this is not the case, the noticing node selects additional node(s) that should hold the data, informs all other responsible nodes for this chunks, and starts replicating data to this new node. (Note that this may happen in parallel to other nodes that hold the same data).
 	   		\end{itemize}
 	   	%TODO: Delete data that was replicated too much?
-   	\end{enumerate}    
+   	\end{enumerate}
         
      \subsubsection{Possible simplifications in this study project}
      
      \begin{description}
-	     \item[2)] The hosts do not exchange information over their state nor do availability checks. This data is gathered and shared cenralised via the management
+	     \item[2)] The hosts do not exchange information over their state nor do availability checks. This data is gathered and shared centralised via the management
 	     \item[-] The data is always distributed on all hosts, not selectively.
-	     \item[-] The replication does not take place in an equal manner; The host, which receives the backup, is the only one that does replication.
+	     \item[-] The replication does not take place in an equal manner; the host, which receives the backup, is the only one that does replication and redundancy checks.
      \end{description}
-     
-     %TODO:
-     
-     
-         \case{a node runs out of capacity receiving replicated data from another node}{
-         	The receiving node must notify the sending node, so that the sending node can choose a different storage node to satisfy redundancy needs.
-         }
-         \case{a node receives corrupted replicated data from another node (permanently and only once)}{
-         	The receiving node must not acknowledge data retrieval and notify the sending node.
-         }
-         \case{a node is receiving data from another one, the sending node goes down}{
-         	(and never comes back again or comes back after 1 minute/ 1 hour / 1 day / 1 month etc.?)
-         	The receiving node should store all data that it has retrieve.
-         }
-         \case{a nodes time is off by one second/minute/hour/day/month/year}{
-         	See scenario \ref{scenario:data-expiration}
-         }
 \end{scenario}
 
 \begin{scenario}{data-expiration}{Data has expired lifetime}
     A node wants to delete data associated with an expired backup/snapshot.
     
     \begin{enumerate}
-	    \item 
+	    \item If a node wants to delete data chunks, it must notify and receive an acknowledge from all other nodes, that hold a data chunk.
+	    	\begin{itemize}
+	    		\item If the time of a host is off, he is hindered by or hindering the deletion of chunks. Thus, even if a host has a time offset, data is never deleted too early.
+	    		\item If a node that replicates a specific data set is not available, the data may not be deleted.
+	    	\end{itemize}
+	    \item After deleting a data chunk, the node must inform all other nodes that hold a chunk, that this data was deleted.
     \end{enumerate}
     
-    \case{a nodes time is off by one second/minute/hour/day/month/year}{
-    	All other nodes replicating this data must be informed, so that they might take measures. After a certain hold down time (e.g. 1 hour), the data may be deleted.
-    }
-    \case{the time changes on a given node (via NTP)}{
-    	(by less than one second/minute/hour/day/month/year etc.?)
-    	
-    	In case a node time is changed, the normal deletion procedure should take place.
-    }
+    
+    \subsubsection{Possible simplifications in this study project}
+   	In a first prototype, the system may just delete chunks after the specified keep date without further checks.
 \end{scenario}
 
 \begin{scenario}{storage-errors}{Data Storage has errors}
     The storage layer notifies the node that some of the data stored on it is corrupt.
+    
+    \begin{enumerate}
+    	\item The storage informs the node of a corrupt data set
+    	\item The node requests the chunk from a peer node that has the chunk, and overwrites it locally.
+    	\item The node informs the management of a possible storage failure.
+    \end{enumerate}
+    
+    \subsubsection{Possible simplifications in this study project}
+    In a first prototype, this feature might not be implemented.
 \end{scenario}
 
-\begin{scenario}{network-erros}{Network availability problems}
+\begin{scenario}{network-errors}{Network availability problems}
    	\case{a node can reach only some nodes directly}{
    		The still available nodes should try to satisfy redundancy needs as good as possible. Unavailable nodes should still be listed as data-holders. This may lead to over-replicated data.
    	}
@@ -176,7 +170,11 @@ This document describes various scenarios of system usage and possible failures.
     	
     	See first case in \ref{scenario:network-errors}
    	}
-    \case{the management wants to update the configuration but can't reach certain nodes?}{
-    	The management changes should be queried by the host by a certain time.
-    }
+   	\case{nodes have different states of management information}{
+   		The replication should still take place, but might lead to duplicated data. In case a node gets a pointer to this new node anywhere, it should update its management information as soon as possible.
+   	}
+%    \case{the management wants to update the configuration but can't reach certain nodes?}{
+%TODO: In the current draft version, I do not see this case as management information is only pulled ^
+%    	The management changes should be queried by the host by a certain time.
+%    }
 \end{scenario}
