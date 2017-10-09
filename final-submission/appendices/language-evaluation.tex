@@ -1,0 +1,162 @@
+% !TeX spellcheck = en_GB
+\section{Language Evaluation}
+
+Based on the Requirements described in Appendix \ref{requirements}, we compared three languages/technologies.
+
+We heard of \textbf{Rust} as being a modern language as an alternative to the traditional ''low-level'' languages C and C++.
+
+\textbf{Erlang} was the second candidate of which we heard that it is well suited for distributed, fault-tolerant systems. It is also a functional programming language, with which we both do not have much experience but share an interest in it.
+
+\textbf{Go} came up when researching for distributed systems in Rust. Friends, as well as various blog posts, suggested Go is established in the field of distributed systems, has a diverse eco-system and is therefore well suited for the job.
+
+We grouped the criterions for our comparison into three groups: Client (See Table \ref{language-comparison-client}), Distributed System  (See Table \ref{language-comparison-ds}) and Eco System  (See Table \ref{language-comparison-eco-system}). The assessment is not entirely objective and based on a brief research as well as personal impressions.
+
+\begin{sidewaystable}
+	\centering
+	\caption{Language and Ecosystem Comparison for the Client}
+	\label{language-comparison-client}
+	\begin{tabu}{X|X X X}
+		\hline
+		\diagbox[width=9em,height=2.5em]{Criteria}{Language}
+		& Rust
+		& Erlag
+		& Go
+		\\ \hline
+
+		platform independent
+		& Yes, LLVM Backend \cite{rust-blog-introducing-mir}
+		& Yes \cite{erlang-faq-implementations}
+		& Yes \cite{go-github-minimum-requirements}
+		\\
+		
+		allow an easy installation (no runtime required or bundle it)
+		& Runtime included, compiles to machine code via LLVM \cite{rust-blog-introducing-mir}
+		& No \cite{erlang-packaging}
+		& Creation of statically-linked binaries by default \cite{golang-org-faq}
+		\\
+		
+		
+		bindings to a reasonable (platform independent) UI-Framework
+		& No, lots of tools are in in alpha stage. See \url{https://github.com/rust-unofficial/awesome-rust\#gui}
+		& No \cite{stackoverflow-erlang-guis}
+		& Yes, See \url{https://github.com/avelino/awesome-go\#gui}
+		\\
+	\end{tabu}
+\end{sidewaystable}
+
+\begin{sidewaystable}
+	\centering
+	\caption{Language and Ecosystem Comparison for the Distributed System}
+	\label{language-comparison-ds}
+	\begin{tabu}{X|X X X}
+		\hline
+		\diagbox[width=9em,height=2.5em]{Criteria}{Language}
+		& Rust
+		& Erlag
+		& Go
+		\\ \hline
+
+		run on lightweight (cost effective) platforms such as a raspberry pi.
+		& Yes, through LLVM \cite{rust-blog-introducing-mir}
+		& Yes \cite{erlang-faq-implementations}. Different Semantics: Run in a cluster
+		& Yes \cite{go-github-minimum-requirements}
+		\\
+		
+		fast / efficient
+		& Yes, ''zero cost abstraction'' and ''minimal runtime'' \cite{rustlang-org}, LLVM optimizer \cite{rust-blog-introducing-mir}
+		& Yes, using the Actor Model \cite{hebert_learn_you_some_erlang}
+		& Yes, using the Goroutines \cite{doxsey_introduction_2012}
+		\\
+		
+		safe concurrency for networking and calculation of checksums
+		& Yes, using borrow and move semantics \cite{rust-book-concurrency}
+		& Yes, using the Actor Model \cite{hebert_learn_you_some_erlang}
+        & Yes, using the Goroutines \cite{doxsey_introduction_2012}
+		\\
+		
+		Use existing libraries (e.g. for reading disk health status)
+		& Yes, using FFI \cite{rust-book-concurrency}
+		& Yes, using NIF \cite{erlang-org-nif}
+		& Yes, using cgo \cite{golang-org-cgo}
+		\\
+		
+		provide a stable and fast network stack
+		& Yes, in the standard library as well as frameworks such as Tokio \cite{tokio-rs}
+		& Yes, in the standard library \cite{erlang-org}
+		& Yes, in the standard library \cite{golang-org}
+		\\
+		
+	\end{tabu}
+\end{sidewaystable}
+
+\begin{sidewaystable}
+	\centering
+	\caption{Language and Ecosystem Comparison for the Eco System}
+	\label{language-comparison-eco-system}
+	\begin{tabu}{X|X X X}
+		\hline
+		\diagbox[width=9em,height=2.5em]{Criteria}{Language}
+		& Rust
+		& Erlag
+		& Go
+		\\ \hline
+
+		Web frameworks (for the management)
+		& Yes, e.g. \url{https://gotham.rs/}
+		& Yes, e.g. \url{http://chicagoboss.org/}
+		& Yes, e.g. \url{https://beego.me/}
+		\\
+		
+		Stability
+		& ''stability without stagnation'' \cite{rust-blog-stability}
+		& Yes, first release in 1986 \cite{erlang-org}
+		& Stabile, release every 6 months \cite{go-github-release-cycle}
+		\\
+		
+		stable libraries for common tasks
+		& More than 11'000 on \url{https://crates.io/}
+		& More than 5'000 Packages available on \url{https://hex.pm/}
+		& More than 756'00 golang Repositories indexed on \url{http://go-search.org/} (includes all GitHub forks as well)
+		\\
+		
+		productive tooling
+		& Cargo, IDE-Support (VS-Code, IntelliJ Rust etc)
+		& rebar3, IDE-Support (erlide, IntelliJ Erlang etc)
+		& dep not yet that established but dependency management via `go get` IDE-Support (VS-Code, Goland etc)
+		\\
+		
+		good testing frameworks (unit and integration tests)
+		& Included (cargo test) as well as other testing frameworks
+		& Included (EUnit)
+		& Included (testing) as well as other testing frameworks
+		\\
+		
+		good and up to date documentation
+		& Yes, Rust Book, Good Documentation of the standard library, other Literature
+		& Yes, User Guide, Good Documentation of the standard library, other Literature
+		& Yes, Good Documentation of the standard library, other Literature
+		\\
+		
+		active community to get support
+		& Yes, via IRC, Forum and more. See \url{https://www.rust-lang.org/en-US/community.html}
+		& Yes via IRC/Slack, Forum and more. See \url{http://www.erlang.org/community}
+		& Yes via IRC/Slack, Forum and more. See \url{http://www.erlang.org/community}
+		\\
+		
+		Support bug-free coding (e.g. good type system, memory safety, linting or good compiler)
+		& Yes, Linter, Borrow-Checker. No good metrics / coverage libraries yet.
+		& Yes, Linter, Coverage Tools etc.
+		& Yes, Linter, Coverage Tools etc.
+	\end{tabu}
+\end{sidewaystable}
+
+\subsection{Decision}
+We decided to use Rust. Although it is still a rather young language, it has a very enthusiastic and welcoming community, stable releases and an excellent documentation.
+
+The main reason we settled for Rust was its type system as well as the concept of Ownership and Borrowing, which enables so many of Rusts features and permits us to do safe concurrency. Also, Rust has two excellent networking libraries.
+
+The most significant downside to Rust for us is the limited amount of high-quality libraries.
+
+We ruled out Erlang because of three reasons. Firstly, since we do not have any experience with functional programming languages, we expect a much steeper learning curve and therefore slower progress. Secondly, we think that we do not need most of Erlangs key features such as Hot Swapping and strong process isolation. At last, Erlang requires to be run in the Erlang VM, which makes deployment more difficult than in Rust or Go.
+
+In comparison to Rust, Go lacks various features. For example, the lack of generics, having a garbage collector and pointers lead to more memory consumption and higher parallelisation risks. An advantage of Go is a slightly more established ecosystem.
