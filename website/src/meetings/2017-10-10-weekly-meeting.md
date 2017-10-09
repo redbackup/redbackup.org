@@ -12,8 +12,10 @@ minute-taker: rzimmerm
 
 ## Agenda
 
-1. ...
-2. ...
+1. Present current Project status
+2. Discuss results of Language evaluation
+3. Discuss revised concept and requirements
+4. Date and time for next meeting
 
 ## Discussion / Decisions
 
