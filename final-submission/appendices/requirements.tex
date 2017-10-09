@@ -29,8 +29,8 @@ on the topic of \textbf{backup creation}, \ldots{}
 \end{flushright}
 
 \begin{enumerate}
-	\item	I want my backups to take place automatically, silently and continuously so that I won't forget it
-	\item	I want to get notified if the creation of a backup fails.
+	\item	I want my backups to take place automatically, silently and continuously so I do not forget.
+	\item	I want to get notified if the creation of a backup fails, but not for every little trivia.
 	\item	I want to get notified if I have not created a new backup for a suspicious amount of time (e.g. usually daily but suddenly no backups for a week).
 	\item	I want that the creation of a backup does not impact the performance of my device noticeably (CPU, RAM, network etc).
 	\item	I want to be able to stop/restart/suspend my device at any time even if a new backup is in the process of being created.
@@ -50,7 +50,6 @@ on the topic of \textbf{backup storage}, \ldots{}
 	\item	\relevantreq{I want my backups to be space efficient to safe cost.}
 	\item	\relevantreq{I want my data to be stored with a defined degree of redundancy so that it does not get lost.}
 	\item	\relevantreq{I want my data to be replicated to different places (e.g. buildings) in case one of them is subject to a catastrophic event (e.g. an earthquake, fire).}
-	\item	\relevantreq{I want to be able to restore my data as easily as possible in case of a catastrophic event.}
 	\item	\relevantreq{I want that my data is intact, safe and secure at any time.}
 	\item	\relevantreq{I does not matter, where my data is replicated to within my trusted network as long as it stays safe.}
 	\item	\relevantreq{I don't care where within the trusted network my data is backed up to as long as the creation and restore of backups is not significantly slower.}
@@ -66,6 +65,7 @@ on the topic of \textbf{backup restore}, \ldots{}
 
 \begin{enumerate}
 	\enumcountrestore
+	\item	\relevantreq{I want to be able to restore my data as easily as possible in case of a catastrophic event.}
 	\item	\relevantreq{I want to be able to restore a previous version of a (possibly deleted) file within less than five minutes.}
 	\item	I want to see the progress when I restore data so that I can estimate when it is done.
 	\enumcountsave
@@ -100,7 +100,7 @@ on the topic of \textbf{backup system management}, \ldots{}
 	\item \relevantreq{I want to scale the system up to 100 Nodes and down to 2.}
 	\item \relevantreq{I want to put large disks (e.g. 2TB) into a node so that I do not have to maintain an unjustifiably high number of nodes.}
 	\item \relevantreq{I want the system to operate properly if the management node is down (no single point of failure). The addition of new nodes may not be possible without management.}
-	\item \relevantreq{I want to perform updates including reboots without impacting the performance of the system (e.g. if data must be copied around).}
+	\item \relevantreq{I want to perform updates including reboots without impacting the performance of the network.}
 	\item \relevantreq{I want to update the management server (including restart) without impacting the system (except for the configuration/monitoring part).}
 	\enumcountsave
 \end{enumerate}
