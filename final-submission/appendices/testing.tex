@@ -12,7 +12,7 @@ Therefore, these tests are executed on every build run of our continuous integra
 
 
 \subsection{Integration Tests}\label{integration-tests}
-Our integration tests are split into two main environments: A minimal one as defined in figure \ref{fig:integrationtestsmall} and a medium network, as defined in figure \ref{fig:integrationtestmedium}.
+Our integration tests are split into two main environments: A minimal one as defined in Figure \ref{fig:integrationtestsmall} and a medium network, as defined in Figure \ref{fig:integrationtestmedium}.
 
 \begin{figure}
 	\centering
@@ -30,7 +30,7 @@ Our integration tests are split into two main environments: A minimal one as def
 
 These two, rather small nework styles will probably be the most commonly used deployments, yet cover most of the possible problems that may occur.
 
-On these two networks, the implemented scenarios as defined in appendix \ref{scenarios} are tested (if applicable).
+On these two networks, the implemented scenarios as defined in Appendix \ref{scenarios} are tested (if applicable).
 
 The integration tests are to be run on every tagged release (i.e. at least once every sprint).
 
@@ -43,7 +43,7 @@ To bootstrap the infrastructure we utilise Docker Compose, a tool for defining a
 Architectural tests are special, manually run tests to verify the scalability of our software architecture.
 
 \subsubsection{Size scalability}
-As per our requirements in appendix \ref{requirements}, the architecture should scale up to 100 nodes. To test this scenario, we use the same underlying techniques as in our integration tests (see chapter \ref{integration-tests}), but scale the infrastructure up to the required limits.
+As per our requirements in Appendix \ref{requirements}, the architecture should scale up to 100 nodes. To test this scenario, we use the same underlying techniques as in our integration tests (see chapter \ref{integration-tests}), but scale the infrastructure up to the required limits.
 
 \subsubsection{Network data capacity}
-Our requirements (appendix \ref{requirements}) also state, that a node must be able to handle up to e.g. 2TB of data. To test this requirement, we create large amounts of random data that has to be stored. This is a realistic requirement, as e.g. a compressed image, audio and movie collection might reach such sizes in practice.
+Our requirements (Appendix \ref{requirements}) also state, that a node must be able to handle up to e.g. 2TB of data. To test this requirement, we create large amounts of random data that has to be stored. This is a realistic requirement, as e.g. a compressed image, audio and movie collection might reach such sizes in practice.
