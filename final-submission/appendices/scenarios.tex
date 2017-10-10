@@ -10,32 +10,57 @@
 }
 
 \section{Scenarios}
+\label{scenarios}
 This document describes various scenarios of system usage and possible failures.
 
 \begin{scenario}{create-backup}{Create backup}
     The client wants to create a backup.
     
     \begin{enumerate}
-    	\item Client asks the management for a list of nodes in its host network. The management response lists hostnames, ip's and storage meta information.
+    	\item Client asks the management for a list of \emph{node}s. The \emph{management} returns a sorted list of all nodes (message: \emph{client fetch target nodes}) (sorting might be based on specific configuration).
     		\begin{itemize}
-    			\item If the management is down and this is a first time backup, client throws error message and aborts.
-   				\item If the management is down, client tries the same host configuration as last time, if the data is not too old (e.g. older than 1w).
-   				\item If the cached configuration does not work or is too old, the client throws an error message.
+    			\item If the management is down and this is a first time backup, client records message and aborts.
+   				\item If the management is down, client tries the same host configuration as last time.
    			\end{itemize}
-   		\item Client tries to contact a node in its zone, which is best suited to take the backup (as per storage meta information)
-   		\item If the contact was established, the client starts creating and sending backup chunks combined with a validity date. Chunks are created with a rolling hash\footnote{Similar to \url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html\#chunks}}. The node acknowledges received chunks.
-   			%TODO: This could be done with a sliding window for QoS/memory usage?
-	   		 \begin{itemize}
-	   			\item If client is disconnected / suspended while running, it tries to resume the connection as soon as possible. After a certain time, an error message is thrown.
-	   			\item If the node goes away (disconnects/crashes/shuts down) during the backup, the node tries to resume the process. After a certain time (e.g. 15m), the client gives up and restarts the backup process (with a new node).
-	   			\item The node must reject (i.e. not acknowledge) a chunk, if the creation date is more than e.g. an hour in the future or past to prevent data loss on bad synchronized clocks.
-	   			\item If the node receives a corrupted chunk (e.g. bit flip), it does not acknowledge.
-	   			\item If the node runs out of storage capacity, it does reject further data chunks. After a timeout, the client tries to put this data onto another node.
-	   		\end{itemize}
-	   	\item The node stores the data chunk deduplicated by its hash.
-	   	\item The node starts the replication process to satisfy redundancy requirements.
+   		\item Client tries to contact nodes in the presorted order.
+   			\begin{enumerate}
+   				\item The client sends a \emph{client backup request}. %TODO: Define backup request with estimate, identification, how long the data should be stored
+   				\item The node acknowledges or denies the backup request.
+   				\item If the node acknowledges, it is declared as \emph{designated node}
+   				\item If the node denies the backup request, try next node.
+   				\item If no node answers the request, client records an error message and aborts.
+   			\end{enumerate}
+   		\item If the contact was established, the client starts creating and sending \emph{backup chunk} messages. Chunks are created with a rolling hash\footnote{Similar to \url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html\#chunks}}. The node acknowledges received chunks.
+   			\begin{enumerate}
+   				\item Split all files that changed since the last backup into \emph{chunk}s\footnote{using a rolling hash} and calculate a corresponding hash, the \emph{chunk identifier} and add it to the local \emph{chunk index}.
+   				\item Files that have not changed since the last backup, must already be present in the chunk index.
+   				\item Send all chunk identifiers present in the chunk index combined with an \emph{expiration date} to the designated node. (message: \emph{client sends chunk list})
+   				\item The designated node checks, if all chunks received from the client chunk list are present in the system.
+   					\begin{itemize}
+   						\item If a chunk is already present, update its expiration date if it is further in the future.
+   						\item If a chunk is not present, request it from the client (see message response \emph{client sends chunk list} for further details)
+   					\end{itemize}
+   				\item The client sends the requested chunks to the designated node with a \emph{client sends chunks} message. %TODO: Abschluss client transaktion (root handle)
+   					\begin{enumerate}
+   						\item The designated node verifies and persists the chunk into its \emph{storage}. Afterwards, it acknowledges receipt to the client (see \emph{client sends chunks} response message).
+   						   			%TODO: Client must remember, which chunks have been acknowledged. This could be done with a sliding window for QoS/memory usage?
+   						\item The designated node replicates chunks in a continuous replication process. (See scenario \ref{scenario:data-replication})
+   					\end{enumerate}
+   				\item The client creates a \emph{serialised metadata chunks}. %TODO: Serialised Metadata is the chunk index plus backup metadata as linked list
+   				\item The client sends the additional chunks (as \emph{client sends chunk list} messages) to the designated node, in which the \emph{root handle} is highlighted. %TODO: The root handle holds a reference to the first list chunk as well as owner etc. information.
+   			\end{enumerate}
     \end{enumerate}
-    %TODO: How do we handle metadata (like snapshots, file names, chunk order etc.)?
+    
+    \subsubsection{Special cases}
+ 	\begin{itemize}
+	 	\item If a client is suspended while running, it continuous with the backup process on resume. %TODO: If the expiration date is in the past, the node should refuse the chunk.
+	 	\item If a file is changed while the backup is running, and the chunk cannot be created, the backup must be restarted. %TODO: This may lead to starvation.
+		\item If client crashes, the backup is aborted and won't be continued if the client is restarted.
+		\item If the node goes away (disconnects/crashes/shuts down) during the backup, the client tries to resume the process. After a certain time (e.g. 15m), the client gives up and restarts the backup process from the beginning.
+		\item The node must reject (i.e. not acknowledge) a chunk, if the creation date is more than e.g. an hour in the future or past to prevent data loss on bad synchronized clocks.
+		\item If the node runs out of storage capacity, it does reject further data chunks. After a timeout, the client restarts the backup process (with another designated node).
+	\end{itemize}
+    
 \end{scenario}
 
 
