@@ -54,4 +54,4 @@ _no upcoming absences_
 
 ## Next Meeting
 
-- Weekly Meeting with MeF at 10.10 17:00 at his office
+- [Weekly Meeting with MeF at 10.10 17:00 at his office](../2017-10-10-weekly-meeting)
