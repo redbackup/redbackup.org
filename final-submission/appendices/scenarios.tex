@@ -30,12 +30,12 @@ This document describes various scenarios of system usage and possible failures.
    				\item If the node denies the backup request, try next node.
    				\item If no node answers the request, client records an error message and aborts.
    			\end{enumerate}
-   		\item If the contact was established, the client starts creating and sending \emph{backup chunk} messages. Chunks are created with a rolling hash\footnote{Similar to \url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html\#chunks}}. The node acknowledges received chunks.
+   		\item If the contact was established, the client starts creating a backup.
    			\begin{enumerate}
-   				\item Split all files that changed since the last backup into \emph{chunk}s\footnote{using a rolling hash} and calculate a corresponding hash, the \emph{chunk identifier} and add it to the local \emph{chunk index}.
+   				\item Split all files that changed since the last backup into \emph{chunk}s\footnote{using a rolling hash, see \url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html\#chunks}} and calculate a corresponding hash, the \emph{chunk identifier} and add it to the local \emph{chunk index}.
    				\item Files that have not changed since the last backup, must already be present in the chunk index.
    				\item Send all chunk identifiers present in the chunk index combined with an \emph{expiration date} to the designated node. (message: \emph{client sends chunk list})
-   				\item The designated node checks, if all chunks received from the client chunk list are present in the system.
+   				\item The designated node checks, if all chunks received from the client chunk list are present on the node.
    					\begin{itemize}
    						\item If a chunk is already present, update its expiration date if it is further in the future.
    						\item If a chunk is not present, request it from the client (see message response \emph{client sends chunk list} for further details)
@@ -60,6 +60,11 @@ This document describes various scenarios of system usage and possible failures.
 		\item The node must reject (i.e. not acknowledge) a chunk, if the creation date is more than e.g. an hour in the future or past to prevent data loss on bad synchronized clocks.
 		\item If the node runs out of storage capacity, it does reject further data chunks. After a timeout, the client restarts the backup process (with another designated node).
 	\end{itemize}
+	
+	\subsubsection{Possible simplifications in this study project}
+	\begin{description}
+		\item[3a)] Don't split files into chunks, send them as is.
+	\end{description}
     
 \end{scenario}
 
@@ -68,20 +73,30 @@ This document describes various scenarios of system usage and possible failures.
 	The client wants to restore specific data.
 	
 	\begin{enumerate}
-		\item The client requests one or multiple data chunks from a node.
-			\begin{itemize}
-				\item In case the node does not have the chunk, it requests the chunk recursively from a node that has it. %TODO: Broadcast? Rumour? How to know who has what?
-			\end{itemize}
-		\item The node returns this data chunks to the client.
-			\begin{itemize}
-				\item If the client disconnects / restarts / suspends, the node logs a sending error. The client may request the data again at a later time.
-				\item If the node crashes/shuts down, the client can request the data from another node.
-			\end{itemize}
+		\item See \ref{scenario:create-backup} step 1.
+		\item The client contacts nodes in the presorted order
+			\begin{enumerate}
+				\item The client sends a \emph{client list root handles} requests to a node.
+				\item The node returns all root handles present in the system (see \emph{client list root handles} response message)
+				\item If no node answers the request, client records an error message and aborts.
+			\end{enumerate}
+		\item The client fetches all \emph{serialised metadata chunks} from the chosen node (message: \emph{client fetch chunks}) and reassembles \emph{chunk index} and backup metadata.
+		\item The user specifies which files in which backup version shall be restored. %TODO: Use snapshot as single backup name?
+		\item Based on the specified files, the client looks up the \emph{chunk identifiers} in the corresponding \emph{chunk index}.
+		\item The client requests the \emph{chunks} from the selected node. (message: \emph{client fetch chunks})
+		\item The client reassembles the chunks into files.
 	\end{enumerate}
+	
+	\subsubsection{Special cases}
+	\begin{itemize}
+		\item If the selected node does not hold the requested chunk, it requests it recursively.
+		\item If the client crashes, the whole restore process must be repeated
+		\item If the selected node is unavailable, the client selects a new node after a certain timeout (e.g. 5m)
+	\end{itemize}
     
 	\subsubsection{Possible simplifications in this study project}
 	\begin{description}
-	 	\item[1)] The client must request a node that has the data already available (possibly the node where the backup was created).
+		\item[-] The client must request a node that has the data already available (possibly the node where the backup was created).
 	\end{description}
 \end{scenario}
 
@@ -90,9 +105,12 @@ This document describes various scenarios of system usage and possible failures.
     A new node joins the system
     
     \begin{enumerate}
-    	\item The node is registered by an administrator in the managment with a home zone and network.
-    	\item The new node queries information on himself and other nodes from his network from the management.
-    	\item Other nodes learn about the new node, as soon as they update their managment information.
+    	\item The node is registered by an administrator in the \emph{managment} with a \emph{location}.
+    	\item The new node queries information on himself and all other nodes from the management on startup.
+    		\begin{itemize}
+    			\item If the management has no information available (yet) or is unavailable, the node retries after a certain timeout (e.g. 5min).
+    		\end{itemize}
+    	\item Other nodes learn about the new node, as soon as they update their management information.
     		\begin{enumerate}
     			\item If the new host contacts an existing node, before the existing node updates its configuration, the existing node should query the management.
     		\end{enumerate}
