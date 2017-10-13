@@ -102,111 +102,125 @@ This document describes various scenarios of system usage and possible failures.
 
 
 \begin{scenario}{node-join}{Node joining}
-    A new node joins the system
+    A new node joins the system.
     
+	This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
+
     \begin{enumerate}
-    	\item The node is registered by an administrator in the \emph{managment} with a \emph{location}.
-    	\item The new node queries information on himself and all other nodes from the management on startup.
+    	\item The node is registered by an administrator in the \emph{managment} using its \emph{node identifier}. A \emph{location} must also be assigned to the node. %TODO: Data
+    	\item The new node queries information of all nodes from the management (message: \emph{node fetch all nodes metadata}) on startup. 
+    	\item The new node configures itself based on its \emph{node identifier} and the response from the management.
     		\begin{itemize}
     			\item If the management has no information available (yet) or is unavailable, the node retries after a certain timeout (e.g. 5min).
     		\end{itemize}
-    	\item Other nodes learn about the new node, as soon as they update their management information.
+    	\item
+    	Other nodes learn about the new node through periodical metadata queries (message: \emph{node fetch all nodes metadata}) %TODO: Component description: regular queries
     		\begin{enumerate}
-    			\item If the new host contacts an existing node, before the existing node updates its configuration, the existing node should query the management.
+    			\item If the new host contacts an existing node, before the existing node updates its metadata, the existing node should query the management (message: \emph{node fetch all nodes metadata})
+    			\item If the management is unavailable, the node ignores all communication attempts.
     		\end{enumerate}
-    	\item The new node starts to send rumour/information on his state to the existing nodes.
     \end{enumerate}
-    
-	\subsubsection{Possible simplifications in this study project}
-	\begin{description}
-		 \item[4)] The rumour data is centralised on the management.
-	\end{description}
 \end{scenario}
 
 \begin{scenario}{node-leave-planned}{Node leaving planned}
     A node leaves the system planned
-    \begin{enumerate}
-    	\item The node is removed from the management and disconnected from the network.
-    	\item Nodes must start the redundancy recovery process without this node.
-    		Also see \ref{scenario:data-replication}.4
-    	\item Trough rumour or management updates, all hosts will be informed that this host is currently unavailable.
-    \end{enumerate}
     
-	\subsubsection{Possible simplifications in this study project}
-		See simplifications in \ref{scenario:data-replication}
+   	This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
+    
+    \begin{enumerate}
+    	\item The node is marked as \emph{leaving soon} by the administrator in the management.
+		\item As soon as the leaving node realises that it is \emph{leaving soon} (using \emph{node fetch all nodes metadata}), the node ignores messages from other nodes, rejects any new backups and starts replicating its data to another node.
+		\item As soon as all data is replicated onto other nodes, the nodes changes its state to \emph{left} and informs the management (message: \emph{node fetch all nodes metadata}). %TODO: The name of this message is not appropriate anymore.
+    	%TODO: Query of metadata must contain state and replication information
+    	%TODO: A node has a state (prepare leaving)
+    \end{enumerate}
 \end{scenario}
 
 \begin{scenario}{node-leave-unplanned}{Node leaving unplanned}
     A node leaves the system unexpectedly.
+    
+	This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
 
-	This is basically the same process as in \ref{scenario:node-leave-planned}, but additionally:
 	\begin{enumerate}
-		\item The management sends a notification to the administrator, after the node has not sent monitoring data after the specified time.
-		\item If the node returns, it should first update its management information and thereafter continue with it's replication process.
+		\item If a node is not responding (which means, no other node nor the management can reach it), the management records the unavailability and informs the administrator.
+		%Replikationsmechanismus; management knows, that on reason of intervall the node is away
 	\end{enumerate}
+	
+	\begin{itemize}
+		\item If the node returns, then the node carries on.
+		\item If the administrator marks the node as \emph{left}, which will be propagated to all nodes via the \emph{node fetch all nodes metadata} message.
+			\begin{itemize}
+				\item Data, which was not previously replicated from the node are be lost.
+			\end{itemize}
+	\end{itemize}
 \end{scenario}
 
 \begin{scenario}{data-replication}{Data is replicated}
 	The network distributes backup data.
-   	\begin{enumerate}
-   		\item If the node has no recent (<1h) network information, it tries to update it from the management. If that fails, continue with already known nodes and information from rumour.
-   		\item Choose best suited node(s) for replication (not same zone, weighting factors as capacity and zone. This data is exchanged in a rumour like manner.)
-   		\item Ask peer node, if he already has data chunks (by hash) and keep date.
-   			\begin{itemize} %TODO: This could be done more space efficiently.
-   				\item If the peer node has the chunk, it must update its keep date and acknowledge.
-   				\item If the peer node doesn't have the chunk, it must notify the requesting node, which sends the chunk and keep date.
-   				\item If the peer node receives a incomplete or currupted chunk, it must not acknowledge the chunk and notify the sending node.
-   				\item If the peer node runs out of capacity while receiving a chunk, it must not acknowledge the chunk and notify the sending node.
-   			\end{itemize}
-   		\item Every node that has a chunk, must periodically assure that all hosts have it (that should).
-   			\begin{itemize}
-	   			\item If this is not the case, the noticing node selects additional node(s) that should hold the data, informs all other responsible nodes for this chunks, and starts replicating data to this new node. (Note that this may happen in parallel to other nodes that hold the same data).
-	   		\end{itemize}
-	   	%TODO: Delete data that was replicated too much?
-   	\end{enumerate}
-        
-     \subsubsection{Possible simplifications in this study project}
-     
-     \begin{description}
-	     \item[2)] The hosts do not exchange information over their state nor do availability checks. This data is gathered and shared centralised via the management
-	     \item[-] The data is always distributed on all hosts, not selectively.
-	     \item[-] The replication does not take place in an equal manner; the host, which receives the backup, is the only one that does replication and redundancy checks.
-     \end{description}
+	
+	This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
+	
+	\begin{enumerate}
+		\item The sending node picks $n$ random entries from its \emph{node chunk table}. In the future, the chunks might be selected based on heuristics.
+		\item The sending node picks one random designated node from its \emph{node metadata table}. In the future, the nodes might be selected based on heuristics. %TODO: naming of node metadata table could be better ;)
+		\item The sending node sends the chosen \emph{chunk identifier}s to the designated node with a \emph{client sends chunk list} %TODO: Rename. Can be the samme message as for the client?
+		\item The designated node checks, if all chunks received from the sending node are present in its \emph{node chunk table}
+			\begin{itemize}
+				\item If a chunk is already present, update its expiration date if it is further in the future.
+				\item If a chunk is not present, request it from the \emph{sending node} (see message response \emph{client sends chunk list} for further details).
+			\end{itemize}
+		\item The sending node sends the \emph{requested chunks} to the \emph{designated node} with a \emph{client sends chunk} message. %TODO: Rename. the. message.
+			\begin{itemize}
+				\item The \emph{designated node} verifies and persists the chunk into its \emph{storage}. Afterwards, it acknowledges receipt to the \emph{sending node} (see \emph{client sends chunks} message).
+			\end{itemize}
+	\end{enumerate}
 \end{scenario}
 
 \begin{scenario}{data-expiration}{Data has expired lifetime}
     A node wants to delete data associated with an expired backup/snapshot.
-    
-    \begin{enumerate}
-	    \item If a node wants to delete data chunks, it must notify and receive an acknowledge from all other nodes, that hold a data chunk.
-	    	\begin{itemize}
-	    		\item If the time of a host is off, he is hindered by or hindering the deletion of chunks. Thus, even if a host has a time offset, data is never deleted too early.
-	    		\item If a node that replicates a specific data set is not available, the data may not be deleted.
-	    	\end{itemize}
-	    \item After deleting a data chunk, the node must inform all other nodes that hold a chunk, that this data was deleted.
-    \end{enumerate}
-    
-    
-    \subsubsection{Possible simplifications in this study project}
-   	In a first prototype, the system may just delete chunks after the specified keep date without further checks.
+   
+	This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
+	
+	\begin{itemize}
+	\item The \emph{management} monitors the nodes physical timestamp and records any deviation from the management time larger than 1h.
+	\item Therefore, a first prototype, the system may just delete chunks after the specified keep date without further checks.
+	   	\begin{itemize}
+	   		\item We build on the assumption, that the nodes have different upstream timeservers, so that a general time shift is unlikely.
+	   		\item In case a single node's time is in the past, and runs out of storage, it might lead to a degraded system (redundancy loss).
+	   		\item If a single nodes time is in the future, the redundancy is reduced by one.
+	   	\end{itemize}
+	\end{itemize}
+	
+	In the future, it is advisable to implement a consents protocol to reduce the likelihood of data loss.
 \end{scenario}
 
 \begin{scenario}{storage-errors}{Data Storage has errors}
     The storage layer notifies the node that some of the data stored on it is corrupt.
     
+	This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
+    
     \begin{enumerate}
     	\item The storage informs the node of a corrupt data set
-    	\item The node requests the chunk from a peer node that has the chunk, and overwrites it locally.
-    	\item The node informs the management of a possible storage failure.
+    	\item The node removes the \emph{chunk identifier} from the \emph{node chunk table}.
+    		\begin{itemize}
+    			\item The chunk will be replicated eventually.
+    		\end{itemize}
+    	\item On the next \emph{node fetch all nodes metadata} request to the management.
     \end{enumerate}
-    
-    \subsubsection{Possible simplifications in this study project}
-    In a first prototype, this feature might not be implemented.
+\end{scenario}
+
+\begin{scenario}{management-problems}{Management problems}
+
+
+\begin{itemize}
+	\item The case, that the management has outdated metadata out of a data loss, will be ignored during this study project. A mechanism solving this problem, would probably be subject to significant changes in further system development e.g. when implementing limited redundancy levels. %TODO: Counter in config in the future
+\end{itemize}
 \end{scenario}
 
 \begin{scenario}{network-errors}{Network availability problems}
    	\case{a node can reach only some nodes directly}{
-   		The still available nodes should try to satisfy redundancy needs as good as possible. Unavailable nodes should still be listed as data-holders. This may lead to over-replicated data.
+   		The still available nodes should try to satisfy redundancy needs as good as possible.
+   		If a node cannot reach other nodes, it notifies the management with the next \emph{node fetch all nodes metadata}
    	}
     \case{the network gets partitioned}{
     	(, and the nodes in each partition can only reach each other and not the other ones.)
@@ -214,10 +228,6 @@ This document describes various scenarios of system usage and possible failures.
     	See first case in \ref{scenario:network-errors}
    	}
    	\case{nodes have different states of management information}{
-   		The replication should still take place, but might lead to duplicated data. In case a node gets a pointer to this new node anywhere, it should update its management information as soon as possible.
+   		The redundancy is temporary reduced to the nodes, which the group of old nodes know, but will eventually be resolved as nodes fetch \emph{metadata}. %TODO: rename metadata
    	}
-%    \case{the management wants to update the configuration but can't reach certain nodes?}{
-%TODO: In the current draft version, I do not see this case as management information is only pulled ^
-%    	The management changes should be queried by the host by a certain time.
-%    }
 \end{scenario}
