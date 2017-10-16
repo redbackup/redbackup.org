@@ -9,6 +9,13 @@ This document describes various scenarios of system usage and possible failures.
 \subsubsection{Create Backup}\label{sec:scenario-create-backup}
 The client wants to create a backup.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{resources/create_backup}
+    \caption{Create Backup Sequence Diagram}
+    \label{fig:create-backup}
+\end{figure}
+
 \begin{enumerate}
     \item Client asks the management for a list of \emph{node}s. The \emph{management} returns a sorted list of all nodes (message: \emph{client fetch target nodes}) (sorting might be based on specific configuration).
         \begin{itemize}
@@ -62,6 +69,13 @@ The client wants to create a backup.
 \subsubsection{Backup Restore}\label{sec:scenario-backup-restore}
 The client wants to restore specific data.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{resources/backup_restore.pdf}
+    \caption{Backup Restore Sequence Diagram}
+    \label{fig:backup-restore}
+\end{figure}
+
 \begin{enumerate}
     \item See scenario~\ref{sec:scenario-create-backup} step 1.
     \item The client contacts nodes in the presorted order
@@ -93,6 +107,13 @@ The client wants to restore specific data.
 \subsubsection{Node Joining}\label{sec:scenario-node-join}
 A new node joins the system.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{resources/node_joining.pdf}
+    \caption{Node Joining Sequence Diagram}
+    \label{fig:node-joining}
+\end{figure}
+
 This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
 
 \begin{enumerate}
@@ -112,6 +133,13 @@ This scenario is described as it is implemented in the study project. It might b
 \subsubsection{Node Leaving Planned}\label{sec:scenario-node-leave-planned}
 A node leaves the system planned
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{resources/node_leaving_planned.pdf}
+    \caption{Node Leaving Planned Sequence Diagram}
+    \label{fig:node-leave-planned}
+\end{figure}
+
 This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
 
 \begin{enumerate}
@@ -124,6 +152,13 @@ This scenario is described as it is implemented in the study project. It might b
 
 \subsubsection{Node Leaving Unplanned}\label{sec:scenario-node-leave-unplanned}
 A node leaves the system unexpectedly.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{resources/node_leaving_unplanned.pdf}
+    \caption{Node Leaving Unplanned Sequence Diagram}
+    \label{fig:node-leave-unplanned}
+\end{figure}
 
 This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
 
@@ -142,6 +177,13 @@ This scenario is described as it is implemented in the study project. It might b
 
 \subsubsection{Data Replication}\label{sec:scenario-data-replication}
 The network distributes backup data.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\linewidth]{resources/data_replication.pdf}
+    \caption{Data Replication Sequence Diagram}
+    \label{fig:data-replication}
+\end{figure}
 
 This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
 
