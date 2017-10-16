@@ -37,7 +37,7 @@ The client wants to create a backup.
                 \begin{enumerate}
                     \item The designated node verifies and persists the chunk into its \emph{storage}. Afterwards, it acknowledges receipt to the client (see \emph{client sends chunks} response message).
                                    %TODO: Client must remember, which chunks have been acknowledged. This could be done with a sliding window for QoS/memory usage?
-                    \item The designated node replicates chunks in a continuous replication process. (See scenario \ref{sec:scenario-data-replication})
+                    \item The designated node replicates chunks in a continuous replication process. (See scenario~\ref{sec:scenario-data-replication})
                 \end{enumerate}
             \item The client creates a \emph{serialised metadata chunks}. %TODO: Serialised Metadata is the chunk index plus backup metadata as linked list
             \item The client sends the additional chunks (as \emph{client sends chunk list} messages) to the designated node, in which the \emph{root handle} is highlighted. %TODO: The root handle holds a reference to the first list chunk as well as owner etc. information.
@@ -50,7 +50,7 @@ The client wants to create a backup.
     \item If a file is changed while the backup is running, and the chunk cannot be created, the backup must be restarted. %TODO: This may lead to starvation.
     \item If client crashes, the backup is aborted and won't be continued if the client is restarted.
     \item If the node goes away (disconnects/crashes/shuts down) during the backup, the client tries to resume the process. After a certain time (e.g. 15m), the client gives up and restarts the backup process from the beginning.
-    \item The node must reject (i.e. not acknowledge) a chunk, if the creation date is more than e.g. an hour in the future or past to prevent data loss on bad synchronized clocks.
+    \item The node must reject (i.e.\ not acknowledge) a chunk, if the creation date is more than e.g.\ an hour in the future or past to prevent data loss on bad synchronized clocks.
     \item If the node runs out of storage capacity, it does reject further data chunks. After a timeout, the client restarts the backup process (with another designated node).
 \end{itemize}
 
@@ -63,7 +63,7 @@ The client wants to create a backup.
 The client wants to restore specific data.
 
 \begin{enumerate}
-    \item See \ref{sec:scenario-create-backup} step 1.
+    \item See scenario~\ref{sec:scenario-create-backup} step 1.
     \item The client contacts nodes in the presorted order
         \begin{enumerate}
             \item The client sends a \emph{client list root handles} requests to a node.
@@ -81,7 +81,7 @@ The client wants to restore specific data.
 \begin{itemize}
     \item If the selected node does not hold the requested chunk, it requests it recursively.
     \item If the client crashes, the whole restore process must be repeated
-    \item If the selected node is unavailable, the client selects a new node after a certain timeout (e.g. 5m)
+    \item If the selected node is unavailable, the client selects a new node after a certain timeout (e.g.\ 5m)
 \end{itemize}
 
 \paragraph{Possible simplifications in this study project}
@@ -100,7 +100,7 @@ This scenario is described as it is implemented in the study project. It might b
     \item The new node queries information of all nodes from the management (message: \emph{node fetch all nodes metadata}) on startup. 
     \item The new node configures itself based on its \emph{node identifier} and the response from the management.
         \begin{itemize}
-            \item If the management has no information available (yet) or is unavailable, the node retries after a certain timeout (e.g. 5min).
+            \item If the management has no information available (yet) or is unavailable, the node retries after a certain timeout (e.g.\ 5min).
         \end{itemize}
     \item Other nodes learn about the new node through periodical metadata queries (message: \emph{node fetch all nodes metadata}) %TODO: Component description: regular queries
         \begin{enumerate}
@@ -193,7 +193,7 @@ This scenario is described as it is implemented in the study project. It might b
 
 \subsubsection{Management Problems}\label{sec:scenario-management-problems}
 \begin{itemize}
-    \item The case, that the management has outdated metadata out of a data loss, will be ignored during this study project. A mechanism solving this problem, would probably be subject to significant changes in further system development e.g. when implementing limited redundancy levels. %TODO: Counter in config in the future
+    \item The case, that the management has outdated metadata out of a data loss, will be ignored during this study project. A mechanism solving this problem, would probably be subject to significant changes in further system development e.g.\ when implementing limited redundancy levels. %TODO: Counter in config in the future
 \end{itemize}
 
 \subsubsection{Network Availability Problems}\label{sec:scenario-network-errors}
@@ -204,7 +204,7 @@ If a node cannot reach other nodes, it notifies the management with the next \em
 \paragraph{Behaviour in case the network gets partitioned}
 (, and the nodes in each partition can only reach each other and not the other ones.)
 
-See first case in \ref{sec:scenario-network-errors}
+See first case in scenario~\ref{sec:scenario-network-errors}
 
 \paragraph{Behaviour in case nodes have different states of management information}
 The redundancy is temporary reduced to the nodes, which the group of old nodes know, but will eventually be resolved as nodes fetch \emph{metadata}. %TODO: rename metadata
