@@ -17,14 +17,14 @@ The client wants to create a backup.
 \end{figure}
 
 \begin{enumerate}
-    \item Client asks the management for a list of \emph{node}s. The \emph{management} returns a sorted list of all nodes (message: \emph{client fetch target nodes}) (sorting might be based on specific configuration).
+    \item Client asks the management for a list of \emph{node}s. The \emph{management} returns a sorted list of all nodes (message: \emph{get target nodes}) (sorting might be based on specific configuration).
         \begin{itemize}
             \item If the management is down and this is a first time backup, client records message and aborts.
             \item If the management is down, client tries the same host configuration as last time.
         \end{itemize}
     \item Client tries to contact nodes in the presorted order.
         \begin{enumerate}
-            \item The client sends a \emph{client backup request}. %TODO: Define backup request with estimate, identification, how long the data should be stored
+            \item The client sends a backup request (message: \emph{get designation}.
             \item The node acknowledges or denies the backup request.
             \item If the node acknowledges, it is declared as \emph{designated node}
             \item If the node denies the backup request, try next node.
@@ -34,20 +34,20 @@ The client wants to create a backup.
         \begin{enumerate}
             \item Split all files that changed since the last backup into \emph{chunk}s\footnote{using a rolling hash, see \url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html\#chunks}} and calculate a corresponding hash, the \emph{chunk identifier} and add it to the local \emph{chunk index}.
             \item Files that have not changed since the last backup, must already be present in the chunk index.
-            \item Send all chunk identifiers present in the chunk index combined with an \emph{expiration date} to the designated node. (message: \emph{client sends chunk list})
+            \item Send all chunk identifiers present in the chunk index combined with an \emph{expiration date} to the designated node. (message: \emph{get chunk states})
             \item The designated node checks, if all chunks received from the client chunk list are present on the node.
                 \begin{itemize}
                     \item If a chunk is already present, update its expiration date if it is further in the future.
-                    \item If a chunk is not present, request it from the client (see message response \emph{client sends chunk list} for further details)
+                    \item If a chunk is not present, request it from the client (see message response \emph{return chunk states} for further details)
                 \end{itemize}
-            \item The client sends the requested chunks to the designated node with a \emph{client sends chunks} message. %TODO: Abschluss client transaktion (root handle)
+            \item The client sends the requested chunks to the designated node with a \emph{post chunks} message. %TODO: Abschluss client transaktion (root handle)
                 \begin{enumerate}
-                    \item The designated node verifies and persists the chunk into its \emph{storage}. Afterwards, it acknowledges receipt to the client (see \emph{client sends chunks} response message).
+                    \item The designated node verifies and persists the chunk into its \emph{storage}. Afterwards, it acknowledges receipt to the client (see \emph{acknowledge chunks} response message).
                                    %TODO: Client must remember, which chunks have been acknowledged. This could be done with a sliding window for QoS/memory usage?
                     \item The designated node replicates chunks in a continuous replication process. (See scenario~\ref{sec:scenario-data-replication})
                 \end{enumerate}
             \item The client creates a \emph{serialised metadata chunks}. %TODO: Serialised Metadata is the chunk index plus backup metadata as linked list
-            \item The client sends the additional chunks (as \emph{client sends chunk list} messages) to the designated node, in which the \emph{root handle} is highlighted. %TODO: The root handle holds a reference to the first list chunk as well as owner etc. information.
+            \item The client sends the additional chunks (as \emph{post chunks} messages) to the designated node, in which the \emph{root handle} is highlighted. %TODO: The root handle holds a reference to the first list chunk as well as owner etc. information.
         \end{enumerate}
 \end{enumerate}
 
@@ -80,14 +80,14 @@ The client wants to restore specific data.
     \item See scenario~\ref{sec:scenario-create-backup} step 1.
     \item The client contacts nodes in the presorted order
         \begin{enumerate}
-            \item The client sends a \emph{client list root handles} requests to a node.
-            \item The node returns all root handles present in the system (see \emph{client list root handles} response message)
+            \item The client sends a \emph{get root handles} requests to a node.
+            \item The node returns all root handles present in the system (see \emph{return root handles} message)
             \item If no node answers the request, client records an error message and aborts.
         \end{enumerate}
-    \item The client fetches all \emph{serialised metadata chunks} from the chosen node (message: \emph{client fetch chunks}) and reassembles \emph{chunk index} and backup metadata.
+    \item The client fetches all \emph{serialised metadata chunks} from the chosen node (message: \emph{get chunks}) and reassembles \emph{chunk index} and backup metadata.
     \item The user specifies which files in which backup version shall be restored. %TODO: Use snapshot as single backup name?
     \item Based on the specified files, the client looks up the \emph{chunk identifiers} in the corresponding \emph{chunk index}.
-    \item The client requests the \emph{chunks} from the selected node. (message: \emph{client fetch chunks})
+    \item The client requests the \emph{chunks} from the selected node. (message: \emph{get chunks})
     \item The client reassembles the chunks into files.
 \end{enumerate}
 
@@ -118,14 +118,14 @@ This scenario is described as it is implemented in the study project. It might b
 
 \begin{enumerate}
     \item The node is registered by an administrator in the \emph{managment} using its \emph{node identifier}. A \emph{location} must also be assigned to the node. %TODO: Data
-    \item The new node queries information of all nodes from the management (message: \emph{node fetch all nodes metadata}) on startup. 
+    \item The new node queries information of all nodes from the management (message: \emph{post nodes metadata}) on startup. 
     \item The new node configures itself based on its \emph{node identifier} and the response from the management.
         \begin{itemize}
             \item If the management has no information available (yet) or is unavailable, the node retries after a certain timeout (e.g.\ 5min).
         \end{itemize}
-    \item Other nodes learn about the new node through periodical metadata queries (message: \emph{node fetch all nodes metadata}) %TODO: Component description: regular queries
+    \item Other nodes learn about the new node through periodical metadata queries (message: \emph{post nodes metadata}) %TODO: Component description: regular queries
         \begin{enumerate}
-            \item If the new host contacts an existing node, before the existing node updates its metadata, the existing node should query the management (message: \emph{node fetch all nodes metadata})
+            \item If the new host contacts an existing node, before the existing node updates its metadata, the existing node should query the management (message: \emph{get nodes metadata})
             \item If the management is unavailable, the node ignores all communication attempts.
         \end{enumerate}
 \end{enumerate}
@@ -144,9 +144,8 @@ This scenario is described as it is implemented in the study project. It might b
 
 \begin{enumerate}
     \item The node is marked as \emph{leaving soon} by the administrator in the management.
-    \item As soon as the leaving node realises that it is \emph{leaving soon} (using \emph{node fetch all nodes metadata}), the node ignores messages from other nodes, rejects any new backups and starts replicating its data to another node.
-    \item As soon as all data is replicated onto other nodes, the nodes changes its state to \emph{left} and informs the management (message: \emph{node fetch all nodes metadata}). %TODO: The name of this message is not appropriate anymore.
-    %TODO: Query of metadata must contain state and replication information
+    \item As soon as the leaving node realises that it is \emph{leaving soon} (using \emph{post nodes metadata}), the node ignores messages from other nodes, rejects any new backups and starts replicating its data to another node.
+    \item As soon as all data is replicated onto other nodes, the nodes changes its state to \emph{left} and informs the management (message: \emph{post nodes metadata}).
     %TODO: A node has a state (prepare leaving)
 \end{enumerate}
 
@@ -169,7 +168,7 @@ This scenario is described as it is implemented in the study project. It might b
 
 \begin{itemize}
     \item If the node returns, then the node carries on.
-    \item If the administrator marks the node as \emph{left}, which will be propagated to all nodes via the \emph{node fetch all nodes metadata} message.
+    \item If the administrator marks the node as \emph{left}, which will be propagated to all nodes via the \emph{post nodes metadata} message.
         \begin{itemize}
             \item Data, which was not previously replicated from the node are lost.
         \end{itemize}
@@ -190,15 +189,15 @@ This scenario is described as it is implemented in the study project. It might b
 \begin{enumerate}
     \item The sending node picks $n$ random entries from its \emph{node chunk table}. In the future, the chunks might be selected based on heuristics.
     \item The sending node picks one random designated node from its \emph{node metadata table}. In the future, the nodes might be selected based on heuristics. %TODO: naming of node metadata table could be better ;)
-    \item The sending node sends the chosen \emph{chunk identifier}s to the designated node with a \emph{client sends chunk list} %TODO: Rename. Can be the samme message as for the client?
+    \item The sending node sends the chosen \emph{chunk identifier}s to the designated node with a \emph{get chunk states} message.
     \item The designated node checks, if all chunks received from the sending node are present in its \emph{node chunk table}
         \begin{itemize}
             \item If a chunk is already present, update its expiration date if it is further in the future.
-            \item If a chunk is not present, request it from the \emph{sending node} (see message response \emph{client sends chunk list} for further details).
+            \item If a chunk is not present, request it from the \emph{sending node} (see message \emph{return chunk states} for further details).
         \end{itemize}
-    \item The sending node sends the \emph{requested chunks} to the \emph{designated node} with a \emph{client sends chunk} message. %TODO: Rename. the. message.
+    \item The sending node sends the \emph{requested chunks} to the \emph{designated node} with a \emph{post chunks} message.
         \begin{itemize}
-            \item The \emph{designated node} verifies and persists the chunk into its \emph{storage}. Afterwards, it acknowledges receipt to the \emph{sending node} (see \emph{client sends chunks} message).
+            \item The \emph{designated node} verifies and persists the chunk into its \emph{storage}. Afterwards, it acknowledges receipt to the \emph{sending node} (see \emph{acknowledge chunks} message).
         \end{itemize}
 \end{enumerate}
 
@@ -230,7 +229,7 @@ This scenario is described as it is implemented in the study project. It might b
         \begin{itemize}
             \item The chunk will be replicated eventually.
         \end{itemize}
-    \item On the next \emph{node fetch all nodes metadata} request to the management.
+    \item On the next \emph{post nodes metadata} request to the management.
 \end{enumerate}
 
 \subsubsection{Management Problems}\label{sec:scenario-management-problems}
@@ -241,7 +240,7 @@ This scenario is described as it is implemented in the study project. It might b
 \subsubsection{Network Availability Problems}\label{sec:scenario-network-errors}
 \paragraph{Behaviour in case a node can reach only some nodes directly}
 The still available nodes should try to satisfy redundancy needs as good as possible.
-If a node cannot reach other nodes, it notifies the management with the next \emph{node fetch all nodes metadata}
+If a node cannot reach other nodes, it notifies the management with the next \emph{post nodes metadata}
 
 \paragraph{Behaviour in case the network gets partitioned}
 (, and the nodes in each partition can only reach each other and not the other ones.)
