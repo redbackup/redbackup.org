@@ -6,6 +6,8 @@
 \label{sec:scenarios}
 This document describes various scenarios of system usage and possible failures.
 
+In the sequence diagrams, we use the composition of the minimal integration test, detailed in Figure \ref{fig:integrationtestsmall} (Chapter \ref{integration-tests}). The client backups its data to Node A only.
+
 \subsubsection{Create Backup}\label{sec:scenario-create-backup}
 The client wants to create a backup.
 
@@ -118,7 +120,7 @@ This scenario is described as it is implemented in the study project. It might b
 
 \begin{enumerate}
     \item The node is registered by an administrator in the \emph{managment} using its \emph{node identifier}. A \emph{location} must also be assigned to the node. %TODO: Data
-    \item The new node queries information of all nodes from the management (message: \emph{post nodes metadata}) on startup. 
+    \item The new node queries information of all nodes from the management (message: \emph{get nodes metadata}) on startup. 
     \item The new node configures itself based on its \emph{node identifier} and the response from the management.
         \begin{itemize}
             \item If the management has no information available (yet) or is unavailable, the node retries after a certain timeout (e.g.\ 5min).
