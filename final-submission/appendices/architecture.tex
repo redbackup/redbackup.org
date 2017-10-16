@@ -136,11 +136,11 @@ This scenario is described as it is implemented in the study project. It might b
     \item If the node returns, then the node carries on.
     \item If the administrator marks the node as \emph{left}, which will be propagated to all nodes via the \emph{node fetch all nodes metadata} message.
         \begin{itemize}
-            \item Data, which was not previously replicated from the node are be lost.
+            \item Data, which was not previously replicated from the node are lost.
         \end{itemize}
 \end{itemize}
 
-\subsubsection{Data is Replicated}\label{sec:scenario-data-replication}
+\subsubsection{Data Replication}\label{sec:scenario-data-replication}
 The network distributes backup data.
 
 This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
@@ -175,7 +175,7 @@ This scenario is described as it is implemented in the study project. It might b
         \end{itemize}
 \end{itemize}
 
-In the future, it is advisable to implement a consents protocol to reduce the likelihood of data loss.
+In the future, it is advisable to implement a consent protocol to reduce the likelihood of data loss.
 
 \subsubsection{Data Storage has Errors}\label{sec:scenario-storage-errors}
 The storage layer notifies the node that some of the data stored on it is corrupt.
