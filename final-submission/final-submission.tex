@@ -121,6 +121,7 @@ We would like to thank our advisor, Prof.Dr. Farhad Mehta, for his continuous su
 %	LIST OF CONTENTS PAGES
 %----------------------------------------------------------------------------------------
 
+\setcounter{tocdepth}{2}
 \tableofcontents % Prints the main table of contents
 
 %----------------------------------------------------------------------------------------
@@ -185,9 +186,10 @@ We would like to thank our advisor, Prof.Dr. Farhad Mehta, for his continuous su
 
 \appendix % Cue to tell LaTeX that the following "chapters" are Appendices
 \chapter{Appendices}
+\setcounter{secnumdepth}{3}
 \renewcommand{\thechapter}{A}
 \include{appendices/requirements}
-\include{appendices/scenarios}
+\include{appendices/architecture}
 \include{appendices/language-evaluation}
 \include{appendices/testing}
 
