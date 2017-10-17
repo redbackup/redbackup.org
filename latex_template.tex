@@ -44,6 +44,26 @@ consistentlayout, % Uncomment to change the layout of the declaration, abstract 
 }
 
 %----------------------------------------------------------------------------------------
+%	Glossary SETTINGS
+%----------------------------------------------------------------------------------------
+\usepackage[acronym,toc,nopostdot]{glossaries}
+\usepackage{hyperref}
+\glossarystyle{altlist}
+\usepackage{xparse}
+\DeclareDocumentCommand{\newdualentry}{ O{} O{} m m m m } {
+	\newglossaryentry{gls-#3}{
+		name={#4 : #5},
+		text={#5\glsadd{#3}},
+		description={#6},
+		#1
+	}
+	\makeglossaries
+	\newacronym[see={[Siehe:]{gls-#3}},#2]{#3}{#4}{#5\glsadd{gls-#3}}
+}
+\renewcommand{\glstextformat}[1]{\textbf{\em #1}}
+\makeglossaries
+
+%----------------------------------------------------------------------------------------
 %	THESIS INFORMATION
 %----------------------------------------------------------------------------------------
 
