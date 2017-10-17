@@ -246,11 +246,11 @@ The \gls{client} wants to create a backup.
 
 \paragraph{Possible simplifications in this study project}
 \begin{description}
-    \item[3a)] Don't split files into chunks, send them as is.
+    \item[3a)] Do not split \glspl{file} into \glspl{chunk} but send them as is.
 \end{description}
 
 \subsubsection{Backup Restore}\label{sec:scenario-backup-restore}
-The client wants to restore specific data.
+The \gls{client} wants to restore specific \glspl{file}.
 
 \begin{figure}[h]
     \centering
@@ -260,25 +260,25 @@ The client wants to restore specific data.
 \end{figure}
 
 \begin{enumerate}
-    \item See scenario~\fullref{sec:scenario-create-backup} step 1.
-    \item The client contacts nodes in the presorted order
+    \item Same as in scenario~\fullref{sec:scenario-create-backup} step 1.
+    \item The \gls{client} contacts the \glspl{node} in the presorted order
         \begin{enumerate}
-            \item The client sends a \emph{get root handles} requests to a node.
-            \item The node returns all root handles present in the system (see \emph{return root handles} message)
-            \item If no node answers the request, client records an error message and aborts.
+            \item The \gls{client} sends a \emph{get root handles} requests to a \gls{node}, the \gls{designated-node}.
+            \item The \gls{designated-node} returns all \glspl{root-handle} present in the system (see \emph{return root handles} message)
+            \item If no \gls{node} answers the request,the \gls{client} records an error message and aborts.
         \end{enumerate}
-    \item The client fetches all \emph{serialised metadata chunks} from the chosen node (message: \emph{get chunks}) and reassembles \emph{chunk index} and backup metadata.
-    \item The user specifies which files in which backup version shall be restored. %TODO: Use snapshot as single backup name?
-    \item Based on the specified files, the client looks up the \emph{chunk identifiers} in the corresponding \emph{chunk index}.
-    \item The client requests the \emph{chunks} from the selected node. (message: \emph{get chunks})
-    \item The client reassembles the chunks into files.
+    \item The \gls{client} fetches all \glspl{chunk-content} of the \glspl{serialised-chunk-index} from the \gls{designated-node} (message: \emph{get chunks}) and reassembles the \glspl{chunk-index}.
+    \item The \gls{user} specifies which \glspl{file} from which \gls{chunk-index} shall be restored.
+    \item The \gls{client} looks up the \glspl{chunk-identifier} in the corresponding \gls{chunk-index}.
+    \item The \gls{client} requests the \glspl{chunk-content} from the \gls{designated-node}. (message: \emph{get chunks})
+    \item The \gls{client} reassembles the \glspl{chunk-content} into \glspl{file}.
 \end{enumerate}
 
 \paragraph{Special cases}
 \begin{itemize}
-    \item If the selected node does not hold the requested chunk, it requests it recursively.
-    \item If the client crashes, the whole restore process must be repeated
-    \item If the selected node is unavailable, the client selects a new node after a certain timeout (e.g.\ 5m)
+    \item If the \gls{designated-node} does not have a requested \gls{chunk-identifier} in its \gls{chunk-table}, it requests the corresponding \gls{chunk-content} recursively.
+    \item If the \gls{client} crashes, the restore process must be repeated
+    \item If the \gls{designated-node} is unavailable, the \gls{client} selects a new \gls{designated-node} after a certain timeout (e.g.\ 5m)
 \end{itemize}
 
 \paragraph{Possible simplifications in this study project}
