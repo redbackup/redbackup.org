@@ -51,7 +51,7 @@ An \emph{Administrator} wants to interact with the system as less as possible. H
     \item The \emph{Client} knows the \emph{Management} by configuration.
     \item The \emph{Client} queries the \emph{Management} for a list of \emph{Node}s, to which he can send backups or restore previous backups. He caches the results in its \emph{Node Cache}.
     \item The \emph{Chunk Index} hierarchically models the file system. This structure might change in the future when supporting symlinks and permissions \footnote{See e.g. \url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html}}.
-    \item The relationship between a given \emph{File} and its \emph{Chunk}s is essential. The \emph{Client} splits a \emph{File} into multiple \emph{Chunks} (using a rolling hash) to speed up the backup of large data. During the study project, a \emph{File} consists of exactly one \emph{Chunk}.
+    \item The relationship between a given \emph{File} and its \emph{Chunk}s is essential. The \emph{Client} splits a \emph{File} into multiple \emph{Chunks} to speed up the backup of large data. During the study project, a \emph{File} consists of exactly one \emph{Chunk}.
     \item A \emph{Chunk} is identified by its \emph{Chunk Identifier}, which can be calculated using a hash function which takes the \emph{Chunk Contents}  as input.
     \item The \emph{Chunk Contents} do not have be present on the \emph{Client}. During backup, the \emph{Client} can calculate the \emph{Chunk Contents} and the corresponding \emph{Chunk Identifer} from the \emph{Files} on the disk. On Restore, the \emph{Client} fetches the \emph{Chunk Contents} from a \emph{Node} and reassembles the \emph{File} based on the \emph{Chunk Index}.
 \end{itemize}
@@ -215,7 +215,7 @@ The \gls{client} wants to create a backup.
        \end{enumerate}
    \item If the backup request was successful, the \gls{client} starts creating a backup.
         \begin{enumerate}
-            \item The \gls{client} splits all \glspl{file} that changed since the last backup into \glspl{chunk-content}\footnote{using a rolling hash, see \url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html\#chunks}} and calculate a corresponding hash, the \gls{chunk-identifier} and add it to the local \gls{chunk-index}.
+            \item The \gls{client} splits all \glspl{file} that changed since the last backup into \glspl{chunk-content} and calculate a corresponding hash, the \gls{chunk-identifier} and add it to the local \gls{chunk-index}.
             \item \Glspl{file} that have not changed since the last backup, are already be present in the \gls{chunk-index}.
             \item The \gls{client} send all \glspl{chunk-identifier} present in the \gls{chunk-index} combined with an \gls{expiration-date} to the \gls{designated-node}. (message: \emph{get chunk states})
             \item The \gls{designated-node} checks, if all \glspl{chunk-identifier} received from the \gls{client} are present in its \gls{chunk-table}.
