@@ -227,7 +227,7 @@ The \gls{client} wants to create a backup.
                 \begin{enumerate}
                     \item The \gls{designated-node} verifies and persists the \glspl{chunk-content} into its \gls{storage}. Afterwards, it acknowledges receipt to the \gls{client} (see \emph{acknowledge chunks} response message).
                                    %TODO: Client must remember, which chunks have been acknowledged. This could be done with a sliding window for QoS/memory usage?
-                    \item The \gls{designated-node} replicates \gls{chunk-content} and their \gls{expiration-date} in a continuous replication process. (See scenario~\ref{sec:scenario-data-replication})
+                    \item The \gls{designated-node} replicates \gls{chunk-content} and their \gls{expiration-date} in a continuous replication process. (See scenario~\fullref{sec:scenario-data-replication})
                 \end{enumerate}
             \item The \gls{client} serializes its \gls{chunk-index} into a \gls{serialised-chunk-index} and splits it into \glspl{chunk} as well. %TODO: Serialised Metadata is the chunk index plus backup metadata as linked list
             \item The \gls{client} sends the additional \glspl{chunk-content} (as \emph{post chunks} messages) to the \gls{designated-node}, in which the \gls{root-handle} is highlighted. %TODO: The root handle holds a reference to the first list chunk as well as owner etc. information.
@@ -260,7 +260,7 @@ The client wants to restore specific data.
 \end{figure}
 
 \begin{enumerate}
-    \item See scenario~\ref{sec:scenario-create-backup} step 1.
+    \item See scenario~\fullref{sec:scenario-create-backup} step 1.
     \item The client contacts nodes in the presorted order
         \begin{enumerate}
             \item The client sends a \emph{get root handles} requests to a node.
@@ -428,7 +428,7 @@ If a node cannot reach other nodes, it notifies the management with the next \em
 \paragraph{Behaviour in case the network gets partitioned}
 (, and the nodes in each partition can only reach each other and not the other ones.)
 
-See first case in scenario~\ref{sec:scenario-network-errors}
+See first case in scenario~\fullref{sec:scenario-network-errors}
 
 \paragraph{Behaviour in case nodes have different states of management information}
 The redundancy is temporary reduced to the nodes, which the group of old nodes know, but will eventually be resolved as nodes fetch \emph{metadata}. %TODO: rename metadata
