@@ -1,0 +1,436 @@
+% !TeX spellcheck = en_GB
+
+\section{Specification}\label{sec:specification}
+
+\subsection{Overview}
+Figure \ref{fig:architecture-overview} presents an overview over the Redbackup system. All actors, components and interactions are described in the following sections.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{resources/architecture_overview}
+    \caption{Redbackup system overview}
+    \label{fig:architecture-overview}
+\end{figure}
+
+\subsection{Actors}
+
+\subsubsection{User}
+A typical \emph{User} does not want to interact with the system at any time. All he/she wants is to be sure that all his/her data is safely backed up.
+
+The following simplifications concering the \emph{User} apply for the study project:
+
+\begin{itemize}
+	\item the \emph{User} must instruct the \emph{Client} manually
+	\item There is no concept of authentication yet
+\end{itemize}
+
+\paragraph{Responsibilities}
+\begin{itemize}
+	\item Instruct the \emph{Client} to create a Backup
+	\item Instruct the \emph{Client} to restore a Backup
+\end{itemize}
+
+
+\subsubsection{Administrator}
+An \emph{Administrator} wants to interact with the system as less as possible. He wants to be sure that the system runs smoothly. If something goes wrong, he wants to be able to fix it within a few minutes.
+
+\paragraph{Responsibilities}
+\begin{itemize}
+	\item Instruct to the \emph{Management} to add/remove \emph{Nodes} from the System
+	\item Ensure that the \emph{Management} runs properly (i.g. monitor it)
+	\item Act if the \emph{Management} notifies him/her about any anomalies
+\end{itemize}
+
+\subsection{Components}
+
+\subsubsection{Client}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{resources/client_domain_model}
+    \caption[Client Domain Model]{Domain Model illustrating the \emph{Client}s perspective}
+\end{figure}
+
+The \emph{Client} knows the \emph{Management} by configuration.
+
+The \emph{Client} queries the \emph{Management} for a list of \emph{Node}s, to which he can send backups or restore previous backups. He caches the results in its \emph{Node Cache}.
+
+The \emph{Chunk Index} hierarchically models the file system. This structure might change in the future when supporting symlinks and permissions \footnote{See \url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html}}.
+
+The relationship between a given \emph{File} and its \emph{Chunk}s is essential. The \emph{Client} splits a \emph{File} into multiple \emph{Chunks} (using a rolling hash) to speed up the backup of large data. During the study project, a \emph{File} consists of one \emph{Chunk}.
+A \emph{Chunk} is identified by its \emph{Chunk Identifier}, which can be calculated using a hash function which takes the \emph{Chunk}s contents as input.
+The contents of the \emph{Chunk} do not have be present on the \emph{Client}. During backup, the \emph{Client} can calculate the \emph{Chunks} from the \emph{Files} on the disk. On Restore, the \emph{Client} fetches the contents of the \emph{Chunks} from a \emph{Node} and reassembles the \emph{File} based on the \emph{Chunk Index}.
+
+% TODO: Serialized Metadata = Serialized version of a given Chunk Index.
+
+\paragraph{Responsibilities}
+
+
+\begin{itemize}
+	\item Keeping the \emph{Node Cache} up to date
+	\item Create Backups (See Scenario \ref{sec:scenario-create-backup}: \nameref{sec:scenario-create-backup})
+	\begin{itemize}
+		\item Building/Calculating the \emph{Chunk Index}
+		\item Serialize the \emph{Chunk Index}
+		\item Send \emph{Chunk}s to \emph{Node}s
+		\item Mark \emph{Chunk}s as \emph{Root Handle}s
+	\end{itemize}
+	\item Restore Backups (See Scenario \ref{sec:scenario-backup-restore}: \nameref{sec:scenario-backup-restore})
+	\begin{itemize}
+		\item Fetch \emph{Root Handle}s from \emph{Node}s
+		\item Fetch \emph{Chunk}s from \emph{Nodes}
+		\item Deserialize \emph{Chunk Index}s
+		\item Reassemble \emph{Chunks} into \emph{File}s
+		\item Let the \emph{User} choose which \emph{File}s from which \emph{Chunk Index} shall be restored.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Node}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{resources/node_domain_model}
+    \caption[Node Domain Model]{Domain Model illustrating the \emph{Node}s perspective}
+\end{figure}
+
+A \emph{Node} is identified by its unique \emph{Node Identifier}. It listens on a certain \emph{Address} and \emph{Port}. A \emph{Node} is also associated with a \emph{Location} which will be a replication criteria in the future.
+
+A \emph{Node} knows the \emph{Management} by configuration and exchanges data with it on a regular basis.
+
+A \emph{Node} is in a given \emph{State} and acts differently depending on it (See Figure \ref{fig:node-states}). A \emph{Node} knows all other \emph{Nodes}s in the System and maintains a \emph{State} for them as well.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{resources/node_state}
+    \caption[Node States]{A UML State Diagram describing the \emph{States} of a \emph{Node}}
+    \label{fig:node-states}
+\end{figure}
+
+\begin{itemize}
+	\item \emph{uninitialized}: The \emph{Node} queries the \emph{Management} for initialization and does nothing else.
+	\item \emph{active}: This is the "normal" state in which a \emph{Node} accepts backups, performs replication and sends requested data.
+	\item \emph{unreachable}: A \emph{Node} is marked as \emph{unreachable} if any other \emph{Node} or the \emph{Management} can not reach it. A node never sees itself in this state.
+	\item  \emph{leaving soon}: The \emph{Node} does not answer any requests and ensures that all its data is replicated. When it is done, it automatically switches into the \emph{left} state.
+	\item \emph{left}: The node has nothing to do in this state and can shut down.
+\end{itemize}
+
+The effective contens of a \emph{Chunk} are stored in a \emph{Storage}. See \ref{sec:component-storage} Component Storage for further details.
+
+The metadata about which \emph{Chunks} are stored on the \emph{Node} as well as their \emph{Expiration Date} and the information weather a \emph{Chunk} is a \emph{Root Handle} is stored in the \emph{Chunk Table}.
+
+\paragraph{Responsibilities}
+
+\begin{itemize}
+	\item Send Metadata periodically in order to ...
+	\begin{itemize}
+		\item Perform initialization
+		\item Learning about other \emph{Nodes}
+		\item Start the \emph{leaving} process and notify the \emph{Management} when it is completed
+		\item Send Metadata to the \emph{Management} so that it can perform health-checks (e.g. Verify the Timestamp)
+	\end{itemize}
+	\item Maintain the \emph{Chunk Table} (via backup and replication)
+	\begin{itemize}
+		\item Update \emph{Expiration Date}s
+		\item Add new \emph{Chunks}
+		\item Remove expired \emph{Chunks}
+	\end{itemize}
+	\item Handle possible \emph{Storagep} issues (See Scenario \ref{sec:scenario-storage-errors} \nameref{sec:scenario-storage-errors})
+	\item reply to \emph{Backup Requests}  (Scenario \ref{sec:scenario-create-backup} \nameref{sec:scenario-create-backup}) , \emph{client list root handles} (Scenario \ref{sec:scenario-backup-restore} \nameref{sec:scenario-backup-restore}) and \emph{fetch chunk}s requests
+	\item Replicate Data (See Scenario \ref{sec:scenario-data-replication} \nameref{sec:scenario-data-replication})
+	\item Handle Leaving Process (See Scenario \ref{sec:scenario-node-leave-planned} \nameref{sec:scenario-node-leave-planned})
+\end{itemize}
+
+\label{sec:component-storage}
+\subsubsection{Storage}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{resources/storage_domain_model}
+	\caption[Storage Domain Model]{Domain Model illustrating the \emph{Storage}s perspective}
+\end{figure}
+
+The main purpose of a \emph{Storage} component is to manage \emph{Chunk}s.
+A \emph{Storage} is associated with one \emph{Node} which stores, loads and deletes \emph{Chunk Contents} by its \emph{Chunk Identifier} on the \emph{Storage}. The same \emph{Node} is notified by the \emph{Storage} e.g. when corrupted data is detected.
+
+A \emph{Chunk} should also monitor the \emph{Disk}s, on which the \emph{Chunk Contents} are stored, for possible issues and report them to the \emph{Node}. This feature, however, is not implemented in the study project.
+
+\paragraph{Responsibilities}
+
+\begin{itemize}
+	\item store \emph{Chunk Contens}
+	\item load and return \emph{Chunk Contens} by its \emph{Chunk Identifier}
+	\item delete\emph{Chunk Contens} by its \emph{Chunk Identifier}
+	\item detect possible corruption of \emph{Chunk Contents}
+	\item perform integrity tests on the \emph{Disk}s (e.g. S.M.A.R.T tests)
+	\item Notify the \emph{Node} when a corruption / integrity problem occur
+\end{itemize}
+
+\subsubsection{Management}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{resources/management_domain_model}
+    \caption[Management Domain Model]{Domain Model illustrating the \emph{Management}s perspective}
+\end{figure}
+
+The \emph{Administrator} is the only Actor interacting with the \emph{Management}. He/She sends instructions (e.g. add new node) and is notified by the \emph{Management} about any anomalies.
+\emph{Clients} fetch a list of all \emph{Nodes} from the \emph{Management} (See Client Component for furhter Details). As for now, the \emph{Management} does not know anything about \emph{Client}s, but this might change when authentication is implemented in the future.
+The \emph{Management} maintains \emph{Metadata} for each \emph{Node} in the System and sends that information every \emph{Node} when they post their \emph{Metadata}.
+
+\paragraph{Responsibilities}
+\begin{itemize}
+	\item Add and remove \emph{Nodes}
+	\item Notify the \emph{Administrator} e.g. if a \emph{Node} leaves unexpectedly.
+	\item Receive \emph{Metadata} from the \emph{Nodes} and reply with \emph{Metadata}
+	\item Send list of \emph{Nodes} to the \emph{Client}s
+\end{itemize}
+
+\subsection{Scenarios}
+\label{sec:scenarios}
+This section describes various scenarios of system usage and possible failures.
+
+In the sequence diagrams, we use the composition of the minimal integration test, detailed in Figure \ref{fig:integrationtestsmall} (Chapter \ref{integration-tests}). The client backups its data to Node A only.
+
+\subsubsection{Create Backup}\label{sec:scenario-create-backup}
+The client wants to create a backup.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{resources/create_backup}
+    \caption{Create Backup Sequence Diagram}
+    \label{fig:create-backup}
+\end{figure}
+
+\begin{enumerate}
+    \item Client asks the management for a list of \emph{node}s. The \emph{management} returns a sorted list of all nodes (message: \emph{get target nodes}) (sorting might be based on specific configuration).
+        \begin{itemize}
+            \item If the management is down and this is a first time backup, client records message and aborts.
+            \item If the management is down, client tries the same host configuration as last time.
+        \end{itemize}
+    \item Client tries to contact nodes in the presorted order.
+        \begin{enumerate}
+            \item The client sends a backup request (message: \emph{get designation}.
+            \item The node acknowledges or denies the backup request.
+            \item If the node acknowledges, it is declared as \emph{designated node}
+            \item If the node denies the backup request, try next node.
+            \item If no node answers the request, client records an error message and aborts.
+       \end{enumerate}
+   \item If the contact was established, the client starts creating a backup.
+        \begin{enumerate}
+            \item Split all files that changed since the last backup into \emph{chunk}s\footnote{using a rolling hash, see \url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html\#chunks}} and calculate a corresponding hash, the \emph{chunk identifier} and add it to the local \emph{chunk index}.
+            \item Files that have not changed since the last backup, must already be present in the chunk index.
+            \item Send all chunk identifiers present in the chunk index combined with an \emph{expiration date} to the designated node. (message: \emph{get chunk states})
+            \item The designated node checks, if all chunks received from the client chunk list are present on the node.
+                \begin{itemize}
+                    \item If a chunk is already present, update its expiration date if it is further in the future.
+                    \item If a chunk is not present, request it from the client (see message response \emph{return chunk states} for further details)
+                \end{itemize}
+            \item The client sends the requested chunks to the designated node with a \emph{post chunks} message. %TODO: Abschluss client transaktion (root handle)
+                \begin{enumerate}
+                    \item The designated node verifies and persists the chunk into its \emph{storage}. Afterwards, it acknowledges receipt to the client (see \emph{acknowledge chunks} response message).
+                                   %TODO: Client must remember, which chunks have been acknowledged. This could be done with a sliding window for QoS/memory usage?
+                    \item The designated node replicates chunks in a continuous replication process. (See scenario~\ref{sec:scenario-data-replication})
+                \end{enumerate}
+            \item The client creates a \emph{serialised metadata chunks}. %TODO: Serialised Metadata is the chunk index plus backup metadata as linked list
+            \item The client sends the additional chunks (as \emph{post chunks} messages) to the designated node, in which the \emph{root handle} is highlighted. %TODO: The root handle holds a reference to the first list chunk as well as owner etc. information.
+        \end{enumerate}
+\end{enumerate}
+
+\paragraph{Special cases}
+\begin{itemize}
+    \item If a client is suspended while running, it continuous with the backup process on resume. %TODO: If the expiration date is in the past, the node should refuse the chunk.
+    \item If a file is changed while the backup is running, and the chunk cannot be created, the backup must be restarted. %TODO: This may lead to starvation.
+    \item If client crashes, the backup is aborted and won't be continued if the client is restarted.
+    \item If the node goes away (disconnects/crashes/shuts down) during the backup, the client tries to resume the process. After a certain time (e.g. 15m), the client gives up and restarts the backup process from the beginning.
+    \item The node must reject (i.e.\ not acknowledge) a chunk, if the creation date is more than e.g.\ an hour in the future or past to prevent data loss on bad synchronized clocks.
+    \item If the node runs out of storage capacity, it does reject further data chunks. After a timeout, the client restarts the backup process (with another designated node).
+\end{itemize}
+
+\paragraph{Possible simplifications in this study project}
+\begin{description}
+    \item[3a)] Don't split files into chunks, send them as is.
+\end{description}
+
+\subsubsection{Backup Restore}\label{sec:scenario-backup-restore}
+The client wants to restore specific data.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{resources/backup_restore.pdf}
+    \caption{Backup Restore Sequence Diagram}
+    \label{fig:backup-restore}
+\end{figure}
+
+\begin{enumerate}
+    \item See scenario~\ref{sec:scenario-create-backup} step 1.
+    \item The client contacts nodes in the presorted order
+        \begin{enumerate}
+            \item The client sends a \emph{get root handles} requests to a node.
+            \item The node returns all root handles present in the system (see \emph{return root handles} message)
+            \item If no node answers the request, client records an error message and aborts.
+        \end{enumerate}
+    \item The client fetches all \emph{serialised metadata chunks} from the chosen node (message: \emph{get chunks}) and reassembles \emph{chunk index} and backup metadata.
+    \item The user specifies which files in which backup version shall be restored. %TODO: Use snapshot as single backup name?
+    \item Based on the specified files, the client looks up the \emph{chunk identifiers} in the corresponding \emph{chunk index}.
+    \item The client requests the \emph{chunks} from the selected node. (message: \emph{get chunks})
+    \item The client reassembles the chunks into files.
+\end{enumerate}
+
+\paragraph{Special cases}
+\begin{itemize}
+    \item If the selected node does not hold the requested chunk, it requests it recursively.
+    \item If the client crashes, the whole restore process must be repeated
+    \item If the selected node is unavailable, the client selects a new node after a certain timeout (e.g.\ 5m)
+\end{itemize}
+
+\paragraph{Possible simplifications in this study project}
+\begin{description}
+    \item[-] The client must request a node that has the data already available (possibly the node where the backup was created).
+\end{description}
+
+
+\subsubsection{Node Joining}\label{sec:scenario-node-join}
+A new node joins the system.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{resources/node_joining.pdf}
+    \caption{Node Joining Sequence Diagram}
+    \label{fig:node-joining}
+\end{figure}
+
+This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
+
+\begin{enumerate}
+    \item The node is registered by an administrator in the \emph{managment} using its \emph{node identifier}. A \emph{location} must also be assigned to the node. %TODO: Data
+    \item The new node queries information of all nodes from the management (message: \emph{get nodes metadata}) on startup. 
+    \item The new node configures itself based on its \emph{node identifier} and the response from the management.
+        \begin{itemize}
+            \item If the management has no information available (yet) or is unavailable, the node retries after a certain timeout (e.g.\ 5min).
+        \end{itemize}
+    \item Other nodes learn about the new node through periodical metadata queries (message: \emph{post nodes metadata}) %TODO: Component description: regular queries
+        \begin{enumerate}
+            \item If the new host contacts an existing node, before the existing node updates its metadata, the existing node should query the management (message: \emph{get nodes metadata})
+            \item If the management is unavailable, the node ignores all communication attempts.
+        \end{enumerate}
+\end{enumerate}
+
+\subsubsection{Node Leaving Planned}\label{sec:scenario-node-leave-planned}
+A node leaves the system planned
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{resources/node_leaving_planned.pdf}
+    \caption{Node Leaving Planned Sequence Diagram}
+    \label{fig:node-leave-planned}
+\end{figure}
+
+This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
+
+\begin{enumerate}
+    \item The node is marked as \emph{leaving soon} by the administrator in the management.
+    \item As soon as the leaving node realises that it is \emph{leaving soon} (using \emph{post nodes metadata}), the node ignores messages from other nodes, rejects any new backups and starts replicating its data to another node.
+    \item As soon as all data is replicated onto other nodes, the nodes changes its state to \emph{left} and informs the management (message: \emph{post nodes metadata}).
+    %TODO: A node has a state (prepare leaving)
+\end{enumerate}
+
+\subsubsection{Node Leaving Unplanned}\label{sec:scenario-node-leave-unplanned}
+A node leaves the system unexpectedly.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{resources/node_leaving_unplanned.pdf}
+    \caption{Node Leaving Unplanned Sequence Diagram}
+    \label{fig:node-leave-unplanned}
+\end{figure}
+
+This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
+
+\begin{enumerate}
+    \item If a node is not responding (which means, no other node nor the management can reach it), the management records the unavailability and informs the administrator.
+    %Replikationsmechanismus; management knows, that on reason of intervall the node is away
+\end{enumerate}
+
+\begin{itemize}
+    \item If the node returns, then the node carries on.
+    \item If the administrator marks the node as \emph{left}, which will be propagated to all nodes via the \emph{post nodes metadata} message.
+        \begin{itemize}
+            \item Data, which was not previously replicated from the node are lost.
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Data Replication}\label{sec:scenario-data-replication}
+The network distributes backup data.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\linewidth]{resources/data_replication.pdf}
+    \caption{Data Replication Sequence Diagram}
+    \label{fig:data-replication}
+\end{figure}
+
+This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
+
+\begin{enumerate}
+    \item The sending node picks $n$ random entries from its \emph{node chunk table}. In the future, the chunks might be selected based on heuristics.
+    \item The sending node picks one random designated node from its \emph{node metadata table}. In the future, the nodes might be selected based on heuristics. %TODO: naming of node metadata table could be better ;)
+    \item The sending node sends the chosen \emph{chunk identifier}s to the designated node with a \emph{get chunk states} message.
+    \item The designated node checks, if all chunks received from the sending node are present in its \emph{node chunk table}
+        \begin{itemize}
+            \item If a chunk is already present, update its expiration date if it is further in the future.
+            \item If a chunk is not present, request it from the \emph{sending node} (see message \emph{return chunk states} for further details).
+        \end{itemize}
+    \item The sending node sends the \emph{requested chunks} to the \emph{designated node} with a \emph{post chunks} message.
+        \begin{itemize}
+            \item The \emph{designated node} verifies and persists the chunk into its \emph{storage}. Afterwards, it acknowledges receipt to the \emph{sending node} (see \emph{acknowledge chunks} message).
+        \end{itemize}
+\end{enumerate}
+
+\subsubsection{Data has Expired Lifetime}\label{sec:scenario-data-expiration}
+A node wants to delete data associated with an expired backup/snapshot.
+
+This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
+
+\begin{itemize}
+    \item The \emph{management} monitors the nodes physical timestamp and records any deviation from the management time larger than 1h.
+    \item Therefore, a first prototype, the system may just delete chunks after the specified keep date without further checks.
+        \begin{itemize}
+            \item We build on the assumption, that the nodes have different upstream timeservers, so that a general time shift is unlikely.
+            \item In case a single node's time is in the past, and runs out of storage, it might lead to a degraded system (redundancy loss).
+            \item If a single nodes time is in the future, the redundancy is reduced by one.
+        \end{itemize}
+\end{itemize}
+
+In the future, it is advisable to implement a consent protocol to reduce the likelihood of data loss.
+
+\subsubsection{Data Storage has Errors}\label{sec:scenario-storage-errors}
+The storage layer notifies the node that some of the data stored on it is corrupt.
+
+This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
+
+\begin{enumerate}
+    \item The storage informs the node of a corrupt data set
+    \item The node removes the \emph{chunk identifier} from the \emph{node chunk table}.
+        \begin{itemize}
+            \item The chunk will be replicated eventually.
+        \end{itemize}
+    \item On the next \emph{post nodes metadata} request to the management.
+\end{enumerate}
+
+\subsubsection{Management Problems}\label{sec:scenario-management-problems}
+\begin{itemize}
+    \item The case, that the management has outdated metadata out of a data loss, will be ignored during this study project. A mechanism solving this problem, would probably be subject to significant changes in further system development e.g.\ when implementing limited redundancy levels. %TODO: Counter in config in the future
+\end{itemize}
+
+\subsubsection{Network Availability Problems}\label{sec:scenario-network-errors}
+\paragraph{Behaviour in case a node can reach only some nodes directly}
+The still available nodes should try to satisfy redundancy needs as good as possible.
+If a node cannot reach other nodes, it notifies the management with the next \emph{post nodes metadata}
+
+\paragraph{Behaviour in case the network gets partitioned}
+(, and the nodes in each partition can only reach each other and not the other ones.)
+
+See first case in scenario~\ref{sec:scenario-network-errors}
+
+\paragraph{Behaviour in case nodes have different states of management information}
+The redundancy is temporary reduced to the nodes, which the group of old nodes know, but will eventually be resolved as nodes fetch \emph{metadata}. %TODO: rename metadata
