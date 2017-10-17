@@ -50,8 +50,8 @@ An \emph{Administrator} wants to interact with the system as less as possible. H
 \begin{itemize}
     \item The \emph{Client} knows the \emph{Management} by configuration.
     \item The \emph{Client} queries the \emph{Management} for a list of \emph{Node}s, to which he can send backups or restore previous backups. He caches the results in its \emph{Node Cache}.
-    \item The \emph{Chunk Index} hierarchically models the file system. This structure might change in the future when supporting symlinks and permissions \footnote{See for example \url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html}}.
-    \item The relationship between a given \emph{File} and its \emph{Chunk}s is essential. The \emph{Client} splits a \emph{File} into multiple \emph{Chunks} (using a rolling hash) to speed up the backup of large data. During the study project, a \emph{File} consists of one \emph{Chunk}.
+    \item The \emph{Chunk Index} hierarchically models the file system. This structure might change in the future when supporting symlinks and permissions \footnote{See e.g. \url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html}}.
+    \item The relationship between a given \emph{File} and its \emph{Chunk}s is essential. The \emph{Client} splits a \emph{File} into multiple \emph{Chunks} (using a rolling hash) to speed up the backup of large data. During the study project, a \emph{File} consists of exactly one \emph{Chunk}.
     \item A \emph{Chunk} is identified by its \emph{Chunk Identifier}, which can be calculated using a hash function which takes the \emph{Chunk Contents}  as input.
     \item The \emph{Chunk Contents} do not have be present on the \emph{Client}. During backup, the \emph{Client} can calculate the \emph{Chunk Contents} and the corresponding \emph{Chunk Identifer} from the \emph{Files} on the disk. On Restore, the \emph{Client} fetches the \emph{Chunk Contents} from a \emph{Node} and reassembles the \emph{File} based on the \emph{Chunk Index}.
 \end{itemize}
@@ -74,7 +74,7 @@ An \emph{Administrator} wants to interact with the system as less as possible. H
     \begin{itemize}
         \item Fetch \emph{Root Handle}s from \emph{Node}s
         \item Fetch \emph{Chunk}s from \emph{Nodes}
-        \item Deserialize \emph{Chunk Index}s
+        \item Deserialize \emph{Chunk Indexe}s
         \item Reassemble \emph{Chunks} into \emph{File}s (not required for the study project)
         \item Let the \emph{User} choose which \emph{File}s from which \emph{Chunk Index} shall be restored.
     \end{itemize}
@@ -100,27 +100,27 @@ An \emph{Administrator} wants to interact with the system as less as possible. H
         \item  \emph{leaving soon}: The \emph{Node} does not answer any requests and ensures that all its data is replicated. When it is done, it automatically switches into the \emph{left} state.
         \item \emph{left}: The \emph{Node} has nothing to do in this state and can shut down.
     \end{itemize}
-    \item A \emph{Node} knows all other \emph{Nodes}s in the System and maintains a \emph{State} (See Figure \ref{fig:node-states}). for them as well.
+    \item A \emph{Node} knows all other \emph{Node}s in the System and maintains a \emph{State} (see Figure~\ref{fig:node-states}) for them as well.
     \item The \emph{Chunk Contents} are stored in a \emph{Storage}. See \ref{sec:component-storage} Component Storage for further details.
-    \item Which \emph{Chunk}s are stored on the \emph{Node}, their \emph{Expiration Date} and the information weather a \emph{Chunk} is a \emph{Root Handle} is stored in the \emph{Chunk Table}.
+    \item Which \emph{Chunk}s are stored on the \emph{Node}, their \emph{Expiration Date} and the information whether a \emph{Chunk} is a \emph{Root Handle} is stored in the \emph{Chunk Table}.
 \end{itemize}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{resources/node_state}
-    \caption[Node States]{A UML State Diagram describing the \emph{States} of a \emph{Node}}
+    \caption[Node States]{A UML State Diagram describing the \emph{State}s of a \emph{Node}}
     \label{fig:node-states}
 \end{figure}
 
 \paragraph{Responsibilities}
 
 \begin{itemize}
-    \item Send Metadata periodically (Messages \emph{get nodes metadata} and \emph{post nodes metadata}) in order to ...
+    \item Send \emph{Metadata} periodically (Messages \emph{get nodes metadata} and \emph{post nodes metadata}) in order to ...
     \begin{itemize}
         \item Perform initialization
         \item Learning about other \emph{Nodes}
         \item Start the \emph{leaving} process and notify the \emph{Management} when it is completed
-        \item Send Metadata to the \emph{Management} so that it can perform health-checks (e.g. Verify the Timestamp)
+        \item Send \emph{Metadata} to the \emph{Management} so that it can perform health-checks (e.g. verify the timestamp)
     \end{itemize}
     \item Maintain the \emph{Chunk Table}
     \begin{itemize}
@@ -128,10 +128,10 @@ An \emph{Administrator} wants to interact with the system as less as possible. H
         \item Add new \emph{Chunks}
         \item Remove expired \emph{Chunks}
     \end{itemize}
-    \item Handle possible \emph{Storage} issues (See Scenario \ref{sec:scenario-storage-errors} \nameref{sec:scenario-storage-errors})
-    \item reply to \emph{get designation}  (Scenario \ref{sec:scenario-create-backup} \nameref{sec:scenario-create-backup}) , \emph{get root handles} (Scenario \ref{sec:scenario-backup-restore} \nameref{sec:scenario-backup-restore}) and \emph{get chunks}s requests
+    \item Handle possible \emph{Storage} issues (see Scenario \ref{sec:scenario-storage-errors} \nameref{sec:scenario-storage-errors})
+    \item Reply to \emph{get designation}  (Scenario \ref{sec:scenario-create-backup} \nameref{sec:scenario-create-backup}) , \emph{get root handles} (Scenario \ref{sec:scenario-backup-restore} \nameref{sec:scenario-backup-restore}) and \emph{get chunks} requests
     \item Replicate Data (See Scenario \ref{sec:scenario-data-replication} \nameref{sec:scenario-data-replication})
-    \item Handle Leaving Process (See Scenario \ref{sec:scenario-node-leave-planned} \nameref{sec:scenario-node-leave-planned})
+    \item Handle \emph{leaving} process (see Scenario \ref{sec:scenario-node-leave-planned} \nameref{sec:scenario-node-leave-planned})
 \end{itemize}
 
 \label{sec:component-storage}
@@ -144,7 +144,7 @@ An \emph{Administrator} wants to interact with the system as less as possible. H
 \end{figure}
 
 \begin{itemize}
-    \item The main purpose of the \emph{Storage} component is to manage \emph{Chunk}s. A \emph{Storage} is associated with one \emph{Node} which stores, loads and deletes \emph{Chunk Contents} by its \emph{Chunk Identifier} on the \emph{Storage}. The same \emph{Node} is notified by the \emph{Storage} e.g. when corrupted data is detected.
+    \item The main purpose of the \emph{Storage} component is to persist \emph{Chunk Contents}. A \emph{Storage} is associated with one \emph{Node} which stores, loads and deletes \emph{Chunk Contents} by its \emph{Chunk Identifier} on the \emph{Storage}. The same \emph{Node} is notified by the \emph{Storage} e.g. when corrupted data is detected.
     \item A \emph{Chunk} should also monitor the \emph{Disk}s, on which the \emph{Chunk Contents} are stored, for possible issues and report them to the \emph{Node}. This feature, however, is not implemented in the study project.
     \item The \emph{Storage} component is deployed on the same host as the \emph{Node} that is using it.
 \end{itemize}
@@ -153,12 +153,12 @@ An \emph{Administrator} wants to interact with the system as less as possible. H
 \paragraph{Responsibilities}
 
 \begin{itemize}
-    \item store \emph{Chunk Contens}
-    \item load and return the \emph{Chunk Contens} for a given \emph{Chunk Identifier}
-    \item delete the \emph{Chunk Contens} for a given \emph{Chunk Identifier}
-    \item detect possible corruption of \emph{Chunk Contents}
-    \item perform integrity checks on the \emph{Disk}s (e.g. S.M.A.R.T tests)
-    \item Notify the \emph{Node} when a corruption / integrity problem occur
+    \item Store \emph{Chunk Content}s
+    \item Load and return the \emph{Chunk Contents} for a given \emph{Chunk Identifier}
+    \item Delete the \emph{Chunk Contents} for a given \emph{Chunk Identifier}
+    \item Detect possible corruption of \emph{Chunk Contents}
+    \item Perform service checks on the \emph{Disk}s (e.g. S.M.A.R.T tests)
+    \item Notify the \emph{Node} when a corruption / integrity problem occurs
 \end{itemize}
 
 \subsubsection{Management}
@@ -170,8 +170,8 @@ An \emph{Administrator} wants to interact with the system as less as possible. H
 \end{figure}
 \begin{itemize}
     \item The \emph{Administrator} is the only Actor interacting with the \emph{Management}. He/She sends instructions (e.g. add new node) and is notified by the \emph{Management} about any anomalies.
-    \item \emph{Clients} fetch a list of all \emph{Nodes} from the \emph{Management} (See Component \ref{sec:component-client} \nameref{sec:component-client} for furhter details). As for the study project, the \emph{Management} does not know anything about \emph{Client}s, but this might change when authentication is implemented in the future.
-    \item The \emph{Management} maintains \emph{Metadata} for each \emph{Node} in the System and sends that information every \emph{Node} when they post their \emph{Metadata}.
+    \item \emph{Clients} fetch a list of all \emph{Nodes} from the \emph{Management} (See Component \ref{sec:component-client} \nameref{sec:component-client} for further details). As for the study project, the \emph{Management} does not know anything about \emph{Client}s, but this might change when authentication is implemented in the future.
+    \item The \emph{Management} maintains \emph{Metadata} for each \emph{Node} in the system and sends that information every \emph{Node} when they post their \emph{Metadata}.
 \end{itemize}
 
 \paragraph{Responsibilities}
