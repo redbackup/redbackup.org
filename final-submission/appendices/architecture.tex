@@ -344,20 +344,20 @@ A node leaves the system unexpectedly.
 This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
 
 \begin{enumerate}
-    \item If a node is not responding (which means, no other node nor the management can reach it), the management records the unavailability and informs the administrator.
+    \item If a \gls{node} is not responding (which means, no other \gls{node} nor the \gls{management} can reach it), the \gls{management} records the unavailability and informs the \gls{administrator}.
     %Replikationsmechanismus; management knows, that on reason of intervall the node is away
 \end{enumerate}
 
 \begin{itemize}
-    \item If the node returns, then the node carries on.
-    \item If the administrator marks the node as \emph{left}, which will be propagated to all nodes via the \emph{post nodes metadata} message.
+    \item If the \gls{node} returns, it carries on as if nothing happend.
+    \item If the \gls{node} does not return, the \gls{administrator} marks the node as \emph{left}, which is propagated to all \glspl{node} via the \emph{post nodes metadata} message.
         \begin{itemize}
-            \item Data, which was not previously replicated from the node are lost.
+            \item \glspl{chunk-content}, which were not previously replicated from the \gls{node} are lost.
         \end{itemize}
 \end{itemize}
 
 \subsubsection{Data Replication}\label{sec:scenario-data-replication}
-The network distributes backup data.
+The network distributes \glspl{chunk}.
 
 \begin{figure}[h]
     \centering
@@ -369,65 +369,65 @@ The network distributes backup data.
 This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
 
 \begin{enumerate}
-    \item The sending node picks $n$ random entries from its \emph{node chunk table}. In the future, the chunks might be selected based on heuristics.
-    \item The sending node picks one random designated node from its \emph{node metadata table}. In the future, the nodes might be selected based on heuristics. %TODO: naming of node metadata table could be better ;)
-    \item The sending node sends the chosen \emph{chunk identifier}s to the designated node with a \emph{get chunk states} message.
-    \item The designated node checks, if all chunks received from the sending node are present in its \emph{node chunk table}
+    \item The \gls{sending-node} picks $n$ random entries from its \gls{chunk-table}. In the future, these entries might be selected based on heuristics.
+    \item The \gls{sending-node} picks one random \gls{designated-node} from its \gls{metadata}. In the future, the \gls{designated-node} might be selected based on heuristics.
+    \item The \gls{sending-node} sends the \glspl{chunk-identifier} of the chosen entries to the \gls{designated-node} with a \emph{get chunk states} message.
+    \item The \gls{designated-node} checks, if all \glspl{chunk-identifier} received from the \gls{sending-node} are present in its \gls{chunk-table}.
         \begin{itemize}
-            \item If a chunk is already present, update its expiration date if it is further in the future.
-            \item If a chunk is not present, request it from the \emph{sending node} (see message \emph{return chunk states} for further details).
+            \item If a \gls{chunk-identifier} is already present, update its \gls{expiration-date} if it is further in the future.
+            \item If a \gls{chunk-identifier} is not present, request the corresponding \gls{chunk-content} from the \gls{sending-node} (see message \emph{return chunk states} for further details).
         \end{itemize}
-    \item The sending node sends the \emph{requested chunks} to the \emph{designated node} with a \emph{post chunks} message.
+    \item The \gls{sending-node} sends the requested \glspl{chunk-content} to the \gls{designated-node} with a \emph{post chunks} message.
         \begin{itemize}
-            \item The \emph{designated node} verifies and persists the chunk into its \emph{storage}. Afterwards, it acknowledges receipt to the \emph{sending node} (see \emph{acknowledge chunks} message).
+            \item The \gls{designated-node} verifies and persists the \glspl{chunk-content} into its \gls{storage}. Afterwards, it acknowledges receipt to the \gls{sending-node} (see \emph{acknowledge chunks} response message).
         \end{itemize}
 \end{enumerate}
 
 \subsubsection{Data has Expired Lifetime}\label{sec:scenario-data-expiration}
-A node wants to delete data associated with an expired backup/snapshot.
+A \gls{node} wants to delete \glspl{chunk} with a past \gls{expiration-date}.
 
 This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
 
 \begin{itemize}
-    \item The \emph{management} monitors the nodes physical timestamp and records any deviation from the management time larger than 1h.
-    \item Therefore, a first prototype, the system may just delete chunks after the specified keep date without further checks.
+    \item The \gls{management} monitors the \glspl{node} physical timestamp and records any deviation from the \gls{management} time larger than 1h.
+    \item Therefore, a first prototype, the system may just delete \glspl{chunk} after the specified \gls{expiration-date} without further checks.
         \begin{itemize}
-            \item We build on the assumption, that the nodes have different upstream timeservers, so that a general time shift is unlikely.
-            \item In case a single node's time is in the past, and runs out of storage, it might lead to a degraded system (redundancy loss).
-            \item If a single nodes time is in the future, the redundancy is reduced by one.
+            \item We build on the assumption, that the \glspl{node} have different upstream timeservers, so that a general time shift is unlikely.
+            \item In case a single \gls{node}s time is in the past, and runs out of storage, it might lead to a degraded system (redundancy loss).
+            \item If a single \gls{node}s time is in the future, the redundancy is reduced by one.
         \end{itemize}
 \end{itemize}
 
 In the future, it is advisable to implement a consent protocol to reduce the likelihood of data loss.
 
 \subsubsection{Data Storage has Errors}\label{sec:scenario-storage-errors}
-The storage layer notifies the node that some of the data stored on it is corrupt.
+The \gls{storage} component notifies its \gls{node} that a \gls{chunk} stored in it is corrupt.
 
 This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
 
 \begin{enumerate}
-    \item The storage informs the node of a corrupt data set
-    \item The node removes the \emph{chunk identifier} from the \emph{node chunk table}.
+    \item The \gls{storage} informs the \gls{node} of a corrupt \gls{chunk} using its \gls{chunk-identifier}
+    \item The node removes the \gls{chunk-identifier} from the \gls{chunk-table}
         \begin{itemize}
-            \item The chunk will be replicated eventually.
+            \item The \gls{chunk} will be replicated eventually.
         \end{itemize}
-    \item On the next \emph{post nodes metadata} request to the management.
+    \item Inform \gls{management} when sending the next \emph{post nodes metadata} message.
 \end{enumerate}
 
 \subsubsection{Management Problems}\label{sec:scenario-management-problems}
 \begin{itemize}
-    \item The case, that the management has outdated metadata out of a data loss, will be ignored during this study project. A mechanism solving this problem, would probably be subject to significant changes in further system development e.g.\ when implementing limited redundancy levels. %TODO: Counter in config in the future
+    \item The case, that the \gls{management} has outdated \gls{metadata} out of a data loss, will be ignored during this study project. A mechanism solving this problem, would probably be subject to significant changes in further system development e.g.\ when implementing limited redundancy levels. %TODO: Counter in config in the future
 \end{itemize}
 
 \subsubsection{Network Availability Problems}\label{sec:scenario-network-errors}
 \paragraph{Behaviour in case a node can reach only some nodes directly}
-The still available nodes should try to satisfy redundancy needs as good as possible.
-If a node cannot reach other nodes, it notifies the management with the next \emph{post nodes metadata}
+The still available \glspl{node} should try to satisfy redundancy needs as good as possible.
+If a \gls{node} cannot reach other \glspl{node}, it notifies the \gls{management} with the next \emph{post nodes metadata}
 
 \paragraph{Behaviour in case the network gets partitioned}
-(, and the nodes in each partition can only reach each other and not the other ones.)
+(, and the \glspl{node} in each partition can only reach each other and not the other ones.)
 
 See first case in scenario~\fullref{sec:scenario-network-errors}
 
 \paragraph{Behaviour in case nodes have different states of management information}
-The redundancy is temporary reduced to the nodes, which the group of old nodes know, but will eventually be resolved as nodes fetch \emph{metadata}. %TODO: rename metadata
+The redundancy is temporary reduced to the \glspl{node} which the group of old \glspl{node} know, but will eventually be resolved as \glspl{node} fetch \gls{metadata}.
