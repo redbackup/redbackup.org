@@ -288,7 +288,7 @@ The \gls{client} wants to restore specific \glspl{file}.
 
 
 \subsubsection{Node Joining}\label{sec:scenario-node-join}
-A new node joins the system.
+A \gls{new-node} joins the system.
 
 \begin{figure}[h]
     \centering
@@ -300,21 +300,21 @@ A new node joins the system.
 This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
 
 \begin{enumerate}
-    \item The node is registered by an administrator in the \emph{managment} using its \emph{node identifier}. A \emph{location} must also be assigned to the node. %TODO: Data
-    \item The new node queries information of all nodes from the management (message: \emph{get nodes metadata}) on startup. 
-    \item The new node configures itself based on its \emph{node identifier} and the response from the management.
+    \item The \gls{new-node} is registered by an \gls{administrator} in the \gls{management} using its \gls{node-identifier}. A \gls{location} must also be assigned to the \gls{node}. %TODO: Data
+    \item The \gls{new-node} queries \gls{metadata} from the \gls{management} (message: \emph{get nodes metadata}) on startup.
+    \item The \gls{new-node} configures itself based on its \gls{node-identifier} and received \gls{metadata} from \gls{management}.
         \begin{itemize}
-            \item If the management has no information available (yet) or is unavailable, the node retries after a certain timeout (e.g.\ 5min).
+            \item If the \gls{management} has no information available (yet) or is unavailable, the \gls{new-node} retries after a certain timeout (e.g.\ 5min).
         \end{itemize}
-    \item Other nodes learn about the new node through periodical metadata queries (message: \emph{post nodes metadata}) %TODO: Component description: regular queries
+    \item Other \glspl{node} learn about the \gls{new-node} through periodical \gls{metadata} queries (message: \emph{post nodes metadata})
         \begin{enumerate}
-            \item If the new host contacts an existing node, before the existing node updates its metadata, the existing node should query the management (message: \emph{get nodes metadata})
-            \item If the management is unavailable, the node ignores all communication attempts.
+            \item If the \gls{new-node} contacts an existing \gls{node}, before the existing \gls{node} updates its \gls{metadata}, the existing \gls{node} should query the \gls{management} (message: \emph{get nodes metadata})
+            \item If the \gls{management} is unavailable, the \gls{new-node} ignores all communication attempts.
         \end{enumerate}
 \end{enumerate}
 
 \subsubsection{Node Leaving Planned}\label{sec:scenario-node-leave-planned}
-A node leaves the system planned
+A \gls{node} leaves the system planned (refered as \gls{leaving-node}).
 
 \begin{figure}[h]
     \centering
@@ -326,10 +326,9 @@ A node leaves the system planned
 This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
 
 \begin{enumerate}
-    \item The node is marked as \emph{leaving soon} by the administrator in the management.
-    \item As soon as the leaving node realises that it is \emph{leaving soon} (using \emph{post nodes metadata}), the node ignores messages from other nodes, rejects any new backups and starts replicating its data to another node.
-    \item As soon as all data is replicated onto other nodes, the nodes changes its state to \emph{left} and informs the management (message: \emph{post nodes metadata}).
-    %TODO: A node has a state (prepare leaving)
+    \item The \gls{leaving-node} is marked as \emph{leaving soon} by the \gls{administrator} in the \gls{management}.
+    \item As soon as the \gls{leaving-node} realises that it is in state \emph{leaving soon} (using \emph{post nodes metadata}), it ignores messages from other \glspl{node}, rejects any new backups and starts replicating its \glspl{chunk-content} to another \gls{node}.
+    \item As soon as all \glspl{chunk-content} are replicated onto other \glspl{node}, the \gls{leaving-node} changes its state to \emph{left} and informs the \gls{management} (message: \emph{post nodes metadata}).
 \end{enumerate}
 
 \subsubsection{Node Leaving Unplanned}\label{sec:scenario-node-leave-unplanned}
