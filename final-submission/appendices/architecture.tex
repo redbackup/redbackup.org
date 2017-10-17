@@ -8,7 +8,7 @@ Figure \ref{fig:architecture-overview} presents an overview over the Redbackup s
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{resources/architecture_overview}
-    \caption{Redbackup system overview}
+    \caption{A simplified system overview}
     \label{fig:architecture-overview}
 \end{figure}
 
@@ -95,7 +95,7 @@ An \emph{Administrator} wants to interact with the system as less as possible. H
     \item A \emph{Node} is in a given \emph{State} and acts differently depending on it (See Figure \ref{fig:node-states}).
     \begin{itemize}
         \item \emph{uninitialized}: The \emph{Node} queries the \emph{Management} for initialization and does nothing else.
-        \item \emph{active}: This is the "normal" state in which a \emph{Node} accepts backups, performs replication and sends requested data.
+        \item \emph{participating}: This is the "normal" state in which a \emph{Node} accepts backups, performs replication and sends requested data.
         \item \emph{unreachable}: A \emph{Node} is marked as \emph{unreachable} if any other \emph{Node} or the \emph{Management} can not reach it. A node never sees itself in this state.
         \item  \emph{leaving soon}: The \emph{Node} does not answer any requests and ensures that all its data is replicated. When it is done, it automatically switches into the \emph{left} state.
         \item \emph{left}: The \emph{Node} has nothing to do in this state and can shut down.
@@ -145,7 +145,7 @@ An \emph{Administrator} wants to interact with the system as less as possible. H
 
 \begin{itemize}
     \item The main purpose of the \emph{Storage} component is to persist \emph{Chunk Contents}. A \emph{Storage} is associated with one \emph{Node} which stores, loads and deletes \emph{Chunk Contents} by its \emph{Chunk Identifier} on the \emph{Storage}. The same \emph{Node} is notified by the \emph{Storage} e.g. when corrupted data is detected.
-    \item A \emph{Chunk} should also monitor the \emph{Disk}s, on which the \emph{Chunk Contents} are stored, for possible issues and report them to the \emph{Node}. This feature, however, is not implemented in the study project.
+    \item A \emph{Chunk} should also monitor the \emph{Medium}s, on which the \emph{Chunk Contents} are stored, for possible issues and report them to the \emph{Node}. This feature, however, is not implemented in the study project.
     \item The \emph{Storage} component is deployed on the same host as the \emph{Node} that is using it.
 \end{itemize}
 
@@ -157,7 +157,7 @@ An \emph{Administrator} wants to interact with the system as less as possible. H
     \item Load and return the \emph{Chunk Contents} for a given \emph{Chunk Identifier}
     \item Delete the \emph{Chunk Contents} for a given \emph{Chunk Identifier}
     \item Detect possible corruption of \emph{Chunk Contents}
-    \item Perform service checks on the \emph{Disk}s (e.g. S.M.A.R.T tests)
+    \item Perform service checks on the \emph{Medium}s (e.g. S.M.A.R.T tests)
     \item Notify the \emph{Node} when a corruption / integrity problem occurs
 \end{itemize}
 
@@ -240,7 +240,7 @@ The \gls{client} wants to create a backup.
     \item If a \gls{file} is changed during the backup process, and the \glspl{chunk-content} and \glspl{chunk-identifier} cannot be calculated, the backup process must be restarted. %TODO: This may lead to starvation.
     \item If \gls{client} crashes, the backup is aborted and won't be continued if the \gls{client} is restarted.
     \item If the \gls{designated-node} goes away (disconnects/crashes/shuts down) during the backup process, the \gls{client} tries to resume the process. After a certain time (e.g. 15m), the \gls{client} gives up and restarts the backup process from the beginning.
-    \item A \gls{node} must reject (i.e.\ not acknowledge) \glspl{chunk-content}, if the creation date is more than e.g.\ an hour in the future or past to prevent data loss on bad synchronized clocks.
+    \item A \gls{node} must reject (i.e.\ not acknowledge) \glspl{chunk-content}, if the timestamp of the sending party (e.g. \gls{client}) is e.g.\ an hour in the future or past to prevent data loss on bad synchronized clocks.
     \item If the \gls{designated-node} runs out of storage capacity, it does reject further \glspl{chunk-content}. After a timeout, the client restarts the backup process (with another designated node).
 \end{itemize}
 
