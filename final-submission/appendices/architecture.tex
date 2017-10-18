@@ -31,8 +31,8 @@ An \gls{administrator} wants to interact with the system as less as possible. He
 
 \paragraph{Responsibilities}
 \begin{itemize}
-    \item Instruct to the \gls{management} to add/remove \glspl{node} from the System
-    \item Ensure that the \gls{management} runs properly (i.g. monitor it)
+    \item Instruct the \gls{management} to add/remove \glspl{node} from the System
+    \item Ensure that the \gls{management} runs properly (i.e. monitor it)
     \item Act if the \gls{management} notifies him/her about any anomalies
 \end{itemize}
 
@@ -53,7 +53,7 @@ An \gls{administrator} wants to interact with the system as less as possible. He
     \item The \gls{chunk-index} hierarchically models the file system. This structure might change in the future when supporting symlinks and permissions \footnote{See e.g. \url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html}}.
     \item The relationship between a given \gls{file} and its \glspl{chunk} is essential. The \gls{client} splits a \gls{file} into multiple \glspl{chunk} to speed up the backup of large data. During the study project, a \gls{file} consists of exactly one \gls{chunk}.
     \item A \gls{chunk} is identified by its \gls{chunk-identifier}, which can be calculated using a hash function which takes the \glspl{chunk-content}  as input.
-    \item The \glspl{chunk-content} do not have be present on the \gls{client}. During backup, the \gls{client} can calculate the \glspl{chunk-content} and the corresponding \gls{chunk-identifier} from the \glspl{file} on the disk. On Restore, the \gls{client} fetches the \glspl{chunk-content} from a \gls{node} and reassembles the \gls{file} based on the \gls{chunk-index}.
+    \item The \glspl{chunk-content} do not have be present on the \gls{client}. During backup, the \gls{client} can calculate the \glspl{chunk-content} and the corresponding \gls{chunk-identifier} from the \glspl{file} on the disk. On restore, the \gls{client} fetches the \glspl{chunk-content} from a \gls{node} and reassembles the \gls{file} based on the \gls{chunk-index}.
 \end{itemize}
 
 % TODO: Serialized Metadata = Serialized version of a given Chunk Index.
@@ -66,7 +66,7 @@ An \gls{administrator} wants to interact with the system as less as possible. He
     \item Create Backups (See Scenario \ref{sec:scenario-create-backup}: \nameref{sec:scenario-create-backup})
     \begin{itemize}
         \item Building/Calculating the \gls{chunk-index}
-        \item Serialize the \gls{chunk-index}
+        \item Serialize the \gls{chunk-index} into \glspl{chunk} including a \gls{root-handle}
         \item Send \glspl{chunk} to \glspl{node}
         \item Mark \glspl{chunk} as \glspl{root-handle}
     \end{itemize}
@@ -100,7 +100,7 @@ An \gls{administrator} wants to interact with the system as less as possible. He
         \item  \emph{leaving soon}: The \gls{node} does not answer any requests and ensures that all its data is replicated. When it is done, it automatically switches into the \emph{left} state.
         \item \emph{left}: The \gls{node} has nothing to do in this state and can shut down.
     \end{itemize}
-    \item A \gls{node} knows all other \glspl{node} in the System and maintains a \gls{state} (see Figure~\ref{fig:node-states}) for them as well.
+    \item A \gls{node} knows all other \glspl{node} in the \gls{system} and maintains a \gls{state} (see Figure~\ref{fig:node-states}) for them as well.
     \item The \glspl{chunk-content} are stored in a \gls{storage}. See \ref{sec:component-storage} Component Storage for further details.
     \item Which \glspl{chunk} are stored on the \gls{node}, their \gls{expiration-date} and the information whether a \gls{chunk} is a \gls{root-handle} is stored in the \gls{chunk-table}.
 \end{itemize}
@@ -118,7 +118,7 @@ An \gls{administrator} wants to interact with the system as less as possible. He
     \item Send \gls{metadata} periodically (Messages \emph{get nodes metadata} and \emph{post nodes metadata}) in order to ...
     \begin{itemize}
         \item Perform initialization
-        \item Learning about other \glspl{node}
+        \item Learn about other \glspl{node}
         \item Start the \emph{leaving} process and notify the \gls{management} when it is completed
         \item Send \gls{metadata} to the \gls{management} so that it can perform health-checks (e.g. verify the timestamp)
     \end{itemize}
@@ -130,7 +130,7 @@ An \gls{administrator} wants to interact with the system as less as possible. He
     \end{itemize}
     \item Handle possible \gls{storage} issues (see Scenario \ref{sec:scenario-storage-errors} \nameref{sec:scenario-storage-errors})
     \item Reply to \emph{get designation}  (Scenario \ref{sec:scenario-create-backup} \nameref{sec:scenario-create-backup}) , \emph{get root handles} (Scenario \ref{sec:scenario-backup-restore} \nameref{sec:scenario-backup-restore}) and \emph{get chunks} requests
-    \item Replicate Data (See Scenario \ref{sec:scenario-data-replication} \nameref{sec:scenario-data-replication})
+    \item Replicate \glspl{chunk} (See Scenario \ref{sec:scenario-data-replication} \nameref{sec:scenario-data-replication})
     \item Handle \emph{leaving} process (see Scenario \ref{sec:scenario-node-leave-planned} \nameref{sec:scenario-node-leave-planned})
 \end{itemize}
 
@@ -170,7 +170,7 @@ An \gls{administrator} wants to interact with the system as less as possible. He
 \end{figure}
 \begin{itemize}
     \item The \gls{administrator} is the only Actor interacting with the \gls{management}. He/She sends instructions (e.g. add new node) and is notified by the \gls{management} about any anomalies.
-    \item \glspl{client} fetch a list of all \glspl{node} from the \gls{management} (See Component \ref{sec:component-client} \nameref{sec:component-client} for further details). As for the study project, the \gls{management} does not know anything about \glspl{client}, but this might change when authentication is implemented in the future.
+    \item \glspl{client} fetch a list of all \glspl{node} from the \gls{management} (See Component \ref{sec:component-client} \nameref{sec:component-client} for further details). As for the study project, the \gls{management} does not have any information about \glspl{client}, but this might change when authentication is implemented in the future.
     \item The \gls{management} maintains \gls{metadata} for each \gls{node} in the system and sends that information every \gls{node} when they post their \gls{metadata}.
 \end{itemize}
 
@@ -200,7 +200,7 @@ The \gls{client} wants to create a backup.
 \end{figure}
 
 \begin{enumerate}
-    \item The \gls{client} asks the \gls{management} for a list of \glspl{node}. The \gls{management} returns a sorted list of all \Glspl{node} (message: \emph{get target nodes}) (sorting might be based on specific configuration).
+    \item The \gls{client} asks the \gls{management} for a list of \glspl{node}. The \gls{management} returns a sorted list of all \glspl{node} (message: \emph{get target nodes}) (sorting might be based on specific configuration).
         \begin{itemize}
             \item If the \gls{management} is down and this is a first time backup, the \gls{client} records a message and aborts.
             \item If the \gls{management} is down, \gls{client} tries the same \glspl{node} as last time.
