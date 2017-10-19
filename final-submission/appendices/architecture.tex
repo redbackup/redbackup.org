@@ -3,86 +3,81 @@
 \section{Specification}\label{sec:specification}
 
 \subsection{Overview}
-Figure \ref{fig:architecture-overview} presents an overview over the Redbackup system. All actors, components and interactions are described in the following sections.
+Figure \ref{fig:architecture-overview} presents an overview over the Redbackup \gls{system}. All actors, components and interactions are described in detail in the following sections.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{resources/architecture_overview}
-    \caption{Redbackup system overview}
+    \caption{A simplified \gls{system} overview}
     \label{fig:architecture-overview}
 \end{figure}
 
 \subsection{Actors}
 
 \subsubsection{User}
-A typical \emph{User} does not want to interact with the system at any time. All he/she wants is to be sure that all his/her data is safely backed up.
+A typical \gls{user} does not want to interact with the \gls{system} at any time. All he/she wants is to be sure that all his/her data is safely backed up.
 
-The following simplifications concering the \emph{User} apply for the study project:
-
-\begin{itemize}
-	\item the \emph{User} must instruct the \emph{Client} manually
-	\item There is no concept of authentication yet
-\end{itemize}
+To simplify the implementation for the study project, the \gls{user} must instruct the \gls{client} manually (create and restore backup).
 
 \paragraph{Responsibilities}
 \begin{itemize}
-	\item Instruct the \emph{Client} to create a Backup
-	\item Instruct the \emph{Client} to restore a Backup
+    \item Instruct the \gls{client} to create a Backup
+    \item Instruct the \gls{client} to restore a Backup
 \end{itemize}
 
 
 \subsubsection{Administrator}
-An \emph{Administrator} wants to interact with the system as less as possible. He wants to be sure that the system runs smoothly. If something goes wrong, he wants to be able to fix it within a few minutes.
+An \gls{administrator} wants to interact with the \gls{system} as less as possible. He/She wants to be sure that the \gls{system} runs smoothly. If something goes wrong, he/she wants to be able to fix it within a few minutes.
 
 \paragraph{Responsibilities}
 \begin{itemize}
-	\item Instruct to the \emph{Management} to add/remove \emph{Nodes} from the System
-	\item Ensure that the \emph{Management} runs properly (i.g. monitor it)
-	\item Act if the \emph{Management} notifies him/her about any anomalies
+    \item Instruct the \gls{management} to add/remove \glspl{node} from the \gls{system}
+    \item Ensure that the \gls{management} runs properly (i.e. monitor it)
+    \item Act if the \gls{management} notifies him/her about any anomalies
 \end{itemize}
 
 \subsection{Components}
 
 \subsubsection{Client}
+\label{sec:component-client}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{resources/client_domain_model}
-    \caption[Client Domain Model]{Domain Model illustrating the \emph{Client}s perspective}
+    \caption[Client Domain Model]{Domain Model illustrating the \glspl{client} perspective}
 \end{figure}
 
-The \emph{Client} knows the \emph{Management} by configuration.
+\begin{itemize}
+    \item The \gls{client} knows the \gls{management} by configuration.
+    \item The \gls{client} queries the \gls{management} for a list of \glspl{node}, to which he can send backups or restore previous backups. He caches the results in its \gls{node-cache}.
+    \item The \gls{chunk-index} hierarchically models the file system. This structure might change in the future when supporting symlinks and permissions \footnote{See e.g. \url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html}}.
+    \item The relationship between a given \gls{file} and its \glspl{chunk} is essential. The \gls{client} splits a \gls{file} into multiple \glspl{chunk} to speed up the backup of large data. During the study project, a \gls{file} consists of exactly one \gls{chunk}.
+    \item A \gls{chunk} is identified by its \gls{chunk-identifier}, which can be calculated using a hash function which takes the \glspl{chunk-content}  as input.
+    \item The \glspl{chunk-content} do not have be present on the \gls{client}. During backup, the \gls{client} can calculate the \glspl{chunk-content} and the corresponding \gls{chunk-identifier} from the \glspl{file} on the disk. On restore, the \gls{client} fetches the \glspl{chunk-content} from a \gls{node} and reassembles the \gls{file} based on the \gls{chunk-index}.
+\end{itemize}
 
-The \emph{Client} queries the \emph{Management} for a list of \emph{Node}s, to which he can send backups or restore previous backups. He caches the results in its \emph{Node Cache}.
-
-The \emph{Chunk Index} hierarchically models the file system. This structure might change in the future when supporting symlinks and permissions \footnote{See \url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html}}.
-
-The relationship between a given \emph{File} and its \emph{Chunk}s is essential. The \emph{Client} splits a \emph{File} into multiple \emph{Chunks} (using a rolling hash) to speed up the backup of large data. During the study project, a \emph{File} consists of one \emph{Chunk}.
-A \emph{Chunk} is identified by its \emph{Chunk Identifier}, which can be calculated using a hash function which takes the \emph{Chunk}s contents as input.
-The contents of the \emph{Chunk} do not have be present on the \emph{Client}. During backup, the \emph{Client} can calculate the \emph{Chunks} from the \emph{Files} on the disk. On Restore, the \emph{Client} fetches the contents of the \emph{Chunks} from a \emph{Node} and reassembles the \emph{File} based on the \emph{Chunk Index}.
-
-% TODO: Serialized Metadata = Serialized version of a given Chunk Index.
+% TODO: Serialised Metadata = Serialised version of a given Chunk Index.
 
 \paragraph{Responsibilities}
 
 
 \begin{itemize}
-	\item Keeping the \emph{Node Cache} up to date
-	\item Create Backups (See Scenario \ref{sec:scenario-create-backup}: \nameref{sec:scenario-create-backup})
-	\begin{itemize}
-		\item Building/Calculating the \emph{Chunk Index}
-		\item Serialize the \emph{Chunk Index}
-		\item Send \emph{Chunk}s to \emph{Node}s
-		\item Mark \emph{Chunk}s as \emph{Root Handle}s
-	\end{itemize}
-	\item Restore Backups (See Scenario \ref{sec:scenario-backup-restore}: \nameref{sec:scenario-backup-restore})
-	\begin{itemize}
-		\item Fetch \emph{Root Handle}s from \emph{Node}s
-		\item Fetch \emph{Chunk}s from \emph{Nodes}
-		\item Deserialize \emph{Chunk Index}s
-		\item Reassemble \emph{Chunks} into \emph{File}s
-		\item Let the \emph{User} choose which \emph{File}s from which \emph{Chunk Index} shall be restored.
-	\end{itemize}
+    \item Keeping the \gls{node-cache} up to date
+    \item Create Backups (See Scenario \ref{sec:scenario-create-backup}: \nameref{sec:scenario-create-backup})
+    \begin{itemize}
+        \item Building/Calculating the \gls{chunk-index}
+        \item Serialize the \gls{chunk-index} into \glspl{chunk} including a \gls{root-handle}
+        \item Send \glspl{chunk} to \glspl{node}
+        \item Mark \glspl{chunk} as \glspl{root-handle}
+    \end{itemize}
+    \item Restore Backups (See Scenario \ref{sec:scenario-backup-restore}: \nameref{sec:scenario-backup-restore})
+    \begin{itemize}
+        \item Fetch \glspl{root-handle} from \glspl{node}
+        \item Fetch \glspl{chunk} from \glspl{node}
+        \item Deserialize \glspl{chunk-index}
+        \item Reassemble \glspl{chunk} into \glspl{file} (not required for the study project)
+        \item Let the \gls{user} choose which \glspl{file} from which \gls{chunk-index} shall be restored.
+    \end{itemize}
 \end{itemize}
 
 \subsubsection{Node}
@@ -90,54 +85,53 @@ The contents of the \emph{Chunk} do not have be present on the \emph{Client}. Du
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{resources/node_domain_model}
-    \caption[Node Domain Model]{Domain Model illustrating the \emph{Node}s perspective}
+    \caption[Node Domain Model]{Domain Model illustrating the \glspl{node} perspective}
 \end{figure}
 
-A \emph{Node} is identified by its unique \emph{Node Identifier}. It listens on a certain \emph{Address} and \emph{Port}. A \emph{Node} is also associated with a \emph{Location} which will be a replication criteria in the future.
-
-A \emph{Node} knows the \emph{Management} by configuration and exchanges data with it on a regular basis.
-
-A \emph{Node} is in a given \emph{State} and acts differently depending on it (See Figure \ref{fig:node-states}). A \emph{Node} knows all other \emph{Nodes}s in the System and maintains a \emph{State} for them as well.
+\begin{itemize}
+    \item A \gls{node} is identified by its unique \gls{node-identifier}. It listens on a certain \emph{IP-Address} and \emph{Port}.
+    \item A \gls{node} is also associated with a \gls{location} which will be a replication criteria in the future.
+    \item A \gls{node} knows the \gls{management} by configuration and exchanges data with it on a regular basis (Messages \emph{get nodes metadata} and \emph{post nodes metadata})
+    \item A \gls{node} is in a given \gls{node-state} and acts differently depending on it (See Figure \ref{fig:node-states}).
+    \begin{itemize}
+        \item \emph{uninitialized}: The \gls{node} queries the \gls{management} for initialization and does nothing else.
+        \item \emph{participating}: This is the "normal" \gls{node-state} in which a \gls{node} accepts backups, performs replication and sends requested data.
+        \item \emph{unreachable}: A \gls{node} is marked as \emph{unreachable} if any other \gls{node} or the \gls{management} can not reach it. A \gls{node} never sees itself in this \gls{node-state}.
+        \item  \emph{leaving soon}: The \gls{node} does not answer any requests and ensures that all its data is replicated. When it is done, it automatically switches into the \emph{left} \gls{node-state}.
+        \item \emph{left}: The \gls{node} has nothing to do in this \gls{node-state} and can shut down.
+    \end{itemize}
+    \item A \gls{node} knows all other \glspl{node} in the \gls{system} and maintains a \gls{node-state} (see Figure~\ref{fig:node-states}) for them as well.
+    \item The \glspl{chunk-content} are stored in a \gls{storage}. See \fullref{sec:component-storage} for further details.
+    \item Which \glspl{chunk} are stored on the \gls{node}, their \gls{expiration-date} and the information whether a \gls{chunk} is a \gls{root-handle} is stored in the \gls{chunk-table}.
+\end{itemize}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{resources/node_state}
-    \caption[Node States]{A UML State Diagram describing the \emph{States} of a \emph{Node}}
+    \caption[Node States]{A UML State Diagram describing the \glspl{node-state}}
     \label{fig:node-states}
 \end{figure}
-
-\begin{itemize}
-	\item \emph{uninitialized}: The \emph{Node} queries the \emph{Management} for initialization and does nothing else.
-	\item \emph{active}: This is the "normal" state in which a \emph{Node} accepts backups, performs replication and sends requested data.
-	\item \emph{unreachable}: A \emph{Node} is marked as \emph{unreachable} if any other \emph{Node} or the \emph{Management} can not reach it. A node never sees itself in this state.
-	\item  \emph{leaving soon}: The \emph{Node} does not answer any requests and ensures that all its data is replicated. When it is done, it automatically switches into the \emph{left} state.
-	\item \emph{left}: The node has nothing to do in this state and can shut down.
-\end{itemize}
-
-The effective contens of a \emph{Chunk} are stored in a \emph{Storage}. See \ref{sec:component-storage} Component Storage for further details.
-
-The metadata about which \emph{Chunks} are stored on the \emph{Node} as well as their \emph{Expiration Date} and the information weather a \emph{Chunk} is a \emph{Root Handle} is stored in the \emph{Chunk Table}.
 
 \paragraph{Responsibilities}
 
 \begin{itemize}
-	\item Send Metadata periodically in order to ...
-	\begin{itemize}
-		\item Perform initialization
-		\item Learning about other \emph{Nodes}
-		\item Start the \emph{leaving} process and notify the \emph{Management} when it is completed
-		\item Send Metadata to the \emph{Management} so that it can perform health-checks (e.g. Verify the Timestamp)
-	\end{itemize}
-	\item Maintain the \emph{Chunk Table} (via backup and replication)
-	\begin{itemize}
-		\item Update \emph{Expiration Date}s
-		\item Add new \emph{Chunks}
-		\item Remove expired \emph{Chunks}
-	\end{itemize}
-	\item Handle possible \emph{Storagep} issues (See Scenario \ref{sec:scenario-storage-errors} \nameref{sec:scenario-storage-errors})
-	\item reply to \emph{Backup Requests}  (Scenario \ref{sec:scenario-create-backup} \nameref{sec:scenario-create-backup}) , \emph{client list root handles} (Scenario \ref{sec:scenario-backup-restore} \nameref{sec:scenario-backup-restore}) and \emph{fetch chunk}s requests
-	\item Replicate Data (See Scenario \ref{sec:scenario-data-replication} \nameref{sec:scenario-data-replication})
-	\item Handle Leaving Process (See Scenario \ref{sec:scenario-node-leave-planned} \nameref{sec:scenario-node-leave-planned})
+    \item Send \gls{metadata} periodically (Messages \emph{get nodes metadata} and \emph{post nodes metadata}) in order to ...
+    \begin{itemize}
+        \item Perform initialization
+        \item Learn about other \glspl{node}
+        \item Start the \emph{leaving} process and notify the \gls{management} when it is completed
+        \item Send \gls{metadata} to the \gls{management} so that it can perform health-checks (e.g. verify the timestamp)
+    \end{itemize}
+    \item Maintain the \gls{chunk-table}
+    \begin{itemize}
+        \item Update \glspl{expiration-date}
+        \item Add new \glspl{chunk}
+        \item Remove expired \glspl{chunk}
+    \end{itemize}
+    \item Handle possible \gls{storage} issues (see Scenario \ref{sec:scenario-storage-errors} \nameref{sec:scenario-storage-errors})
+    \item Reply to \emph{get designation}  (Scenario \ref{sec:scenario-create-backup} \nameref{sec:scenario-create-backup}) , \emph{get root handles} (Scenario \ref{sec:scenario-backup-restore} \nameref{sec:scenario-backup-restore}) and \emph{get chunks} requests
+    \item Replicate \glspl{chunk} (See Scenario \ref{sec:scenario-data-replication} \nameref{sec:scenario-data-replication})
+    \item Handle \emph{leaving} process (see Scenario \ref{sec:scenario-node-leave-planned} \nameref{sec:scenario-node-leave-planned})
 \end{itemize}
 
 \label{sec:component-storage}
@@ -146,23 +140,25 @@ The metadata about which \emph{Chunks} are stored on the \emph{Node} as well as 
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{resources/storage_domain_model}
-	\caption[Storage Domain Model]{Domain Model illustrating the \emph{Storage}s perspective}
+    \caption[Storage Domain Model]{Domain Model illustrating the \gls{storage}s perspective}
 \end{figure}
 
-The main purpose of a \emph{Storage} component is to manage \emph{Chunk}s.
-A \emph{Storage} is associated with one \emph{Node} which stores, loads and deletes \emph{Chunk Contents} by its \emph{Chunk Identifier} on the \emph{Storage}. The same \emph{Node} is notified by the \emph{Storage} e.g. when corrupted data is detected.
+\begin{itemize}
+    \item The main purpose of the \gls{storage} component is to persist \glspl{chunk-content}. A \gls{storage} is associated with one \gls{node} which stores, loads and deletes \glspl{chunk-content} by its \gls{chunk-identifier} on the \gls{storage}. The same \gls{node} is notified by the \gls{storage} e.g. when corrupted data is detected.
+    \item A \gls{chunk} should also monitor the \glspl{medium}, on which the \glspl{chunk-content} are stored, for possible issues and report them to the \gls{node}. This feature, however, is not implemented in the study project.
+    \item The \gls{storage} component is deployed on the same host as the \gls{node} that is using it.
+\end{itemize}
 
-A \emph{Chunk} should also monitor the \emph{Disk}s, on which the \emph{Chunk Contents} are stored, for possible issues and report them to the \emph{Node}. This feature, however, is not implemented in the study project.
 
 \paragraph{Responsibilities}
 
 \begin{itemize}
-	\item store \emph{Chunk Contens}
-	\item load and return \emph{Chunk Contens} by its \emph{Chunk Identifier}
-	\item delete\emph{Chunk Contens} by its \emph{Chunk Identifier}
-	\item detect possible corruption of \emph{Chunk Contents}
-	\item perform integrity tests on the \emph{Disk}s (e.g. S.M.A.R.T tests)
-	\item Notify the \emph{Node} when a corruption / integrity problem occur
+    \item Store \glspl{chunk-content}
+    \item Load and return the \glspl{chunk-content} for a given \gls{chunk-identifier}
+    \item Delete the \glspl{chunk-content} for a given \gls{chunk-identifier}
+    \item Detect possible corruption of \glspl{chunk-content}
+    \item Perform service checks on the \glspl{medium} (e.g. S.M.A.R.T tests)
+    \item Notify the \gls{node} when a corruption / integrity problem occurs
 \end{itemize}
 
 \subsubsection{Management}
@@ -170,29 +166,31 @@ A \emph{Chunk} should also monitor the \emph{Disk}s, on which the \emph{Chunk Co
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{resources/management_domain_model}
-    \caption[Management Domain Model]{Domain Model illustrating the \emph{Management}s perspective}
+    \caption[Management Domain Model]{Domain Model illustrating the \gls{management}'s perspective}
 \end{figure}
-
-The \emph{Administrator} is the only Actor interacting with the \emph{Management}. He/She sends instructions (e.g. add new node) and is notified by the \emph{Management} about any anomalies.
-\emph{Clients} fetch a list of all \emph{Nodes} from the \emph{Management} (See Client Component for furhter Details). As for now, the \emph{Management} does not know anything about \emph{Client}s, but this might change when authentication is implemented in the future.
-The \emph{Management} maintains \emph{Metadata} for each \emph{Node} in the System and sends that information every \emph{Node} when they post their \emph{Metadata}.
+\begin{itemize}
+    \item The \gls{administrator} is the only Actor interacting with the \gls{management}. He/She sends instructions (e.g. add new \gls{node}) and is notified by the \gls{management} about any anomalies.
+    \item \glspl{client} fetch a list of all \glspl{node} from the \gls{management} (See Component \ref{sec:component-client} \nameref{sec:component-client} for further details). As for the study project, the \gls{management} does not have any information about \glspl{client}, but this might change when authentication is implemented in the future.
+    \item The \gls{management} maintains \gls{metadata} for each \gls{node} in the \gls{system} and sends that information every \gls{node} when they post their \gls{metadata}.
+\end{itemize}
 
 \paragraph{Responsibilities}
 \begin{itemize}
-	\item Add and remove \emph{Nodes}
-	\item Notify the \emph{Administrator} e.g. if a \emph{Node} leaves unexpectedly.
-	\item Receive \emph{Metadata} from the \emph{Nodes} and reply with \emph{Metadata}
-	\item Send list of \emph{Nodes} to the \emph{Client}s
+    \item Add and remove \glspl{node}
+    \item Notify the \gls{administrator} e.g. if a \gls{node} leaves unexpectedly.
+    \item Receive \gls{metadata} from the \glspl{node} and reply with \gls{metadata}
+    \item Send list of \glspl{node} to the \glspl{client}
 \end{itemize}
 
 \subsection{Scenarios}
 \label{sec:scenarios}
-This section describes various scenarios of system usage and possible failures.
+This section describes various scenarios of \gls{system} usage and possible failures.
 
-In the sequence diagrams, we use the composition of the minimal integration test, detailed in Figure \ref{fig:integrationtestsmall} (Chapter \ref{integration-tests}). The client backups its data to Node A only.
+In the sequence diagrams, we use the composition of the minimal integration test, detailed in Figure \ref{fig:integrationtestsmall} (Chapter \ref{integration-tests}).
+The \gls{client} sends its data to \Gls{node} A only.
 
 \subsubsection{Create Backup}\label{sec:scenario-create-backup}
-The client wants to create a backup.
+The \gls{client} wants to create a backup.
 
 \begin{figure}[h]
     \centering
@@ -202,57 +200,57 @@ The client wants to create a backup.
 \end{figure}
 
 \begin{enumerate}
-    \item Client asks the management for a list of \emph{node}s. The \emph{management} returns a sorted list of all nodes (message: \emph{get target nodes}) (sorting might be based on specific configuration).
+    \item The \gls{client} asks the \gls{management} for a list of \glspl{node}. The \gls{management} returns a sorted list of all \glspl{node} (message: \emph{get target nodes}) (sorting might be based on specific configuration).
         \begin{itemize}
-            \item If the management is down and this is a first time backup, client records message and aborts.
-            \item If the management is down, client tries the same host configuration as last time.
+            \item If the \gls{management} is down and this is a first time backup, the \gls{client} records a message and aborts.
+            \item If the \gls{management} is down, \gls{client} tries the same \glspl{node} as last time.
         \end{itemize}
-    \item Client tries to contact nodes in the presorted order.
+    \item The \gls{client} tries to contact \glspl{node} in the presorted order.
         \begin{enumerate}
-            \item The client sends a backup request (message: \emph{get designation}.
-            \item The node acknowledges or denies the backup request.
-            \item If the node acknowledges, it is declared as \emph{designated node}
-            \item If the node denies the backup request, try next node.
-            \item If no node answers the request, client records an error message and aborts.
+            \item The \gls{client} sends a backup request (message: \emph{get designation}).
+            \item The \gls{node} acknowledges or denies the backup request (message: \emph{return designation}).
+            \item If the \gls{node} acknowledges, it is declared as \gls{designated-node}.
+            \item If the \gls{node} denies the backup request, the \gls{client} tries the next \gls{node}.
+            \item If no \gls{node} answers the request, the \gls{client} records an error message and aborts.
        \end{enumerate}
-   \item If the contact was established, the client starts creating a backup.
+   \item If the backup request was successful, the \gls{client} starts creating a backup.
         \begin{enumerate}
-            \item Split all files that changed since the last backup into \emph{chunk}s\footnote{using a rolling hash, see \url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html\#chunks}} and calculate a corresponding hash, the \emph{chunk identifier} and add it to the local \emph{chunk index}.
-            \item Files that have not changed since the last backup, must already be present in the chunk index.
-            \item Send all chunk identifiers present in the chunk index combined with an \emph{expiration date} to the designated node. (message: \emph{get chunk states})
-            \item The designated node checks, if all chunks received from the client chunk list are present on the node.
+            \item The \gls{client} splits all \glspl{file} that changed since the last backup into \glspl{chunk-content} and calculate a corresponding hash, the \gls{chunk-identifier} and add it to the local \gls{chunk-index}.
+            \item \Glspl{file} that have not changed since the last backup, are already be present in the \gls{chunk-index}.
+            \item The \gls{client} send all \glspl{chunk-identifier} present in the \gls{chunk-index} combined with an \gls{expiration-date} to the \gls{designated-node}. (message: \emph{get chunk states})
+            \item The \gls{designated-node} checks, if all \glspl{chunk-identifier} received from the \gls{client} are present in its \gls{chunk-table}.
                 \begin{itemize}
-                    \item If a chunk is already present, update its expiration date if it is further in the future.
-                    \item If a chunk is not present, request it from the client (see message response \emph{return chunk states} for further details)
+                    \item If a \gls{chunk-identifier} is already present on the \gls{designated-node}, update its \gls{expiration-date} if it is further in the future.
+                    \item If a \gls{chunk-identifier} is not present on the \gls{designated-node}, request it from the \gls{client} (see message response \emph{return chunk states} for further details)
                 \end{itemize}
-            \item The client sends the requested chunks to the designated node with a \emph{post chunks} message. %TODO: Abschluss client transaktion (root handle)
+            \item The \gls{client} sends the requested \glspl{chunk-content} to the \gls{designated-node} with a \emph{post chunks} message. %TODO: Abschluss client transaktion (root handle)
                 \begin{enumerate}
-                    \item The designated node verifies and persists the chunk into its \emph{storage}. Afterwards, it acknowledges receipt to the client (see \emph{acknowledge chunks} response message).
+                    \item The \gls{designated-node} verifies and persists the \glspl{chunk-content} into its \gls{storage}. Afterwards, it acknowledges receipt to the \gls{client} (see \emph{acknowledge chunks} response message).
                                    %TODO: Client must remember, which chunks have been acknowledged. This could be done with a sliding window for QoS/memory usage?
-                    \item The designated node replicates chunks in a continuous replication process. (See scenario~\ref{sec:scenario-data-replication})
+                    \item The \gls{designated-node} replicates \gls{chunk-content} and their \gls{expiration-date} in a continuous replication process. (See scenario~\fullref{sec:scenario-data-replication})
                 \end{enumerate}
-            \item The client creates a \emph{serialised metadata chunks}. %TODO: Serialised Metadata is the chunk index plus backup metadata as linked list
-            \item The client sends the additional chunks (as \emph{post chunks} messages) to the designated node, in which the \emph{root handle} is highlighted. %TODO: The root handle holds a reference to the first list chunk as well as owner etc. information.
+            \item The \gls{client} serializes its \gls{chunk-index} into a \gls{serialised-chunk-index} and splits it into \glspl{chunk} as well. %TODO: Serialised Metadata is the chunk index plus backup metadata as linked list
+            \item The \gls{client} sends the additional \glspl{chunk-content} (as \emph{post chunks} messages) to the \gls{designated-node}, in which the \gls{root-handle} is highlighted. %TODO: The root handle holds a reference to the first list chunk as well as owner etc. information.
         \end{enumerate}
 \end{enumerate}
 
 \paragraph{Special cases}
 \begin{itemize}
-    \item If a client is suspended while running, it continuous with the backup process on resume. %TODO: If the expiration date is in the past, the node should refuse the chunk.
-    \item If a file is changed while the backup is running, and the chunk cannot be created, the backup must be restarted. %TODO: This may lead to starvation.
-    \item If client crashes, the backup is aborted and won't be continued if the client is restarted.
-    \item If the node goes away (disconnects/crashes/shuts down) during the backup, the client tries to resume the process. After a certain time (e.g. 15m), the client gives up and restarts the backup process from the beginning.
-    \item The node must reject (i.e.\ not acknowledge) a chunk, if the creation date is more than e.g.\ an hour in the future or past to prevent data loss on bad synchronized clocks.
-    \item If the node runs out of storage capacity, it does reject further data chunks. After a timeout, the client restarts the backup process (with another designated node).
+    \item If the \gls{client} is suspended while running, it continuous with the backup process on resume. %TODO: If the expiration date is in the past, the node should refuse the chunk.
+    \item If a \gls{file} is changed during the backup process, and the \glspl{chunk-content} and \glspl{chunk-identifier} cannot be calculated, the backup process must be restarted. %TODO: This may lead to starvation.
+    \item If \gls{client} crashes, the backup is aborted and won't be continued if the \gls{client} is restarted.
+    \item If the \gls{designated-node} goes away (disconnects/crashes/shuts down) during the backup process, the \gls{client} tries to resume the process. After a certain time (e.g. 15m), the \gls{client} gives up and restarts the backup process from the beginning.
+    \item A \gls{node} must reject (i.e.\ not acknowledge) \glspl{chunk-content}, if the timestamp of the sending party (e.g. \gls{client}) is e.g.\ an hour in the future or past to prevent data loss on bad synchronized clocks.
+    \item If the \gls{designated-node} runs out of storage capacity, it does reject further \glspl{chunk-content}. After a timeout, the \gls{client} restarts the backup process (with another \gls{designated-node}).
 \end{itemize}
 
 \paragraph{Possible simplifications in this study project}
 \begin{description}
-    \item[3a)] Don't split files into chunks, send them as is.
+    \item[3a)] Do not split \glspl{file} into \glspl{chunk} but send them as is.
 \end{description}
 
 \subsubsection{Backup Restore}\label{sec:scenario-backup-restore}
-The client wants to restore specific data.
+The \gls{client} wants to restore specific \glspl{file}.
 
 \begin{figure}[h]
     \centering
@@ -262,35 +260,35 @@ The client wants to restore specific data.
 \end{figure}
 
 \begin{enumerate}
-    \item See scenario~\ref{sec:scenario-create-backup} step 1.
-    \item The client contacts nodes in the presorted order
+    \item Same as in scenario~\fullref{sec:scenario-create-backup} step 1.
+    \item The \gls{client} contacts the \glspl{node} in the presorted order
         \begin{enumerate}
-            \item The client sends a \emph{get root handles} requests to a node.
-            \item The node returns all root handles present in the system (see \emph{return root handles} message)
-            \item If no node answers the request, client records an error message and aborts.
+            \item The \gls{client} sends a \emph{get root handles} requests to a \gls{node}, the \gls{designated-node}.
+            \item The \gls{designated-node} returns all \glspl{root-handle} present in the \gls{system} (see \emph{return root handles} message)
+            \item If no \gls{node} answers the request,the \gls{client} records an error message and aborts.
         \end{enumerate}
-    \item The client fetches all \emph{serialised metadata chunks} from the chosen node (message: \emph{get chunks}) and reassembles \emph{chunk index} and backup metadata.
-    \item The user specifies which files in which backup version shall be restored. %TODO: Use snapshot as single backup name?
-    \item Based on the specified files, the client looks up the \emph{chunk identifiers} in the corresponding \emph{chunk index}.
-    \item The client requests the \emph{chunks} from the selected node. (message: \emph{get chunks})
-    \item The client reassembles the chunks into files.
+    \item The \gls{client} fetches all \glspl{chunk-content} of the \glspl{serialised-chunk-index} from the \gls{designated-node} (message: \emph{get chunks}) and reassembles the \glspl{chunk-index}.
+    \item The \gls{user} specifies which \glspl{file} from which \gls{chunk-index} shall be restored.
+    \item The \gls{client} looks up the \glspl{chunk-identifier} in the corresponding \gls{chunk-index}.
+    \item The \gls{client} requests the \glspl{chunk-content} from the \gls{designated-node}. (message: \emph{get chunks})
+    \item The \gls{client} reassembles the \glspl{chunk-content} into \glspl{file}.
 \end{enumerate}
 
 \paragraph{Special cases}
 \begin{itemize}
-    \item If the selected node does not hold the requested chunk, it requests it recursively.
-    \item If the client crashes, the whole restore process must be repeated
-    \item If the selected node is unavailable, the client selects a new node after a certain timeout (e.g.\ 5m)
+    \item If the \gls{designated-node} does not have a requested \gls{chunk-identifier} in its \gls{chunk-table}, it requests the corresponding \gls{chunk-content} recursively.
+    \item If the \gls{client} crashes, the restore process must be repeated
+    \item If the \gls{designated-node} is unavailable, the \gls{client} selects a new \gls{designated-node} after a certain timeout (e.g.\ 5m)
 \end{itemize}
 
 \paragraph{Possible simplifications in this study project}
 \begin{description}
-    \item[-] The client must request a node that has the data already available (possibly the node where the backup was created).
+    \item[-] The \gls{client} must request a \gls{node} that has the data already available (possibly the \gls{designated-node}, where the backup was created).
 \end{description}
 
 
 \subsubsection{Node Joining}\label{sec:scenario-node-join}
-A new node joins the system.
+A \gls{new-node} joins the \gls{system}.
 
 \begin{figure}[h]
     \centering
@@ -302,21 +300,21 @@ A new node joins the system.
 This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
 
 \begin{enumerate}
-    \item The node is registered by an administrator in the \emph{managment} using its \emph{node identifier}. A \emph{location} must also be assigned to the node. %TODO: Data
-    \item The new node queries information of all nodes from the management (message: \emph{get nodes metadata}) on startup. 
-    \item The new node configures itself based on its \emph{node identifier} and the response from the management.
+    \item The \gls{new-node} is registered by an \gls{administrator} in the \gls{management} using its \gls{node-identifier}. A \gls{location} must also be assigned to the \gls{node}. %TODO: Data
+    \item The \gls{new-node} queries \gls{metadata} from the \gls{management} (message: \emph{get nodes metadata}) on startup.
+    \item The \gls{new-node} configures itself based on its \gls{node-identifier} and received \gls{metadata} from \gls{management}.
         \begin{itemize}
-            \item If the management has no information available (yet) or is unavailable, the node retries after a certain timeout (e.g.\ 5min).
+            \item If the \gls{management} has no information available (yet) or is unavailable, the \gls{new-node} retries after a certain timeout (e.g.\ 5min).
         \end{itemize}
-    \item Other nodes learn about the new node through periodical metadata queries (message: \emph{post nodes metadata}) %TODO: Component description: regular queries
+    \item Other \glspl{node} learn about the \gls{new-node} through periodical \gls{metadata} queries (message: \emph{post nodes metadata})
         \begin{enumerate}
-            \item If the new host contacts an existing node, before the existing node updates its metadata, the existing node should query the management (message: \emph{get nodes metadata})
-            \item If the management is unavailable, the node ignores all communication attempts.
+            \item If the \gls{new-node} contacts an existing \gls{node}, before the existing \gls{node} updates its \gls{metadata}, the existing \gls{node} should query the \gls{management} (message: \emph{get nodes metadata})
+            \item If the \gls{management} is unavailable, the \gls{new-node} ignores all communication attempts.
         \end{enumerate}
 \end{enumerate}
 
 \subsubsection{Node Leaving Planned}\label{sec:scenario-node-leave-planned}
-A node leaves the system planned
+A \gls{node} leaves the \gls{system} planned (refered as \gls{leaving-node}).
 
 \begin{figure}[h]
     \centering
@@ -328,14 +326,13 @@ A node leaves the system planned
 This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
 
 \begin{enumerate}
-    \item The node is marked as \emph{leaving soon} by the administrator in the management.
-    \item As soon as the leaving node realises that it is \emph{leaving soon} (using \emph{post nodes metadata}), the node ignores messages from other nodes, rejects any new backups and starts replicating its data to another node.
-    \item As soon as all data is replicated onto other nodes, the nodes changes its state to \emph{left} and informs the management (message: \emph{post nodes metadata}).
-    %TODO: A node has a state (prepare leaving)
+    \item The \gls{leaving-node} is marked as \emph{leaving soon} by the \gls{administrator} in the \gls{management}.
+    \item As soon as the \gls{leaving-node} realises that it is in \gls{node-state} \emph{leaving soon} (using \emph{post nodes metadata}), it ignores messages from other \glspl{node}, rejects any new backups and starts replicating its \glspl{chunk-content} to another \gls{node}.
+    \item As soon as all \glspl{chunk-content} are replicated onto other \glspl{node}, the \gls{leaving-node} changes its \gls{node-state} to \emph{left} and informs the \gls{management} (message: \emph{post nodes metadata}).
 \end{enumerate}
 
 \subsubsection{Node Leaving Unplanned}\label{sec:scenario-node-leave-unplanned}
-A node leaves the system unexpectedly.
+A \gls{node} leaves the \gls{system} unexpectedly.
 
 \begin{figure}[h]
     \centering
@@ -347,20 +344,20 @@ A node leaves the system unexpectedly.
 This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
 
 \begin{enumerate}
-    \item If a node is not responding (which means, no other node nor the management can reach it), the management records the unavailability and informs the administrator.
+    \item If a \gls{node} is not responding (which means, no other \gls{node} nor the \gls{management} can reach it), the \gls{management} records the unavailability and informs the \gls{administrator}.
     %Replikationsmechanismus; management knows, that on reason of intervall the node is away
 \end{enumerate}
 
 \begin{itemize}
-    \item If the node returns, then the node carries on.
-    \item If the administrator marks the node as \emph{left}, which will be propagated to all nodes via the \emph{post nodes metadata} message.
+    \item If the \gls{node} returns, it carries on as if nothing happend.
+    \item If the \gls{node} does not return, the \gls{administrator} marks the \gls{node} as \emph{left}, which is propagated to all \glspl{node} via the \emph{post nodes metadata} message.
         \begin{itemize}
-            \item Data, which was not previously replicated from the node are lost.
+            \item \glspl{chunk-content}, which were not previously replicated from the \gls{node} are lost.
         \end{itemize}
 \end{itemize}
 
 \subsubsection{Data Replication}\label{sec:scenario-data-replication}
-The network distributes backup data.
+The network distributes \glspl{chunk}.
 
 \begin{figure}[h]
     \centering
@@ -372,65 +369,65 @@ The network distributes backup data.
 This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
 
 \begin{enumerate}
-    \item The sending node picks $n$ random entries from its \emph{node chunk table}. In the future, the chunks might be selected based on heuristics.
-    \item The sending node picks one random designated node from its \emph{node metadata table}. In the future, the nodes might be selected based on heuristics. %TODO: naming of node metadata table could be better ;)
-    \item The sending node sends the chosen \emph{chunk identifier}s to the designated node with a \emph{get chunk states} message.
-    \item The designated node checks, if all chunks received from the sending node are present in its \emph{node chunk table}
+    \item The \gls{sending-node} picks $n$ random entries from its \gls{chunk-table}. In the future, these entries might be selected based on heuristics.
+    \item The \gls{sending-node} picks one random \gls{designated-node} from its \gls{metadata}. In the future, the \gls{designated-node} might be selected based on heuristics.
+    \item The \gls{sending-node} sends the \glspl{chunk-identifier} of the chosen entries to the \gls{designated-node} with a \emph{get chunk states} message.
+    \item The \gls{designated-node} checks, if all \glspl{chunk-identifier} received from the \gls{sending-node} are present in its \gls{chunk-table}.
         \begin{itemize}
-            \item If a chunk is already present, update its expiration date if it is further in the future.
-            \item If a chunk is not present, request it from the \emph{sending node} (see message \emph{return chunk states} for further details).
+            \item If a \gls{chunk-identifier} is already present, update its \gls{expiration-date} if it is further in the future.
+            \item If a \gls{chunk-identifier} is not present, request the corresponding \gls{chunk-content} from the \gls{sending-node} (see message \emph{return chunk states} for further details).
         \end{itemize}
-    \item The sending node sends the \emph{requested chunks} to the \emph{designated node} with a \emph{post chunks} message.
+    \item The \gls{sending-node} sends the requested \glspl{chunk-content} to the \gls{designated-node} with a \emph{post chunks} message.
         \begin{itemize}
-            \item The \emph{designated node} verifies and persists the chunk into its \emph{storage}. Afterwards, it acknowledges receipt to the \emph{sending node} (see \emph{acknowledge chunks} message).
+            \item The \gls{designated-node} verifies and persists the \glspl{chunk-content} into its \gls{storage}. Afterwards, it acknowledges receipt to the \gls{sending-node} (see \emph{acknowledge chunks} response message).
         \end{itemize}
 \end{enumerate}
 
 \subsubsection{Data has Expired Lifetime}\label{sec:scenario-data-expiration}
-A node wants to delete data associated with an expired backup/snapshot.
+A \gls{node} wants to delete \glspl{chunk} with a past \gls{expiration-date}.
 
 This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
 
 \begin{itemize}
-    \item The \emph{management} monitors the nodes physical timestamp and records any deviation from the management time larger than 1h.
-    \item Therefore, a first prototype, the system may just delete chunks after the specified keep date without further checks.
+    \item The \gls{management} monitors the \glspl{node} physical timestamp and records any deviation from the \gls{management} time larger than 1h.
+    \item Therefore, a first prototype, the \gls{nodes} may just delete \glspl{chunk} after the specified \gls{expiration-date} without further checks.
         \begin{itemize}
-            \item We build on the assumption, that the nodes have different upstream timeservers, so that a general time shift is unlikely.
-            \item In case a single node's time is in the past, and runs out of storage, it might lead to a degraded system (redundancy loss).
-            \item If a single nodes time is in the future, the redundancy is reduced by one.
+            \item We build on the assumption, that the \glspl{node} have different upstream timeservers, so that a general time shift is unlikely.
+            \item In case a single \gls{node}s time is in the past, and runs out of storage capacity, it might lead to a redundancy loss.
+            \item If a single \gls{node}s time is in the future, the redundancy is reduced by one.
         \end{itemize}
 \end{itemize}
 
 In the future, it is advisable to implement a consent protocol to reduce the likelihood of data loss.
 
 \subsubsection{Data Storage has Errors}\label{sec:scenario-storage-errors}
-The storage layer notifies the node that some of the data stored on it is corrupt.
+The \gls{storage} component notifies its \gls{node} that a \gls{chunk} stored in it is corrupt.
 
 This scenario is described as it is implemented in the study project. It might be subject to further evaluation in the future.
 
 \begin{enumerate}
-    \item The storage informs the node of a corrupt data set
-    \item The node removes the \emph{chunk identifier} from the \emph{node chunk table}.
+    \item The \gls{storage} informs the \gls{node} of a corrupt \gls{chunk} using its \gls{chunk-identifier}
+    \item The \gls{node} removes the \gls{chunk-identifier} from the \gls{chunk-table}
         \begin{itemize}
-            \item The chunk will be replicated eventually.
+            \item The \gls{chunk} will be replicated eventually.
         \end{itemize}
-    \item On the next \emph{post nodes metadata} request to the management.
+    \item Inform \gls{management} when sending the next \emph{post nodes metadata} message.
 \end{enumerate}
 
 \subsubsection{Management Problems}\label{sec:scenario-management-problems}
 \begin{itemize}
-    \item The case, that the management has outdated metadata out of a data loss, will be ignored during this study project. A mechanism solving this problem, would probably be subject to significant changes in further system development e.g.\ when implementing limited redundancy levels. %TODO: Counter in config in the future
+    \item The case, that the \gls{management} has outdated \gls{metadata} out of a data loss, will be ignored during this study project. A mechanism solving this problem, would probably be subject to significant changes in further development e.g.\ when implementing limited redundancy levels. %TODO: Counter in config in the future
 \end{itemize}
 
 \subsubsection{Network Availability Problems}\label{sec:scenario-network-errors}
 \paragraph{Behaviour in case a node can reach only some nodes directly}
-The still available nodes should try to satisfy redundancy needs as good as possible.
-If a node cannot reach other nodes, it notifies the management with the next \emph{post nodes metadata}
+The still available \glspl{node} should try to satisfy redundancy needs as good as possible.
+If a \gls{node} cannot reach other \glspl{node}, it notifies the \gls{management} with the next \emph{post nodes metadata}
 
 \paragraph{Behaviour in case the network gets partitioned}
-(, and the nodes in each partition can only reach each other and not the other ones.)
+(, and the \glspl{node} in each partition can only reach each other and not the other ones.)
 
-See first case in scenario~\ref{sec:scenario-network-errors}
+See first case in scenario~\fullref{sec:scenario-network-errors}
 
 \paragraph{Behaviour in case nodes have different states of management information}
-The redundancy is temporary reduced to the nodes, which the group of old nodes know, but will eventually be resolved as nodes fetch \emph{metadata}. %TODO: rename metadata
+The redundancy is temporary reduced to the \glspl{node} which the group of old \glspl{node} know, but will eventually be resolved as \glspl{node} fetch \gls{metadata}.

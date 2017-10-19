@@ -29,6 +29,8 @@ consistentlayout, % Uncomment to change the layout of the declaration, abstract 
 \usepackage{url}
 \usepackage[autostyle=true]{csquotes} % Required to generate language-dependent quotes in the bibliography
 
+\newcommand*{\fullref}[1]{\hyperref[{#1}]{\ref*{#1} \nameref*{#1}}} % One single link
+
 %----------------------------------------------------------------------------------------
 %	MARGIN SETTINGS
 %----------------------------------------------------------------------------------------
@@ -42,6 +44,26 @@ consistentlayout, % Uncomment to change the layout of the declaration, abstract 
 	bottom=1.5cm, % Bottom margin
 	%showframe, % Uncomment to show how the type block is set on the page
 }
+
+%----------------------------------------------------------------------------------------
+%	Glossary SETTINGS
+%----------------------------------------------------------------------------------------
+\usepackage[acronym,toc,nopostdot]{glossaries}
+\usepackage{hyperref}
+\glossarystyle{altlist}
+\usepackage{xparse}
+\DeclareDocumentCommand{\newdualentry}{ O{} O{} m m m m } {
+	\newglossaryentry{gls-#3}{
+		name={#4 : #5},
+		text={#5\glsadd{#3}},
+		description={#6},
+		#1
+	}
+	\makeglossaries
+	\newacronym[see={[Siehe:]{gls-#3}},#2]{#3}{#4}{#5\glsadd{gls-#3}}
+}
+\renewcommand{\glstextformat}[1]{\textbf{\em #1}}
+\makeglossaries
 
 %----------------------------------------------------------------------------------------
 %	THESIS INFORMATION
