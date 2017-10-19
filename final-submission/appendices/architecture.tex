@@ -390,7 +390,7 @@ This scenario is described as it is implemented in the study project. It might b
 
 \begin{itemize}
     \item The \gls{management} monitors the \glspl{node} physical timestamp and records any deviation from the \gls{management} time larger than 1h.
-    \item Therefore, a first prototype, the \gls{nodes} may just delete \glspl{chunk} after the specified \gls{expiration-date} without further checks.
+    \item Therefore, a first prototype, the \gls{node} may just delete \glspl{chunk} after the specified \gls{expiration-date} without further checks.
         \begin{itemize}
             \item We build on the assumption, that the \glspl{node} have different upstream timeservers, so that a general time shift is unlikely.
             \item In case a single \gls{node}s time is in the past, and runs out of storage capacity, it might lead to a redundancy loss.
