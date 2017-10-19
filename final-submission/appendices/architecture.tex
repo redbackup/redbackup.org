@@ -432,47 +432,83 @@ See first case in scenario~\fullref{sec:scenario-network-errors}
 \paragraph{Behaviour in case nodes have different states of management information}
 The redundancy is temporary reduced to the \glspl{node} which the group of old \glspl{node} know, but will eventually be resolved as \glspl{node} fetch \gls{metadata}.
 
-\subsection{Messages}
 
-\emph{Messages} denote the communication units, which are transported over the network.
+\subsection{Messages}\label{sec:messages}
+\Glspl{message} denote the communication units between application components. A \gls{message} is wrapped by an \gls{envelope}.
 
-\subsubsection{target nodes}
-\paragraph{get target nodes}
-\paragraph{return target nodes}
-RETURN: sorting based on managment configuration: hostnames; ipaddresses
+\subsubsection{Envelopes}
+An \gls{envelope} is a wrapper for a \gls{message}, which provides standardised attributes.
 
-\subsubsection{designation}
-\paragraph{get designation}
+\begin{table}[h]
+    \begin{tabu}{>{\ttfamily}l X}
+        timestamp\_now
+            & The current UTC time of the local clock as a unix timestamp.  \\
+        message\_type
+            & A string representation of the type of the message, as described in chapter \fullref{sec:messages}. \\
+        message
+            & The actual payload of the specified \texttt{message\_type}
+    \end{tabu}
+    \caption[\Gls{envelope} Structure]{Structure of an \gls{envelope}.}
+    \label{tab:envelope}
+\end{table}
+
+\subsubsection{get target nodes}
+A \gls{client} requests a list of \glspl{node} from the management, with the indent to make backups on. The client expects a \emph{return target nodes} \gls{message} in return.
+
+The \gls{message} is empty.
+
+\subsubsection{return target nodes}
+The \gls{node} responds to the \glspl{client} request \emph{get target nodes}.
+
+\begin{table}[h]
+    \begin{tabu}{>{\ttfamily}l X}
+        target\_nodes
+            & A list of possible \emph{target nodes} as described in Table \ref{tab:message-return-target-nodes-field-target-nodes}. The list is sorted in descending order by preference, defined by the \gls{management}.
+    \end{tabu}
+    \caption[\emph{return target nodes} Structure]{Structure of a \emph{return target nodes} \Gls{message}.}
+    \label{tab:message-return-target-nodes}
+\end{table}
+
+\begin{table}[h]
+    \begin{tabu}{>{\ttfamily}l X}
+        hostname
+            & Hostname of the \gls{node}. \\
+        ip\_address
+            &  IP-Address of the \gls{node}. \\
+        port\_number
+            &  Port-Number of the \gls{node}. \\
+    \end{tabu}
+    \caption[Field \texttt{target\_nodes} Structure]{Structure of Field \texttt{target\_nodes} as Used in the \emph{return target nodes} \Gls{message}.}
+    \label{tab:message-return-target-nodes-field-target-nodes}
+\end{table}
+
+\subsubsection{get designation}
 GET: estimate size; identification; how long data stored
-\paragraph{return designation}
+\subsubsection{return designation}
  RETURN: agree; not agree (reason)
 
-\subsubsection{chunk states}
-\paragraph{get chunk states}
-\paragraph{return chunk states}
+\subsubsection{get chunk states}
+\subsubsection{return chunk states}
 RETURN: chunk identifiers; keep date; stored (boolean); chunk handle state(boolean)
 
-\subsubsection{chunks}
-\paragraph{post chunks}
+\subsubsection{post chunks}
 POST: chunk identifier; chunk data; how long data stored; root handle state
-\paragraph{acknowledge chunks}
+\subsubsection{acknowledge chunks}
 ACK: chunk identifier; stored(boolean)
 
-\paragraph{get chunks}
+\subsubsection{get chunks}
 GET: chunk identifier
-\paragraph{return chunks}
+\subsubsection{return chunks}
 RETURN: chunk identifier, chunk data; root handle state
 
-\subsubsection{root handles}
-\paragraph{get root handles}
+\subsubsection{get root handles}
 GET: userid
-\paragraph{return root handles}
+\subsubsection{return root handles}
 RETURN: chunk identifier; chunk data
 
-\subsubsection{nodes metadata}
-\paragraph{get nodes metadata}
-\paragraph{post nodes metadata}
+\subsubsection{get nodes metadata}
+\subsubsection{post nodes metadata}
 POST: current local node metadata(identifier; state; redundancy status; free storage; capacity); current "neightbour" status(identifier;state)
-\paragraph{return nodes metadata}
+\subsubsection{return nodes metadata}
 RETURN list of (node name; node ip; node state; node free storage)
 
