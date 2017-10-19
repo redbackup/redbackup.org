@@ -3,19 +3,19 @@
 \section{Specification}\label{sec:specification}
 
 \subsection{Overview}
-Figure \ref{fig:architecture-overview} presents an overview over the Redbackup system. All actors, components and interactions are described in detail in the following sections.
+Figure \ref{fig:architecture-overview} presents an overview over the Redbackup \gls{system}. All actors, components and interactions are described in detail in the following sections.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{resources/architecture_overview}
-    \caption{A simplified system overview}
+    \caption{A simplified \gls{system} overview}
     \label{fig:architecture-overview}
 \end{figure}
 
 \subsection{Actors}
 
 \subsubsection{User}
-A typical \gls{user} does not want to interact with the system at any time. All he/she wants is to be sure that all his/her data is safely backed up.
+A typical \gls{user} does not want to interact with the \gls{system} at any time. All he/she wants is to be sure that all his/her data is safely backed up.
 
 To simplify the implementation for the study project, the \gls{user} must instruct the \gls{client} manually (create and restore backup).
 
@@ -27,11 +27,11 @@ To simplify the implementation for the study project, the \gls{user} must instru
 
 
 \subsubsection{Administrator}
-An \gls{administrator} wants to interact with the system as less as possible. He/She wants to be sure that the \gls{system} runs smoothly. If something goes wrong, he/she wants to be able to fix it within a few minutes.
+An \gls{administrator} wants to interact with the \gls{system} as less as possible. He/She wants to be sure that the \gls{system} runs smoothly. If something goes wrong, he/she wants to be able to fix it within a few minutes.
 
 \paragraph{Responsibilities}
 \begin{itemize}
-    \item Instruct the \gls{management} to add/remove \glspl{node} from the System
+    \item Instruct the \gls{management} to add/remove \glspl{node} from the \gls{system}
     \item Ensure that the \gls{management} runs properly (i.e. monitor it)
     \item Act if the \gls{management} notifies him/her about any anomalies
 \end{itemize}
@@ -184,7 +184,7 @@ An \gls{administrator} wants to interact with the system as less as possible. He
 
 \subsection{Scenarios}
 \label{sec:scenarios}
-This section describes various scenarios of system usage and possible failures.
+This section describes various scenarios of \gls{system} usage and possible failures.
 
 In the sequence diagrams, we use the composition of the minimal integration test, detailed in Figure \ref{fig:integrationtestsmall} (Chapter \ref{integration-tests}).
 The \gls{client} sends its data to \Gls{node} A only.
@@ -264,7 +264,7 @@ The \gls{client} wants to restore specific \glspl{file}.
     \item The \gls{client} contacts the \glspl{node} in the presorted order
         \begin{enumerate}
             \item The \gls{client} sends a \emph{get root handles} requests to a \gls{node}, the \gls{designated-node}.
-            \item The \gls{designated-node} returns all \glspl{root-handle} present in the system (see \emph{return root handles} message)
+            \item The \gls{designated-node} returns all \glspl{root-handle} present in the \gls{system} (see \emph{return root handles} message)
             \item If no \gls{node} answers the request,the \gls{client} records an error message and aborts.
         \end{enumerate}
     \item The \gls{client} fetches all \glspl{chunk-content} of the \glspl{serialised-chunk-index} from the \gls{designated-node} (message: \emph{get chunks}) and reassembles the \glspl{chunk-index}.
@@ -288,7 +288,7 @@ The \gls{client} wants to restore specific \glspl{file}.
 
 
 \subsubsection{Node Joining}\label{sec:scenario-node-join}
-A \gls{new-node} joins the system.
+A \gls{new-node} joins the \gls{system}.
 
 \begin{figure}[h]
     \centering
@@ -314,7 +314,7 @@ This scenario is described as it is implemented in the study project. It might b
 \end{enumerate}
 
 \subsubsection{Node Leaving Planned}\label{sec:scenario-node-leave-planned}
-A \gls{node} leaves the system planned (refered as \gls{leaving-node}).
+A \gls{node} leaves the \gls{system} planned (refered as \gls{leaving-node}).
 
 \begin{figure}[h]
     \centering
@@ -332,7 +332,7 @@ This scenario is described as it is implemented in the study project. It might b
 \end{enumerate}
 
 \subsubsection{Node Leaving Unplanned}\label{sec:scenario-node-leave-unplanned}
-A \gls{node} leaves the system unexpectedly.
+A \gls{node} leaves the \gls{system} unexpectedly.
 
 \begin{figure}[h]
     \centering
@@ -390,10 +390,10 @@ This scenario is described as it is implemented in the study project. It might b
 
 \begin{itemize}
     \item The \gls{management} monitors the \glspl{node} physical timestamp and records any deviation from the \gls{management} time larger than 1h.
-    \item Therefore, a first prototype, the system may just delete \glspl{chunk} after the specified \gls{expiration-date} without further checks.
+    \item Therefore, a first prototype, the \gls{nodes} may just delete \glspl{chunk} after the specified \gls{expiration-date} without further checks.
         \begin{itemize}
             \item We build on the assumption, that the \glspl{node} have different upstream timeservers, so that a general time shift is unlikely.
-            \item In case a single \gls{node}s time is in the past, and runs out of storage capacity, it might lead to a degraded system (redundancy loss).
+            \item In case a single \gls{node}s time is in the past, and runs out of storage capacity, it might lead to a redundancy loss.
             \item If a single \gls{node}s time is in the future, the redundancy is reduced by one.
         \end{itemize}
 \end{itemize}
@@ -416,7 +416,7 @@ This scenario is described as it is implemented in the study project. It might b
 
 \subsubsection{Management Problems}\label{sec:scenario-management-problems}
 \begin{itemize}
-    \item The case, that the \gls{management} has outdated \gls{metadata} out of a data loss, will be ignored during this study project. A mechanism solving this problem, would probably be subject to significant changes in further system development e.g.\ when implementing limited redundancy levels. %TODO: Counter in config in the future
+    \item The case, that the \gls{management} has outdated \gls{metadata} out of a data loss, will be ignored during this study project. A mechanism solving this problem, would probably be subject to significant changes in further development e.g.\ when implementing limited redundancy levels. %TODO: Counter in config in the future
 \end{itemize}
 
 \subsubsection{Network Availability Problems}\label{sec:scenario-network-errors}
