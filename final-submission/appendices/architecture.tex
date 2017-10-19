@@ -458,7 +458,7 @@ A \gls{client} requests a list of \glspl{node} from the management, with the ind
 The \gls{message} is empty.
 
 \subsubsection{return target nodes}
-The \gls{node} responds to the \glspl{client} request \emph{get target nodes}.
+The \glspl{management} response to the \glspl{client} request \emph{get target nodes}.
 
 \begin{table}[h]
     \begin{tabu}{>{\ttfamily}l X}
@@ -483,13 +483,76 @@ The \gls{node} responds to the \glspl{client} request \emph{get target nodes}.
 \end{table}
 
 \subsubsection{get designation}
-GET: estimate size; identification; how long data stored
+With a \emph{get designation}, a \gls{client} requests the permit to create backup onto an \gls{node}.
+
+The information sent with this request permit the \gls{node} to decide, whether or not it wants to receive a possible backup.
+
+The client expects a \emph{return designation} \gls{message} in return.
+
+\begin{table}[h]
+    \begin{tabu}{>{\ttfamily}l X}
+        client\_id
+            & Unique identifier of the \gls{client} \\
+        estimate\_size
+            & Backup size estimate by the \gls{client} in bytes. \\
+        data\_storage
+            & Unix timestamp of UTC timezone, until when the backup is scheduled to be kept.
+    \end{tabu}
+    \caption[\emph{get designaton} Structure]{Structure of a \emph{get designation} \Gls{message}.}
+    \label{tab:message-get-designation}
+\end{table}
+
 \subsubsection{return designation}
- RETURN: agree; not agree (reason)
+The \glspl{node} response to the \gls{client} request \emph{get target nodes}.
+\begin{table}[h]
+    \begin{tabu}{>{\ttfamily}l X}
+        consent
+            & Boolean, whether or not the node is ready to receive the backup.
+    \end{tabu}
+    \caption[\emph{return designaton} Structure]{Structure of a \emph{return designation} \Gls{message}.}
+    \label{tab:message-return-designation}
+\end{table}
 
 \subsubsection{get chunk states}
+With a \emph{get chunk states}, a \gls{client} requests the current availability of \glspl{chunk} on a \gls{node}.
+
+If the \gls{node} holds a \gls{chunk}, it should update the \gls{expiration-date}, if the transmitted date is further in the future.
+
+The client expects a \emph{return chunk states} \gls{message} in return.
+
+\begin{table}[h]
+    \begin{tabu}{>{\ttfamily}l X}
+        chunks
+            & A list of \glspl{chunk-identifier}. \\
+        expiration\_date
+            & The \gls{expiration-date} of all \glspl{chunk} in the \texttt{chunks}-field, represented as a unix timestamp in the UTC timezone.
+    \end{tabu}
+    \caption[\emph{get chunk states} Structure]{Structure of a \emph{get chunk states} \Gls{message}.}
+    \label{tab:message-get-chunk-states}
+\end{table}
+
 \subsubsection{return chunk states}
-RETURN: chunk identifiers; keep date; stored (boolean); chunk handle state(boolean)
+\begin{table}[h]
+    \begin{tabu}{>{\ttfamily}l X}
+        chunks
+            & A list of \glspl{chunk-identifier}.
+    \end{tabu}
+    \caption[\emph{return chunk states} Structure]{Structure of a \emph{return chunk states} \Gls{message}.}
+    \label{tab:message-return-chunk-states}
+\end{table}
+
+\begin{table}[h]
+    \begin{tabu}{>{\ttfamily}l X}
+        chunk\_identifier
+            & The \gls{chunk-identifier} \\
+        root\_handle
+            & Boolean, whether the \gls{chunk} is \gls{root-handle} \\
+        stored
+            & Boolean, that denotes if the host holds the \gls{chunk} with at least the requested \gls{expiration-date}.
+    \end{tabu}
+    \caption[Field \texttt{chunks} Structure]{Structure of Field \texttt{chunks} as Used in the \emph{return chunk states} \Gls{message}.}
+    \label{tab:message-return-chunk-states-field-chunks}
+\end{table}
 
 \subsubsection{post chunks}
 POST: chunk identifier; chunk data; how long data stored; root handle state
