@@ -434,7 +434,17 @@ The redundancy is temporary reduced to the \glspl{node} which the group of old \
 
 
 \subsection{Messages}\label{sec:messages}
+
 \Glspl{message} denote the communication units between application components. A \gls{message} is separated into a \texttt{header} and \texttt{payload} field.
+
+In the future, the \texttt{header} might get extended by e.g. a \texttt{message size} and \texttt{checksums}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.3\linewidth]{resources/message_schematic}
+    \caption[\Gls{message} Schematic]{Schematic of a \gls{message}}
+    \label{fig:messageschematic}
+\end{figure}
 
 \begin{table}[h!]
     \begin{tabu}{| >{\ttfamily}l | X |}
