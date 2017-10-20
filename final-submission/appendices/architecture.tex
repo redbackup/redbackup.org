@@ -434,22 +434,28 @@ The redundancy is temporary reduced to the \glspl{node} which the group of old \
 
 
 \subsection{Messages}\label{sec:messages}
-\Glspl{message} denote the communication units between application components. A \gls{message} is wrapped by an \gls{envelope}.
+\Glspl{message} denote the communication units between application components. A \gls{message} is separated into a \texttt{header} and \texttt{payload} field.
 
-\subsubsection{Envelopes}
-An \gls{envelope} is a wrapper for a \gls{message}, which provides standardised attributes.
+\begin{table}[h!]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        header
+            & Meta-information about the message as specified in Table \ref{tab:message}.\\
+        payload
+            & The actual payload of the specified \texttt{header.type}.
+    \end{tabu}
+    \caption[\Gls{message} Structure]{Structure of a \gls{message}.}
+    \label{tab:message}
+\end{table}
 
 \begin{table}[h!]
     \begin{tabu}{| >{\ttfamily}l | X |}
         timestamp\_now
             & The current UTC time of the local clock as a unix timestamp.  \\
-        message\_type
-            & A string representation of the type of the message, as described in chapter \fullref{sec:messages}. \\
-        message
-            & The actual payload of the specified \texttt{message\_type}
+        type
+            & A string representation of the payload type, as described in subsections \fullref{sec:messages}.
     \end{tabu}
-    \caption[\Gls{envelope} Structure]{Structure of an \gls{envelope}.}
-    \label{tab:envelope}
+    \caption[\Gls{message} Field \texttt{header} Structure]{Structure of the \gls{message} \texttt{header} Field}
+    \label{tab:message-field-header}
 \end{table}
 
 \subsubsection{get target nodes}
