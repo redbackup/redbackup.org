@@ -536,10 +536,10 @@ The client expects a \emph{return chunk states} \gls{message} in return.
 
 \begin{table}[h!]
     \begin{tabu}{| >{\ttfamily}l | X |}
-        chunks
+        chunk\_identifiers
             & A list of \glspl{chunk-identifier}. \\
         expiration\_date
-            & The \gls{expiration-date} of all \glspl{chunk} in the \texttt{chunks}-field, represented as a unix timestamp in the UTC timezone.
+            & The \gls{expiration-date} of all \glspl{chunk} in the \texttt{chunk\_identifiers}-field, represented as a unix timestamp in the UTC timezone.
     \end{tabu}
     \caption[\emph{get chunk states} Structure]{Structure of a \emph{get chunk states} \Gls{message}.}
     \label{tab:message-get-chunk-states}
