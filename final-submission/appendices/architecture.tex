@@ -50,7 +50,7 @@ An \gls{administrator} wants to interact with the \gls{system} as less as possib
 \begin{itemize}
     \item The \gls{client} knows the \gls{management} by configuration.
     \item The \gls{client} queries the \gls{management} for a list of \glspl{node}, to which he can send backups or restore previous backups. He caches the results in its \gls{node-cache}.
-    \item The \gls{chunk-index} hierarchically models the file system. This structure might change in the future when supporting symlinks and permissions \footnote{See e.g. \url{https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html}}.
+    \item The \gls{chunk-index} hierarchically models the file system. This structure might change in the future when supporting symlinks and permissions \cite{borg-data-structures}.
     \item The relationship between a given \gls{file} and its \glspl{chunk} is essential. The \gls{client} splits a \gls{file} into multiple \glspl{chunk} to speed up the backup of large data. During the study project, a \gls{file} consists of exactly one \gls{chunk}.
     \item A \gls{chunk} is identified by its \gls{chunk-identifier}, which can be calculated using a hash function which takes the \glspl{chunk-content}  as input.
     \item The \glspl{chunk-content} do not have be present on the \gls{client}. During backup, the \gls{client} can calculate the \glspl{chunk-content} and the corresponding \gls{chunk-identifier} from the \glspl{file} on the disk. On restore, the \gls{client} fetches the \glspl{chunk-content} from a \gls{node} and reassembles the \gls{file} based on the \gls{chunk-index}.
