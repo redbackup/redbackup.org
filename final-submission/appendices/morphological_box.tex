@@ -1,0 +1,71 @@
+% !TeX spellcheck = en_GB
+\section{Morphological Box}
+We used the morphological box technique to explore different possible solutions.
+
+The chosen option should be as simple as possible for the prototype developed in the study project but extensible for further adaption.
+
+The following paragraphs reason the selected entry in each dimension.
+
+\paragraph{Redundancy} 
+We originally planned to support Client m-replication. This, however, is a complex mechanism that requires sophisticated algorithms to work correctly and efficiently. In the end, we chose the system n-replication option because it is easy to implement in a prototype. Changing this option in the future is hard because it requires fundamental changes in the replication process.
+
+\paragraph{What to store}
+The idea of chunks come from Borg Backup \footnote{https://borgbackup.readthedocs.io/en/stable/}. Files are partitioned into chunks using a rolling hash which allows deduplication as well as space efficient backups for large files. These are desired properties in a backup system to minimise network and disk usage.
+Encrypting chunks means that deduplication of the same file coming from different users is not possible anymore but is a necessity for privacy. Encryption is not trivial and requires a user concept that is not included in the prototype developed in the study project.
+We chose the plain option files for the study project to simplify the client implementation. Supporting encrypted chunks in the future is possible by just modifying the client.
+
+\paragraph{Role of the management}
+The one in charge option is the most straightforward option to implement but conflicts with many intentions of the administrator (See \fullref{sec:adminstrator-intention}). We also intended to avoid a single point of failure. We chose the option autonomous replication because it guarantees that replication is always ensured and keeps communication relatively simple.
+
+\paragraph{Storage backend}
+Using the file system is the simplest possible solution for the study project and therefore selected option. Adding support for other backends in the future is still possible since the storage component is an isolated part of the architecture. 
+
+\paragraph{Programming language / ecosystem}
+A complete language evaluation can be found in \fullref{sec:language-evaluation}.
+
+
+\begin{sidewaystable}
+	\centering
+	\caption[Morphological Box]{...}
+	\label{tbl:morphological-box}
+    \begin{tabu}{X | X X X X}
+		\hline
+          \textbf{Redundancy}
+          & No Redundancy
+          & Client m-replication: The \gls{client} defines a custom degree of redundancy (from 1 to the number of nodes)
+          & System m-replication: The \gls{administrator} defines a degree of redundancy for the whole system (from 1 to the number of nodes)
+          & \textbf{System n-replication}: The degree of redundancy for the whole system is equal to the amount of \glspl{node} in the system.
+          \\ \hline
+
+          \textbf{What to store}
+          & \textbf{Plain Files}
+          & Encrypted Files
+          & Chunks: Cut a file into multiple parts and store them individually.
+          & Encrypted Chunks: Same as Chunks, but every Chunk is individually encrypted.
+          \\ \hline
+
+
+          \textbf{Role of the management}
+          & One in charge: Management knows and controls everything (e.g. the location of every chunk)
+          & Configuration only: Management must be up for management only. The nodes are mostly autonomous.
+          & \textbf{Autonomous replication}: Management must be available for most of the tasks but replication also works if the management is down
+          & No Management: Everything node is completely autonomous.
+          \\ \hline
+
+
+          \textbf{Storage backend}
+          & \textbf{Plain Filesystem}: Just store the all chunks as files in one directory
+          & Database (e.g. Git, Redis, RocksDB): Using an existing database solution.
+          & Cloud Storage (e.g. Amazon S3): A proxy to a cloud provider
+          & Custom: A optimized version of the plain file system with better indexing and compression.
+          \\ \hline
+
+
+          \textbf{Programming language / ecosystem}
+          & \textbf{Rust}
+          & Go
+          & Erlang
+          & 
+          \\ \hline
+	\end{tabu}
+\end{sidewaystable}
