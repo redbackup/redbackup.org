@@ -15,9 +15,9 @@ minute-taker: rzimmerm
 
 
 1. Review: First impression of Rust
-2. Discuss the Result of our morphological box
-3. Discuss revised Concept and Requirements
-  - Do the newly added Diagramms help?
+2. Discuss the result of our morphological box
+3. Discuss revised concept and requirements
+  - Do the newly added diagramms help?
   - Are the scenarios coherent?
 4. Date and time for next meeting
 
@@ -32,20 +32,20 @@ minute-taker: rzimmerm
     - Overview Figure: Draw multiple boxes for the nodes and set the arrow to the other nodes.
     - Domain Models: Remove `+` signs and "diamonds"
   - We are now done with the elaboration and can start in the next sprints with the actual implementation.
-3. The next Meeting takes place on 19.11.2017 at 08:15 at MeFs office.
+3. The next meeting takes place on 19.11.2017 at 08:15 at MeFs office.
   - The date might change depending on MeFs schedule.
   - MeF will notify us if the date changes.
 
 
-## Open issues
+## Open Issues
 
 _open issues must be completed before the next meeting_
 
-- Develop a minimal prototype (MVP) for the next meeting ((REDPRO-82)[https://project.redbackup.org/browse/REDPRO-REDPRO-82])
-- Send MeF the revised document when they are stable ((REDPRO-83)[https://project.redbackup.org/browse/REDPRO-REDPRO-83])
-- Improve diagrams in the specification ((REDPRO-84)[https://project.redbackup.org/browse/REDPRO-REDPRO-84])
+- Develop a minimal prototype (MVP) for the next meeting ([REDPRO-82](https://project.redbackup.org/browse/REDPRO-82))
+- Send MeF the revised document when they are stable ([REDPRO-83](https://project.redbackup.org/browse/REDPRO-83))
+- Improve diagrams in the specification ([REDPRO-84](https://project.redbackup.org/browse/REDPRO-84))
 
-## Upcoming absences
+## Upcoming Absences
 
 - Raphael Zimmermann: 27.10.2017 (Friday)
 - Fabian Hauser: 27.10.2017 (Friday)
