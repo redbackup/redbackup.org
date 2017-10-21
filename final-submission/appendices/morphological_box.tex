@@ -1,0 +1,72 @@
+% !TeX spellcheck = en_GB
+\section{Fundamental Design Decisions} % TODO: better name?
+
+We used the morphological box technique to explore different possible solutions.
+
+The chosen option should be as simple as possible for the prototype developed in the study project but extensible for further adaption.
+
+The following paragraphs reason the selected entry in each dimension.
+
+\paragraph{Redundancy} 
+We originally planned to support \emph{client m-replication}. This, however, is a complex mechanism that requires sophisticated algorithms to work correctly and efficiently. We chose the system \emph{n-replication} option because it is simple to implement in a prototype. Changing this option in the future is hard because it requires fundamental changes in the replication process and the communication protocols.
+
+\paragraph{Storage Unit}
+The idea of \emph{chunks} come from Borg Backup. Files are partitioned into chunks using a rolling hash which allows deduplication as well as space efficient backups for large files \cite{borg-data-structures}. These are desired properties in a backup system to minimise network and disk usage.
+\emph{Encrypting chunks} means that deduplication of the same file coming from different users is not possible anymore but is a necessity for privacy. Encryption is not trivial and requires a user concept that is out of scope of the prototype developed in the study project.
+We chose the \emph{plain filesystem} option for the study project to simplify the client implementation. Supporting \emph{encrypted chunks} in the future is possible by just modifying the client.
+
+\paragraph{Role of the management}
+The \emph{one in charge} option is the most straightforward option to implement but conflicts with many intentions of the administrator (See \fullref{sec:adminstrator-intention}). We also intended to avoid a single point of failure. We chose the option \emph{autonomous replication} because it guarantees that replication is always ensured and keeps communication relatively simple.
+
+\paragraph{Storage backend}
+Using the file system is the simplest possible solution for the study project and therefore selected option. Adding support for other backends in the future is still possible since the storage component is an isolated part of the architecture (See \fullref{sec:component-storage})
+
+\paragraph{Programming language / ecosystem}
+A complete language evaluation can be found in \fullref{sec:language-evaluation}.
+
+
+\begin{sidewaystable}
+	\centering
+	\caption[Morphological Box]{Morphological Box}
+	\label{tbl:morphological-box}
+    \begin{tabu}{X | X X X X}
+		\hline
+          \textbf{Redundancy}
+          & No redundancy
+          & Client m-replication: The client defines a custom degree of redundancy (from 1 to the number of nodes).
+          & System m-replication: The administrator defines the degree of redundancy for the whole system (from 1 to the number of nodes).
+          & \textbf{System n-replication}: The degree of redundancy for the whole system is equal to the amount of nodes in the system.
+          \\ \hline
+
+          \textbf{Storage Unit}
+          & \textbf{Plain Files}
+          & Encrypted Files
+          & Chunks: Cut files into multiple parts and store these individually.
+          & Encrypted chunks: Same as chunks, but every chunk is individually encrypted.
+          \\ \hline
+
+
+          \textbf{Role of the management}
+          & One in charge: The management knows and controls everything (e.g. the location of every file/chunk).
+          & Configuration only: The management must be up for administrative tasks only. The nodes are mostly autonomous.
+          & \textbf{Autonomous replication}: The management must be available for most of the tasks but replication also works if the management is down.
+          & No management: Every node is completely autonomous.
+          \\ \hline
+
+
+          \textbf{Storage backend}
+          & \textbf{Plain Filesystem}: Just store all files/chunks as files in one directory with a unique identifier.
+          & Database: Use an existing database solution (e.g. Git, Redis, RocksDB).
+          & Cloud Storage: A proxy to a cloud storage provider (e.g. Amazon S3).
+          & Custom: An optimized version of the plain file system option with optimised indexing and compression.
+          \\ \hline
+
+
+          \textbf{Programming language / ecosystem}
+          & \textbf{Rust}
+          & Go
+          & Erlang
+          & 
+          \\ \hline
+	\end{tabu}
+\end{sidewaystable}
