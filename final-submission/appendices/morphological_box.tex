@@ -12,6 +12,7 @@ We originally planned to support \emph{client m-replication}. This, however, is 
 
 \paragraph{Storage unit}
 The idea of \emph{chunks} come from Borg Backup. Files are partitioned into chunks using a rolling hash which allows deduplication as well as space efficient backups for large files \cite{borg-data-structures}. These are desired properties in a backup system to minimise network and disk usage.
+
 \emph{Encrypting chunks} means that deduplication of the same file coming from different users is not possible anymore but is a necessity for privacy. Encryption is not trivial and requires a user concept that is out of scope of the prototype developed in the study project.
 We chose the \emph{plain filesystem} option for the study project to simplify the client implementation. Supporting \emph{encrypted chunks} in the future is possible by just modifying the client.
 
@@ -85,3 +86,19 @@ A complete language evaluation can be found in \fullref{sec:language-evaluation}
           \\ \hline
 	\end{tabu}
 \end{sidewaystable}
+
+\subsection{Hash Collisions}
+To achieve deduplication and space-efficient backups for large files, as discussed above, a file/chunk identifier must be derived from the actual file/chunk contents. 
+A common mechanism used to derive identifiers from binary data are cryptographic hash functions. Most cryptographic hash functions produce a message digest having a fixed size (e.g. SHA256 produces a 256-bit digest) for a message with an arbitrary length, which can theoretically lead to collisions.
+Perfect hash functions do not have this property because their input message size is fixed and equal to the size of the resulting message digest. A perfect hash function is not practical in our case due to the large message digests.
+With cryptographic hash function, collisions are possible but unlikely. Assuming that the applied function does produce equally distributed results, the probability can be calculated based on the birthday problem\cite{birthday-attack} as follows, where $p$ is the number of chunks in the system and $n$ the size of the message digests:
+
+\[
+P(p, n) = \frac{p^2}{2^{n+1}}
+\]
+
+Assuming we have $p=30^{21}$ files/chunks the system (which is equivalent to two billion years of music assuning each chunk has a size of one byte\cite{seagate-zetabyte}) and using the SHA-256 algorithm, the probability of collisions is about $4.72 \cdot 10^{-16}$, which is almost 0 and can almost be neglected.
+
+If, however, a collision happens after all, for example, if the used cryptographic hash function is flawed or the unlikely event occurs, it results in data loss.
+
+As for the study project, we use the SHA-256 algorithm and neglect the risk of hash collisions due to its low probability. Nonetheless, we prepare all protocols and components to use an interchangeable mechanism for the calculation and transmission of the identifiers.
