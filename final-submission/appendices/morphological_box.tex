@@ -10,7 +10,7 @@ The following paragraphs reason the selected entry in each dimension.
 \paragraph{Redundancy} 
 We originally planned to support \emph{client m-replication}. This, however, is a complex mechanism that requires sophisticated algorithms to work correctly and efficiently. We chose the system \emph{n-replication} option because it is simple to implement in a prototype. Changing this option in the future is hard because it requires fundamental changes in the replication process and the communication protocols.
 
-\paragraph{Storage Unit}
+\paragraph{Storage unit}
 The idea of \emph{chunks} come from Borg Backup. Files are partitioned into chunks using a rolling hash which allows deduplication as well as space efficient backups for large files \cite{borg-data-structures}. These are desired properties in a backup system to minimise network and disk usage.
 \emph{Encrypting chunks} means that deduplication of the same file coming from different users is not possible anymore but is a necessity for privacy. Encryption is not trivial and requires a user concept that is out of scope of the prototype developed in the study project.
 We chose the \emph{plain filesystem} option for the study project to simplify the client implementation. Supporting \emph{encrypted chunks} in the future is possible by just modifying the client.
@@ -20,6 +20,13 @@ The \emph{one in charge} option is the most straightforward option to implement 
 
 \paragraph{Storage backend}
 Using the file system is the simplest possible solution for the study project and therefore selected option. Adding support for other backends in the future is still possible since the storage component is an isolated part of the architecture (See \fullref{sec:component-storage})
+
+\paragraph{Removal of old backups}
+We propose to use a fixed \emph{physical time} that must be specified on backup creation. After expiration, the backup data may be removed by a garbage collector. This may be extended to allow only mutual garbage removal in the future.
+
+A significant problem that \emph{physical time} addresses is the safety of backup data in case a user computer is infected with malware. An illicit application might command the removal of backups, or create new backups to initiate a garbage collection process to free storage capacity.
+
+Nevertheless, the use of \emph{physical time} has the downside of possible data loss due to wrong system times. To lessen this risk, the system should use multiple distinct upstream time-servers. This is given with a high probability, as the proposed redundancy model motivates users to expand the system across multiple physical locations. Furthermore, the client, nodes and management should verify a reasonable accurate time when communicating mutually.
 
 \paragraph{Programming language / ecosystem}
 A complete language evaluation can be found in \fullref{sec:language-evaluation}.
@@ -38,9 +45,9 @@ A complete language evaluation can be found in \fullref{sec:language-evaluation}
           & \textbf{System n-replication}: The degree of redundancy for the whole system is equal to the amount of nodes in the system.
           \\ \hline
 
-          \textbf{Storage Unit}
-          & \textbf{Plain Files}
-          & Encrypted Files
+          \textbf{Storage unit}
+          & \textbf{Plain files}
+          & Encrypted files
           & Chunks: Cut files into multiple parts and store these individually.
           & Encrypted chunks: Same as chunks, but every chunk is individually encrypted.
           \\ \hline
@@ -55,10 +62,18 @@ A complete language evaluation can be found in \fullref{sec:language-evaluation}
 
 
           \textbf{Storage backend}
-          & \textbf{Plain Filesystem}: Just store all files/chunks as files in one directory with a unique identifier.
+          & \textbf{Plain filesystem}: Just store all files/chunks as files in one directory with a unique identifier.
           & Database: Use an existing database solution (e.g. Git, Redis, RocksDB).
           & Cloud Storage: A proxy to a cloud storage provider (e.g. Amazon S3).
           & Custom: An optimized version of the plain file system option with optimised indexing and compression.
+          \\ \hline
+
+
+          \textbf{Removal of old backups}
+          & \textbf{Physical time}: Data is removed on a specified physical time.
+          & User command: The user commands removal of data.
+          & Free storage: Data is removed, as soon as capacity issues occur.
+          & Physical time with mutual agreement: All nodes must agree before data is removed.
           \\ \hline
 
 
