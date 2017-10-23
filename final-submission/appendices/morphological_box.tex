@@ -21,10 +21,10 @@ The \emph{one in charge} option is the most straightforward option to implement 
 \paragraph{Storage backend}
 Using the file system is the simplest possible solution for the study project and therefore selected option. Adding support for other backends in the future is still possible since the storage component is an isolated part of the architecture (See \fullref{sec:component-storage})
 
-\paragraph{Garbage collection}
-We propose to use a fixed \emph{physical time} that must be specified on backup creation. After expiration, the backup data may be removed by a garbage collector. This may be extended to only allow mutual garbage removal in the future.
+\paragraph{Removal of old backups}
+We propose to use a fixed \emph{physical time} that must be specified on backup creation. After expiration, the backup data may be removed by a garbage collector. This may be extended to allow only mutual garbage removal in the future.
 
-An important problem that is addressed by \emph{physical time} is the safety of backup data in case a user computer is infected with malware. An illicit applications might command the removal of backups, or create new backups in order to initiate a garbage collection process to create free storage capacity.
+A significant problem that \emph{physical time} addresses is the safety of backup data in case a user computer is infected with malware. An illicit application might command the removal of backups, or create new backups to initiate a garbage collection process to free storage capacity.
 
 Nevertheless, the use of \emph{physical time} has the downside of possible data loss due to wrong system times. To lessen this risk, the system should use multiple distinct upstream time-servers. This is given with a high probability, as the proposed redundancy model motivates users to expand the system across multiple physical locations. Furthermore, the client, nodes and management should verify a reasonable accurate time when communicating mutually.
 
@@ -69,11 +69,11 @@ A complete language evaluation can be found in \fullref{sec:language-evaluation}
           \\ \hline
 
 
-          \textbf{Garbage collection}
+          \textbf{Removal of old backups}
           & \textbf{Physical time}: Data is removed on a specified physical time.
           & User command: The user commands removal of data.
           & Free storage: Data is removed, as soon as capacity issues occur.
-          & Physical time with mutual agreement between nodes.
+          & Physical time with mutual agreement: All nodes must agree before data is removed.
           \\ \hline
 
 
