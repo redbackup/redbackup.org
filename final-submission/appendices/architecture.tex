@@ -454,7 +454,7 @@ A \gls{message} is separated into a \gls{message-header} and \gls{message-payloa
         
         \hline
         payload
-        & The actual payload of the message depending on the message type defined in the \gls{header-field} \texttt{type} (See Table \ref{tab:core-header-fields}). \\
+        & The actual payload of the message depending on the message type defined in the \gls{header-field} \texttt{type} (see Table \ref{tab:core-header-fields}). \\
 
         \hline
     \end{tabu}
@@ -466,7 +466,7 @@ A \gls{message} is separated into a \gls{message-header} and \gls{message-payloa
 \begin{tabu}{| >{\ttfamily}l | X |}
     \hline
     field name
-    & Unique name of the \gls{header-field}. A core set of \gls{header-field} that must be sent with every request is defined in Table \ref{tab:message-header-key-value}. \\
+    & Unique name of the \gls{header-field}. A core set of \gls{header-field} that must be sent with every request is defined in Table \ref{tab:core-header-fields}. \\
     
     \hline
     field value
@@ -514,7 +514,7 @@ A \gls{message} is separated into a \gls{message-header} and \gls{message-payloa
         &  No additional \glspl{message-header} required \\
         
         Message payload
-        & The \gls{message-payload} is empty. \\
+        & The \gls{message-payload} is empty \\
 
         Response
         & \fullref{sec:return-target-nodes} (compulsory) \\
@@ -541,9 +541,9 @@ A \gls{message} is separated into a \gls{message-header} and \gls{message-payloa
         & See Table \ref{tab:payload-return-target-nodes}\\
 
         Response
-        & no response \\
+        & No response \\
     \end{tabu}
-    \caption{\texttt{get target nodes} message specification}
+    \caption{\texttt{return target nodes} message specification}
 \end{table}
 
 
@@ -562,7 +562,7 @@ A \gls{message} is separated into a \gls{message-header} and \gls{message-payloa
     \begin{tabu}{| >{\ttfamily}l | X |}
         \hline
         node\_identifier
-        & \gls{node-identifier} of the \gls{node}. \\
+        & \Gls{node-identifier} of the \gls{node}. \\
         
         \hline
         address
@@ -638,7 +638,7 @@ A \gls{message} is separated into a \gls{message-header} and \gls{message-payloa
         & See Table \ref{tab:message-return-designation}\\
 
         Response
-        & no response \\
+        & No response \\
     \end{tabu}
     \caption{\texttt{return designation} message specification}
 \end{table}
@@ -732,7 +732,7 @@ A \gls{message} is separated into a \gls{message-header} and \gls{message-payloa
         & See Table \ref{tab:message-return-chunk-states}\\
 
         Response
-        & no response \\
+        & No response \\
     \end{tabu}
     \caption{\texttt{return chunk states} message specification}
 \end{table}
@@ -741,7 +741,7 @@ A \gls{message} is separated into a \gls{message-header} and \gls{message-payloa
     \begin{tabu}{| >{\ttfamily}l | X |}
         \hline
         chunks
-        & A set of \texttt{chunk element} as defined in Table \ref{tab:chunk-element} that are present on this node with the updated \texttt{expiration\_date} \\
+        & A set of \texttt{chunk elements} as defined in Table \ref{tab:chunk-element} that are present on this node with the updated \texttt{expiration\_date} \\
         \hline
     \end{tabu}
     \caption{Structure of the \texttt{return chunk states} \gls{message-payload}}    
@@ -830,7 +830,7 @@ A \gls{message} is separated into a \gls{message-header} and \gls{message-payloa
         & See Table \ref{tab:message-acknowledge-chunks}\\
 
         Response
-        & no response \\
+        & No response \\
     \end{tabu}
     \caption{\texttt{acknowledge chunks} message specification}
 \end{table}
@@ -901,7 +901,7 @@ A \gls{message} is separated into a \gls{message-header} and \gls{message-payloa
         & See Table \ref{tab:message-return-chunks}\\
 
         Response
-        & no response \\
+        & No response \\
     \end{tabu}
     \caption{\texttt{return chunks} message specification}
 \end{table}
@@ -962,7 +962,7 @@ A \gls{message} is separated into a \gls{message-header} and \gls{message-payloa
         & See Table \ref{tab:message-return-root-handles}\\
 
         Response
-        & no response \\
+        & No response \\
     \end{tabu}
     \caption{\texttt{return root handles} message specification}
 \end{table}
@@ -1111,7 +1111,7 @@ A \gls{message} is separated into a \gls{message-header} and \gls{message-payloa
         & See Table \ref{tab:message-return-nodes-metadata}\\
 
         Response
-        & no response \\
+        & No response \\
     \end{tabu}
     \caption{\texttt{return nodes metadata} message specification}
 \end{table}
@@ -1135,7 +1135,7 @@ A \gls{message} is separated into a \gls{message-header} and \gls{message-payloa
         
         \hline
         address
-        & The \glspl{node} address of this \gls{node}. \\
+        & The address of this \gls{node}. \\
         
         \hline
         port
