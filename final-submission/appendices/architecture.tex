@@ -431,3 +431,721 @@ See first case in scenario~\fullref{sec:scenario-network-errors}
 
 \paragraph{Behaviour in case nodes have different states of management information}
 The redundancy is temporary reduced to the \glspl{node} which the group of old \glspl{node} know, but will eventually be resolved as \glspl{node} fetch \gls{metadata}.
+
+
+\subsection{Messages}\label{sec:messages}
+
+\Glspl{message} denote the communication units between application components. The following message specification is not bound to a specific message format (e.g. BSON or Protobuf) on purpose since it might change in the future to optimise performance. We will use BSON for the prototype in the study project.
+
+A \gls{message} is separated into a \gls{message-header} and \gls{message-payload} section. In the future, the \gls{message-header} section might get extended by e.g. a \texttt{message size} and \texttt{checksums}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.3\linewidth]{resources/message_schematic}
+    \caption[\Gls{message} Schematic]{Schematic of a \gls{message}}
+    \label{fig:messageschematic}
+\end{figure}
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        header
+        & Set of \glspl{header-field} elements as specified in Table \ref{tab:message-field-header}. \\
+        
+        \hline
+        payload
+        & The actual payload of the message depending on the message type defined in the \gls{header-field} \texttt{type} (see Table \ref{tab:core-header-fields}). \\
+
+        \hline
+    \end{tabu}
+    \caption[\Gls{message} Structure]{Structure of a \gls{message}.}
+    \label{tab:message}
+\end{table}
+
+\begin{table}[H]
+\begin{tabu}{| >{\ttfamily}l | X |}
+    \hline
+    field name
+    & Unique name of the \gls{header-field}. A core set of \gls{header-field} that must be sent with every request is defined in Table \ref{tab:core-header-fields}. \\
+    
+    \hline
+    field value
+    & The value belonging to the field name. \\
+
+    \hline
+\end{tabu}
+\caption{Structure of a \gls{header-field} element}
+\label{tab:message-field-header}
+\end{table}
+
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        timestamp\_now
+        & The current UTC time of the local clock as a unix timestamp (64-bit).  \\
+        
+        \hline
+        type
+        & A string representation of the \gls{message-type}, as described in subsections \fullref{sec:messages}. \\
+        \hline
+    \end{tabu}
+    \caption{Core set of \glspl{header-field} sent with every request}
+    \label{tab:core-header-fields}
+\end{table}
+
+\subsubsection{get target nodes}\label{sec:get-target-nodes}
+
+\begin{table}[H]
+    \begin{tabu}{lX}
+        Context
+        & \makecell[tl]{
+            \fullref{sec:scenario-create-backup} \\
+            \fullref{sec:scenario-backup-restore}
+          } \\
+        
+        Sender
+        & A \gls{client} \\
+        
+        Receiver
+        & The \gls{management} \\
+        
+        Additional message headers
+        &  No additional \glspl{message-header} required \\
+        
+        Message payload
+        & The \gls{message-payload} is empty \\
+
+        Response
+        & \fullref{sec:return-target-nodes} (compulsory) \\
+    \end{tabu}
+    \caption{\texttt{get target nodes} message specification}
+\end{table}
+
+\subsubsection{return target nodes}\label{sec:return-target-nodes}
+\begin{table}[H]
+    \begin{tabu}{lX}
+        Context
+        & Response to \fullref{sec:get-target-nodes} \\
+        
+        Sender
+        & The \gls{management} \\
+        
+        Receiver
+        & The \gls{client} that sent the \texttt{get target nodes} message \\
+        
+        Additional message headers
+        &  No additional \glspl{message-header} required \\
+        
+        Message payload
+        & See Table \ref{tab:payload-return-target-nodes}\\
+
+        Response
+        & No response \\
+    \end{tabu}
+    \caption{\texttt{return target nodes} message specification}
+\end{table}
+
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        target\_nodes
+            & A list of \texttt{target node elements} as defined in Table \ref{tab:element-target-nodes}. The list is sorted in descending order by preference. \\
+        \hline
+    \end{tabu}
+    \caption{Structure of the \texttt{return target nodes} \gls{message-payload}}
+    \label{tab:payload-return-target-nodes}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        node\_identifier
+        & \Gls{node-identifier} of the \gls{node}. \\
+        
+        \hline
+        address
+        &  Address (domain name or IP) of the \gls{node}. \\
+        
+        \hline
+        port
+        &  Port-Number of the \gls{node}. \\
+
+        \hline
+    \end{tabu}
+    \caption{Structure of the \texttt{target node element}}
+    \label{tab:element-target-nodes}
+\end{table}
+
+\subsubsection{get designation}\label{sec:get-designation}
+
+\begin{table}[H]
+    \begin{tabu}{lX}
+        Context
+        & \fullref{sec:scenario-create-backup} \\
+        
+        Sender
+        & A \gls{client} \\
+        
+        Receiver
+        & A \gls{node} \\
+        
+        Additional message headers
+        &  No additional \glspl{message-header} required \\
+        
+        Message payload
+        & See Table \ref{tab:message-get-designation} \\
+
+        Response
+        & \fullref{sec:return-designation} (compulsory) \\
+    \end{tabu}
+    \caption{\texttt{get designation} message specification}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        estimate\_size
+        & Backup size estimate by the \gls{client} in bytes. \\
+        
+        \hline
+        expiration\_date
+        & Unix timestamp (64-bit) of UTC timezone, until when the backup is scheduled to be kept.\\
+        
+        \hline
+    \end{tabu}
+    \caption{Structure of the \emph{get designation} \gls{message-payload}.}
+    \label{tab:message-get-designation}
+\end{table}
+
+\subsubsection{return designation}\label{sec:return-designation}
+\begin{table}[H]
+    \begin{tabu}{lX}
+        Context
+        & Response to \fullref{sec:get-designation} \\
+        
+        Sender
+        & The \gls{node} that received the \texttt{get designation} message  \\
+        
+        Receiver
+        & The \gls{client} that sent the \texttt{get designation} message \\
+        
+        Additional message headers
+        &  No additional \glspl{message-header} required \\
+        
+        Message payload
+        & See Table \ref{tab:message-return-designation}\\
+
+        Response
+        & No response \\
+    \end{tabu}
+    \caption{\texttt{return designation} message specification}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        designation
+        & Boolean, whether or not the node is ready to receive the backup. \\
+        \hline
+    \end{tabu}
+    \caption{Structure of the \emph{return designation} \gls{message-payload}.}
+    \label{tab:message-return-designation}
+\end{table}
+
+\subsubsection{get chunk states}\label{sec:get-chunk-states}
+\begin{table}[H]
+    \begin{tabu}{lX}
+        Context
+        & \makecell[tl]{
+            \fullref{sec:scenario-create-backup} \\
+            \fullref{sec:scenario-data-replication}
+          } \\
+        
+        Sender
+        & A \gls{client} or a \gls{node} \\
+        
+        Receiver
+        & A \gls{node} \\
+        
+        Additional message headers
+        &  No additional \glspl{message-header} required \\
+        
+        Message payload
+        & See Table \ref{tab:message-get-chunk-states}\\
+
+        Response
+        & \fullref{sec:return-chunk-states} (compulsory) \\
+    \end{tabu}
+    \caption{\texttt{get chunk states} message specification}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        chunks
+        & A set of \texttt{chunk elements} as defined in Table \ref{tab:chunk-element} for which the state shall be checked. \\
+        \hline
+    \end{tabu}
+    \caption{Structure of the \texttt{get chunk states} \gls{message-payload}}    
+    \label{tab:message-get-chunk-states}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        chunk\_identifier
+        & The \gls{chunk-identifier} of this \gls{chunk}\\
+        
+        \hline
+        expiration\_date
+        & The \gls{expiration-date} of this \gls{chunk} \\
+
+        \hline        
+        root\_handle
+        & Boolean, whether this \gls{chunk} is a \gls{root-handle} \\
+
+        \hline
+    \end{tabu}
+    \caption{Structure of the \texttt{chunk element}}
+    \label{tab:chunk-element}
+\end{table}
+
+\subsubsection{return chunk states}\label{sec:return-chunk-states}
+
+\begin{table}[H]
+    \begin{tabu}{lX}
+        Context
+        & Response to \fullref{sec:get-chunk-states} \\
+        
+        Sender
+        & The \gls{node} that received the \texttt{get chunk states} message\\
+        
+        Receiver
+        & The \gls{client} or \gls{node} that sent the \texttt{get chunk states} message \\
+        
+        Additional message headers
+        &  No additional \glspl{message-header} required \\
+        
+        Message payload
+        & See Table \ref{tab:message-return-chunk-states}\\
+
+        Response
+        & No response \\
+    \end{tabu}
+    \caption{\texttt{return chunk states} message specification}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        chunks
+        & A set of \texttt{chunk elements} as defined in Table \ref{tab:chunk-element} that are present on this node with the updated \texttt{expiration\_date} \\
+        \hline
+    \end{tabu}
+    \caption{Structure of the \texttt{return chunk states} \gls{message-payload}}    
+    \label{tab:message-return-chunk-states}
+\end{table}
+
+\subsubsection{post chunks}\label{sec:post-chunks}
+
+\begin{table}[H]
+    \begin{tabu}{lX}
+        Context
+        & \makecell[tl]{
+            \fullref{sec:scenario-create-backup} \\
+            \fullref{sec:scenario-data-replication}
+          } \\
+        
+        Sender
+        & A \gls{client} or a \gls{node} \\
+        
+        Receiver
+        & A \gls{node} \\
+        
+        Additional message headers
+        &  No additional \glspl{message-header} required \\
+        
+        Message payload
+        & See Table \ref{tab:message-post-chunks}\\
+
+        Response
+        & \fullref{sec:acknowledge-chunks} (compulsory) \\
+    \end{tabu}
+    \caption{\texttt{post chunks} message specification}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        chunks
+        & A set of \texttt{chunk content elements} as defined in Table \ref{tab:chunks-content-element}. \\
+        \hline
+    \end{tabu}
+    \caption{Structure of the \texttt{post chunks} \gls{message-payload}}
+    \label{tab:message-post-chunks}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        chunk\_identifier
+        & The \gls{chunk-identifier} of this \gls{chunk}\\
+        
+        \hline
+        expiration\_date
+        & The \gls{expiration-date} of this \gls{chunk} \\
+
+        \hline        
+        root\_handle
+        & Boolean, whether this \gls{chunk} is a \gls{root-handle} \\
+
+        \hline
+        chunk\_content
+        & The binary \glspl{chunk-content} of this \gls{chunk} \\
+        \hline
+    \end{tabu}
+    \caption{Structure of the \texttt{chunk content element}}
+    \label{tab:chunks-content-element}
+\end{table}
+
+\subsubsection{acknowledge chunks}\label{sec:acknowledge-chunks}
+
+\begin{table}[H]
+    \begin{tabu}{lX}
+        Context
+        & Response to \fullref{sec:post-chunks} \\
+        
+        Sender
+        & The \gls{node} that received the \texttt{post chunks} message\\
+        
+        Receiver
+        & The \gls{client} or \gls{node} that sent the \texttt{post chunks} message \\
+        
+        Additional message headers
+        &  No additional \glspl{message-header} required \\
+        
+        Message payload
+        & See Table \ref{tab:message-acknowledge-chunks}\\
+
+        Response
+        & No response \\
+    \end{tabu}
+    \caption{\texttt{acknowledge chunks} message specification}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        chunks
+        &  A set of \texttt{chunk elements} as defined in Table \ref{tab:chunk-element} that were received and stored. \\
+        \hline
+    \end{tabu}
+    \caption{Structure of the \texttt{acknowledge chunks} \gls{message-payload}}    
+    \label{tab:message-acknowledge-chunks}
+\end{table}
+
+
+\subsubsection{get chunks}\label{sec:get-chunks}
+\begin{table}[H]
+    \begin{tabu}{lX}
+        Context
+        & \fullref{sec:scenario-backup-restore} \\
+        
+        Sender
+        & A \gls{client} \\
+        
+        Receiver
+        & A \gls{node} \\
+        
+        Additional message headers
+        &  No additional \glspl{message-header} required \\
+        
+        Message payload
+        &  See Table \ref{tab:message-get-chunks}\\
+
+        Response
+        & \fullref{sec:return-chunks} (compulsory) \\
+    \end{tabu}
+    \caption{\texttt{get chunks} message specification}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        chunk\_identifiers
+        & A set of \glspl{chunk-identifier} for which the \glspl{chunk-content} shall be returned. \\
+        \hline    
+    \end{tabu}
+    \caption{Structure of the \texttt{get chunks} \gls{message-payload}}
+    \label{tab:message-get-chunks}
+\end{table}
+
+\subsubsection{return chunks}\label{sec:return-chunks}
+\begin{table}[H]
+    \begin{tabu}{lX}
+        Context
+        & Response to \fullref{sec:get-chunks} \\
+        
+        Sender
+        & The \gls{node} that received the \texttt{get chunks} message \\
+        
+        Receiver
+        & The \gls{client} that sent the \texttt{get chunks} message \\
+        
+        Additional message headers
+        &  No additional \glspl{message-header} required \\
+        
+        Message payload
+        & See Table \ref{tab:message-return-chunks}\\
+
+        Response
+        & No response \\
+    \end{tabu}
+    \caption{\texttt{return chunks} message specification}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        chunks
+        & A set of \texttt{chunk content elements} as defined in Table \ref{tab:chunks-content-element}. \\
+        \hline
+    \end{tabu}
+    \caption{Structure of the \texttt{return chunks} \gls{message-payload}}    
+    \label{tab:message-return-chunks}
+\end{table}
+
+
+
+\subsubsection{get root handles}\label{sec:get-root-handles}
+\begin{table}[H]
+    \begin{tabu}{lX}
+        Context
+        & \fullref{sec:scenario-backup-restore} \\
+        
+        Sender
+        & A \gls{client} \\
+        
+        Receiver
+        & A \gls{node} \\
+        
+        Additional message headers
+        &  No additional \glspl{message-header} required \\
+        
+        Message payload
+        & The \gls{message-payload} is empty. \\
+
+        Response
+        & \fullref{sec:return-root-handles} (compulsory) \\
+    \end{tabu}
+    \caption{\texttt{get root handles} message specification}
+\end{table}
+
+\subsubsection{return root handles}\label{sec:return-root-handles}
+\begin{table}[H]
+    \begin{tabu}{lX}
+        Context
+        & Response to \fullref{sec:get-root-handles} \\
+        
+        Sender
+        & The \gls{node} that received the \texttt{get root handles} message \\
+        
+        Receiver
+        & The \gls{client} that sent the \texttt{get root handles} message \\
+        
+        Additional message headers
+        &  No additional \glspl{message-header} required \\
+        
+        Message payload
+        & See Table \ref{tab:message-return-root-handles}\\
+
+        Response
+        & No response \\
+    \end{tabu}
+    \caption{\texttt{return root handles} message specification}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        root\_handle\_chunks
+        & A set of \texttt{chunk content elements} as defined in Table \ref{tab:chunks-content-element}, all of which are \glspl{root-handle} \\
+        \hline
+    \end{tabu}
+    \caption{Structure of the \texttt{return root handles} \gls{message-payload}}
+    \label{tab:message-return-root-handles}
+\end{table}
+
+
+\subsubsection{get nodes metadata}\label{sec:get-nodes-metadata}
+
+\begin{table}[H]
+    \begin{tabu}{lX}
+        Context
+        & \makecell[tl]{
+            \fullref{sec:scenario-node-join} \\
+            Periodical \gls{node} updates: \gls{node} reads data from \gls{management} only
+          } \\
+        
+        Sender
+        & A \gls{node} \\
+        
+        Receiver
+        & The \gls{management} \\
+        
+        Additional message headers
+        &  No additional \glspl{message-header} required \\
+        
+        Message payload
+        & The \gls{message-payload} is empty. \\
+
+        Response
+        & \fullref{sec:return-nodes-metadata} (compulsory) \\
+    \end{tabu}
+    \caption{\texttt{get nodes metadata} message specification}
+\end{table}
+
+\subsubsection{post nodes metadata}\label{sec:post-nodes-metadata}
+\begin{table}[H]
+    \begin{tabu}{lX}
+        Context
+        & \makecell[tl]{
+            \fullref{sec:scenario-node-join} \\
+            Periodical \gls{node} updates: Node sends data
+          } \\
+        
+        Sender
+        & A \gls{node} \\
+        
+        Receiver
+        & The \gls{management} \\
+        
+        Additional message headers
+        &  No additional \glspl{message-header} required \\
+        
+        Message payload
+        &  See Table \ref{tab:message-post-nodes-metadata}\\
+        
+        Response
+        & \fullref{sec:return-nodes-metadata} (compulsory) \\
+    \end{tabu}
+    \caption{\texttt{post nodes metadata} message specification}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        this\_node
+        & An \texttt{internal node metadata element} as described in Table \ref{tab:internal-node-metadata-element} describing the sending \gls{node}. \\
+        
+        \hline
+        other\_nodes
+        & A set of \texttt{node state metadata elements} as described in Table \ref{tab:node-state-metadata-element}. One element for for every other \gls{node} in the \gls{system} about which the sending \gls{node} is aware of.\\
+        \hline
+    \end{tabu}
+    \caption{Structure of the \texttt{post nodes metadata} \gls{message-payload}}
+    \label{tab:message-post-nodes-metadata}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        node\_identifier
+        & The \gls{node-identifier} of this \gls{node}\\
+
+        \hline
+        state
+        & The inner \gls{node-state} of this \gls{node}\\
+        
+        \hline
+        storage\_used
+        & Free \gls{storage} of this \gls{node} in \emph{bytes} . \\
+
+        \hline
+        storage\_total
+        & Total \gls{storage} capacity of this \gls{node} in \emph{bytes}. \\
+        \hline
+    \end{tabu}
+    \caption{Structure of the \texttt{internal node metadata element}}
+    \label{tab:internal-node-metadata-element}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        node\_identifier
+        & The \gls{node-identifier} of this \gls{node}\\
+
+        \hline
+        state
+        & The \gls{node-state} of this \gls{node} (as seen from the outside)\\
+        \hline
+    \end{tabu}
+    \caption{Structure of the \texttt{node state metadata element}}
+    \label{tab:node-state-metadata-element}
+\end{table}
+
+
+\subsubsection{return nodes metadata}\label{sec:return-nodes-metadata}
+
+\begin{table}[H]
+    \begin{tabu}{lX}
+        Context
+        & \makecell[tl]{
+            Response to \fullref{sec:post-nodes-metadata} \\
+            Response to \fullref{sec:get-nodes-metadata}
+          } \\
+        
+        Sender
+        & The \gls{management} \\
+        
+        Receiver
+        & The \gls{node} that sent the \texttt{post nodes metadata} / \texttt{get nodes metadata}  message \\
+        
+        Additional message headers
+        &  No additional \glspl{message-header} required \\
+        
+        Message payload
+        & See Table \ref{tab:message-return-nodes-metadata}\\
+
+        Response
+        & No response \\
+    \end{tabu}
+    \caption{\texttt{return nodes metadata} message specification}
+\end{table}
+
+
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        nodes
+        & A set of \texttt{node contact metadata elements} as described in Table \ref{tab:node-contact-metadata-element}. One element for for every \gls{node} in the \gls{system}. \\
+        \hline
+    \end{tabu}
+    \caption{Structure of the \texttt{return nodes metadata} \gls{message-payload}}
+    \label{tab:message-return-nodes-metadata}
+\end{table}
+\begin{table}[H]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        node\_identifier
+        & The \gls{node-identifier} of this \gls{node}. \\
+        
+        \hline
+        address
+        & The address of this \gls{node}. \\
+        
+        \hline
+        port
+        & The \glspl{node} port of this \gls{node}. \\
+        
+        \hline
+        state
+        & The \gls{node-state} of this \gls{node}.\\
+        \hline
+    \end{tabu}
+    \caption{Structure of the \texttt{node contact metadata element}}
+    \label{tab:node-contact-metadata-element}    
+\end{table}
