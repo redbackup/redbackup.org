@@ -435,9 +435,9 @@ The redundancy is temporary reduced to the \glspl{node} which the group of old \
 
 \subsection{Messages}\label{sec:messages}
 
-\Glspl{message} denote the communication units between application components. A \gls{message} is separated into a \texttt{header} and \texttt{payload} field.
+\Glspl{message} denote the communication units between application components. The following message specification is not bound to a specific message format (e.g. BSON or Protobuf) on purpose since it might change in the future to optimise performance. We will use BSON for the prototype in the study project.
 
-In the future, the \texttt{header} might get extended by e.g. a \texttt{message size} and \texttt{checksums}.
+A \gls{message} is separated into a \gls{message-header} and \gls{message-payload} section. In the future, the \gls{message-header} section might get extended by e.g. a \texttt{message size} and \texttt{checksums}.
 
 \begin{figure}[h]
     \centering
@@ -448,53 +448,150 @@ In the future, the \texttt{header} might get extended by e.g. a \texttt{message 
 
 \begin{table}[h!]
     \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
         header
-            & Meta-information about the message as specified in Table \ref{tab:message}.\\
+        & Set of \glspl{header-field} as specified in Table \ref{tab:message-field-header}. \\
+        
+        \hline
         payload
-            & The actual payload of the specified \texttt{header.type}.
+        & The actual payload of the message depending on the message type defined in the \gls{header-field} \texttt{type} (See Table \ref{tab:core-header-fields}). \\
+
+        \hline
     \end{tabu}
     \caption[\Gls{message} Structure]{Structure of a \gls{message}.}
     \label{tab:message}
 \end{table}
 
 \begin{table}[h!]
+\begin{tabu}{| >{\ttfamily}l | X |}
+    \hline
+    field name
+    & Unique name of the \gls{header-field}. A core set of \gls{header-field} that must be sent with every request is defined in Table \ref{tab:message-header-key-value}. \\
+    
+    \hline
+    field value
+    & The value belonging to the field name. \\
+
+    \hline
+\end{tabu}
+\caption{Structure of a \gls{header-field}.}
+\label{tab:message-field-header}
+\end{table}
+
+
+\begin{table}[h!]
     \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
         timestamp\_now
-            & The current UTC time of the local clock as a unix timestamp.  \\
+        & The current UTC time of the local clock as a unix timestamp (64-bit).  \\
+        
+        \hline
         type
-            & A string representation of the payload type, as described in subsections \fullref{sec:messages}.
+        & A string representation of the \gls{message-type}, as described in subsections \fullref{sec:messages}. \\
+        \hline
+    \end{tabu}
+    \caption{Core set of \glspl{header-field} sent with every request}
+    \label{tab:core-header-fields}
+\end{table}
+
+\begin{table}[h!]
+    \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
+        timestamp\_now
+        & The current UTC time of the local clock as a unix timestamp (64-bit).  \\
+        
+        \hline
+        type
+        & A string representation of the payload type, as described in subsections \fullref{sec:messages}. \\
+        \hline
     \end{tabu}
     \caption[\Gls{message} Field \texttt{header} Structure]{Structure of the \gls{message} \texttt{header} Field}
-    \label{tab:message-field-header}
+    \label{tab:message-header-key-value}
 \end{table}
 
-\subsubsection{get target nodes}
-A \gls{client} requests a list of \glspl{node} from the management, with the indent to make backups on. The client expects a \emph{return target nodes} \gls{message} in return.
+\subsubsection{get target nodes}\label{sec:get-target-nodes}
 
-The \gls{message} is empty.
+\begin{table}[h!]
+    \begin{tabu}{lX}
+        Context
+        & \makecell[tl]{
+            \fullref{sec:scenario-create-backup} \\
+            \fullref{sec:scenario-backup-restore}
+          } \\
+        
+        Sender
+        & A \gls{client} \\
+        
+        Receiver
+        & The \gls{management} \\
+        
+        Additional message headers
+        &  No additional \glspl{message-header} required \\
+        
+        Message payload
+        & The \gls{message-payload} is empty. \\
 
-\subsubsection{return target nodes}
-The \glspl{management} response to the \glspl{client} request \emph{get target nodes}.
+        Response
+        & \fullref{sec:return-target-nodes} (compulsory) \\
+    \end{tabu}
+    \caption{\texttt{get target nodes} message specification}
+    \label{tab:message-header-key-value}
+\end{table}
+
+\subsubsection{return target nodes}\label{sec:return-target-nodes}
+\begin{table}[h!]
+    \begin{tabu}{lX}
+        Context
+        & Response to \fullref{sec:get-target-nodes} \\
+        
+        Sender
+        & The \gls{management} \\
+        
+        Receiver
+        & The \gls{client} that sent the \texttt{get target nodes} message \\
+        
+        Additional message headers
+        &  No additional \glspl{message-header} required \\
+        
+        Message payload
+        & See Table \ref{tab:payload-return-target-nodes}\\
+
+        Response
+        & no response required \\
+    \end{tabu}
+    \caption{\texttt{get target nodes} message specification}
+    \label{tab:message-header-key-value}
+\end{table}
+
 
 \begin{table}[h!]
     \begin{tabu}{| >{\ttfamily}l | X |}
+        \hline
         target\_nodes
-            & A list of possible \emph{target nodes} as defined in Table \ref{tab:message-return-target-nodes-field-target-nodes}. The list is sorted in descending order by preference, defined by the \gls{management}.
+            & A list of \texttt{designated node elements} as defined in Table \ref{tab:message-return-target-nodes-field-target-nodes}. The list is sorted in descending order by preference. \\
+        \hline
     \end{tabu}
-    \caption[\emph{return target nodes} Structure]{Structure of a \emph{return target nodes} \Gls{message}.}
-    \label{tab:message-return-target-nodes}
+    \caption{Structure of the \texttt{return target nodes} \gls{message-payload}}
+    \label{tab:payload-return-target-nodes}
 \end{table}
 
 \begin{table}[h!]
     \begin{tabu}{| >{\ttfamily}l | X |}
-        hostname
-            & Hostname of the \gls{node}. \\
-        ip\_address
-            &  IP-Address of the \gls{node}. \\
-        port\_number
-            &  Port-Number of the \gls{node}. \\
+        \hline
+        node\_identifier
+        & \gls{node-identifier} of the \gls{node}. \\
+        
+        \hline
+        address
+        &  Address (domain name or IP) of the \gls{node}. \\
+        
+        \hline
+        port
+        &  Port-Number of the \gls{node}. \\
+
+        \hline
     \end{tabu}
-    \caption[Field \texttt{target\_nodes} Structure]{Structure of Field \texttt{target\_nodes} as Used in the \emph{return target nodes} \Gls{message}.}
+    \caption{Structure of the \texttt{designated node element}}
     \label{tab:message-return-target-nodes-field-target-nodes}
 \end{table}
 
@@ -510,7 +607,7 @@ The client expects a \emph{return designation} \gls{message} in return.
         estimate\_size
             & Backup size estimate by the \gls{client} in bytes. \\
         data\_storage
-            & Unix timestamp of UTC timezone, until when the backup is scheduled to be kept.
+            & Unix timestamp (64-bit) of UTC timezone, until when the backup is scheduled to be kept.
     \end{tabu}
     \caption[\emph{get designaton} Structure]{Structure of a \emph{get designation} \Gls{message}.}
     \label{tab:message-get-designation}
@@ -539,7 +636,7 @@ The client expects a \emph{return chunk states} \gls{message} in return.
         chunk\_identifiers
             & A list of \glspl{chunk-identifier}. \\
         expiration\_date
-            & The \gls{expiration-date} of all \glspl{chunk} in the \texttt{chunk\_identifiers}-field, represented as a unix timestamp in the UTC timezone.
+            & The \gls{expiration-date} of all \glspl{chunk} in the \texttt{chunk\_identifiers}-field, represented as a unix timestamp (64-bit) in the UTC timezone.
     \end{tabu}
     \caption[\emph{get chunk states} Structure]{Structure of a \emph{get chunk states} \Gls{message}.}
     \label{tab:message-get-chunk-states}
@@ -580,7 +677,7 @@ The sender expects a \emph{acknowledge chunks} \gls{message} in return.
         chunks
             & A list of \glspl{chunk} as defined in Table \ref{tab:message-post-chunks-field-chunks}. \\
         expiration\_date
-            & The \gls{expiration-date} of all \glspl{chunk} in the \texttt{chunks}-field, represented as a unix timestamp in the UTC timezone. \\
+            & The \gls{expiration-date} of all \glspl{chunk} in the \texttt{chunks}-field, represented as a unix timestamp (64-bit) in the UTC timezone. \\
         root\_handle
             & Boolean, whether or not the chunks in the field \texttt{chunks} are \glspl{root-handle}
     \end{tabu}
@@ -644,7 +741,7 @@ The \gls{node} returns all requested \glspl{chunk} to the enquirer.
         chunks
             & A list of \glspl{chunk} as defined in Table \ref{tab:message-return-chunks-field-chunks}. \\
         expiration\_date
-            & The \gls{expiration-date} of all \glspl{chunk} in the \texttt{chunks}-field, represented as a unix timestamp in the UTC timezone. \\
+            & The \gls{expiration-date} of all \glspl{chunk} in the \texttt{chunks}-field, represented as a unix timestamp (64-bit) in the UTC timezone. \\
         root\_handle
             & Boolean, whether or not the chunks in the field \texttt{chunks} are \glspl{root-handle}
     \end{tabu}
@@ -691,7 +788,7 @@ The \gls{node} returns all requested \gls{root-handle} \glspl{chunk} to the enqu
         chunk\_content
             & The \glspl{chunk} binary content. \\
         expiration\_date
-            & The \gls{expiration-date} represented as a unix timestamp in the UTC timezone.
+            & The \gls{expiration-date} represented as a unix timestamp (64-bit) in the UTC timezone.
     \end{tabu}
     \caption[Field \texttt{chunks} Structure]{Structure of Field \texttt{chunks} as Used in the \emph{return root handles} \Gls{message}.}
     \label{tab:message-return-root-handles-field-chunks}
