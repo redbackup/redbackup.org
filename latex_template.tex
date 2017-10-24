@@ -50,9 +50,9 @@ consistentlayout, % Uncomment to change the layout of the declaration, abstract 
 %----------------------------------------------------------------------------------------
 %	Glossary SETTINGS
 %----------------------------------------------------------------------------------------
-\usepackage[acronym,toc,nopostdot]{glossaries}
 \usepackage{hyperref}
-\glossarystyle{altlist}
+\usepackage[toc,nopostdot]{glossaries}%acronym
+\setglossarystyle{altlist}
 \usepackage{xparse}
 \DeclareDocumentCommand{\newdualentry}{ O{} O{} m m m m } {
 	\newglossaryentry{gls-#3}{
