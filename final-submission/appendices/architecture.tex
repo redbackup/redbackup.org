@@ -38,8 +38,7 @@ An \gls{administrator} wants to interact with the \gls{system} as less as possib
 
 \subsection{Components}
 
-\subsubsection{Client}
-\label{sec:component-client}
+\subsubsection{Client}\label{sec:component-client}
 
 \begin{figure}[h]
     \centering
@@ -80,7 +79,7 @@ An \gls{administrator} wants to interact with the \gls{system} as less as possib
     \end{itemize}
 \end{itemize}
 
-\subsubsection{Node}
+\subsubsection{Node}\label{sec:component-node}
 
 \begin{figure}[h]
     \centering
@@ -134,8 +133,7 @@ An \gls{administrator} wants to interact with the \gls{system} as less as possib
     \item Handle \emph{leaving} process (see Scenario \ref{sec:scenario-node-leave-planned} \nameref{sec:scenario-node-leave-planned})
 \end{itemize}
 
-\label{sec:component-storage}
-\subsubsection{Storage}
+\subsubsection{Storage}\label{sec:component-storage}
 
 \begin{figure}[h]
     \centering
@@ -161,7 +159,7 @@ An \gls{administrator} wants to interact with the \gls{system} as less as possib
     \item Notify the \gls{node} when a corruption / integrity problem occurs
 \end{itemize}
 
-\subsubsection{Management}
+\subsubsection{Management}\label{sec:component-management}
 
 \begin{figure}[h]
     \centering
@@ -487,7 +485,7 @@ A \gls{message} is separated into a \gls{message-header} and \gls{message-payloa
         
         \hline
         type
-        & A string representation of the \gls{message-type}, as described in subsections \fullref{sec:messages}. \\
+        & A string representation of the message type, as described in subsections \fullref{sec:messages}. \\
         \hline
     \end{tabu}
     \caption{Core set of \glspl{header-field} sent with every request}
