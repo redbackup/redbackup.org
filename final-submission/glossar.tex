@@ -1,166 +1,160 @@
 \newglossaryentry{administrator}
 {
     name={administrator},
-    description={TODO}
+    description={A person that is in charge of managing the system (e.g. add / remove nodes).}
 }
 \newglossaryentry{user}
 {
     name={user},
-    description={TODO}
+    description={A person that has a \gls{client} installed and performs regular backups into the system.}
+}
+\newglossaryentry{node}
+{
+    name={node},
+    description={A core participant in the system that manages \glspl{chunk} (See \fullref{sec:component-node})}
+}
+\newglossaryentry{designated-node}
+{
+    name={designated node},
+    description={A \gls{node} that is selected by a \gls{client} to send backup data to or restore data from.}
 }
 \newglossaryentry{new-node}
 {
     name={new node},
-    description={TODO}
-}
-\newglossaryentry{node-identifier}
-{
-    name={node identifier},
-    description={TODO}
-}
-\newglossaryentry{location}
-{
-    name={location},
-    description={TODO}
+    description={A \gls{node} that is scheduled to be integrated into the system.}
 }
 \newglossaryentry{leaving-node}
 {
     name={leaving node},
-    description={TODO}
+    description={A \gls{node} that is scheduled to leave the system permanently.}
 }
 \newglossaryentry{sending-node}
 {
     name={sending node},
-    description={TODO}
+    description={A \gls{node} that is sending data to another node or a client}
+}
+\newglossaryentry{node-identifier}
+{
+    name={node identifier},
+    description={A unique identifier that every node has to identify itself and others.}
+}
+\newglossaryentry{location}
+{
+    name={location},
+    description={Multiple nodes can be associated with a (physical) location to ensure redundancy is met over multiple physical locations.}
 }
 \newglossaryentry{metadata}
 {
     name={metadata},
-    description={TODO}
+    description={A set of data that describes a \gls{node} (e.g. its state, storage capacity). The set of data differs depending on the context.}
 }
 \newglossaryentry{storage}
 {
     name={storage},
-    description={TODO}
+    description={A component in charge to persist data (see \fullref{sec:component-storage}).}
 }
 \newglossaryentry{serialised-chunk-index}
 {
     name={serialised chunk index},
-    description={TODO}
+    description={A serialised version of the \gls{chunk-index}, that might be split into multiple chunks, created on backup and used for restore.}
 }
 \newglossaryentry{chunk-content}
 {
     name={chunk content},
-    description={TODO}
+    description={The actual binary data a chunk represents.}
 }
 \newglossaryentry{chunk}
 {
     name={chunk},
-    description={TODO: has content and hash}
+    description={A piece of data in the system, consisting of a binary data (\gls{chunk-content}), a unique identifier (\gls{chunk-identifier}) and an \gls{expiration-date}.}
 }
 \newglossaryentry{root-handle}
 {
     name={root handle},
-    description={TODO: has content and hash}
+    description={A chunk that is highlighted to find backups in the system.}
 }
 
 \newglossaryentry{chunk-identifier}
 {
     name={chunk identifier},
-    description={TODO}
+    description={A unique identifier of a \gls{chunk} that is derived from the corresponding \gls{chunk-content}.}
 }
 \newglossaryentry{chunk-index}
 {
     name={chunk index},
-    description={TODO}
+    description={A \gls{client}-side data structure that maps files on the filesystem to chunks.}
 }
 \newglossaryentry{chunk-table}
 {
     name={chunk table},
-    description={TODO}
+    description={A data structure on a \gls{node} containing all \gls{chunk-identifier} and \glspl{expiration-date} of all \glspl{chunk} stored on this \gls{node}.}
 }
 \newglossaryentry{file}
 {
     name={file},
-    description={TODO}
+    description={A document on a client system that shall be backed up.}
 }
 \newglossaryentry{expiration-date}
 {
     name={expiration date},
-    description={TODO}
-}
-\newglossaryentry{designated-node}
-{
-    name={designated node},
-    description={TODO}
-}
-
-\newglossaryentry{node}
-{
-    name={node},
-    description={TODO}
+    description={Date, until which a given \gls{chunk} must be kept in the system.}
 }
 
 \newglossaryentry{client}
 {
     name={client},
-    description={TODO}
+    description={A piece of software which runs on a users computer, that is in charge of creating and restoring backups (see \fullref{sec:component-client}).}
 }
 
 \newglossaryentry{management}
 {
     name={management},
-    description={TODO}
+    description={A component that orchestrates the configuration of the system (see \fullref{sec:component-management}).}
 }
 
 \newglossaryentry{system}
 {
     name={system},
-    description={TODO: The whole backup system. What boundaries does that include?}
+    description={The whole redbackup system as described in \fullref{sec:specification}.}
 }
 
 \newglossaryentry{node-cache}
 {
     name={node-cache},
-    description={TODO: The cache of the client, in which he rememers target nodes from the management}
+    description={A list of contact information of nodes in the system that each client maintains in case the management is unavailable.}
 }
 
 \newglossaryentry{node-state}
 {
     name={node state},
-    description={TODO: Also link the state attachment}
+    description={The intrinsic or extrinsic state of any node (see \fullref{sec:component-node}).}
 }
 
 \newglossaryentry{medium}
 {
     name={medium},
-    description={TODO: This is the storage medium, usually a hdd}
+    description={Particular form of storage for files, e.g. hard discs or magnetic tape.}
 }
 
 \newglossaryentry{message}
 {
     name={message},
-    description={TODO}
+    description={A unit of communication between two parties.}
 }
 
 \newglossaryentry{message-payload}
 {
     name={message payload},
-    description={TODO}
+    description={Actual data of a \gls{message}.}
 }
 \newglossaryentry{message-header}
 {
     name={message header},
-    description={TODO}
+    description={Meta-information describing the \gls{message}}
 }
 \newglossaryentry{header-field}
 {
     name={header field},
-    description={TODO}
-}
-\newglossaryentry{message-type}
-{
-    name={message type},
-    description={TODO}
+    description={Components of the \gls{message-header} section of \glspl{message} that define operating parameters.}
 }
 
