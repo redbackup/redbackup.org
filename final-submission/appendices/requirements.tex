@@ -22,7 +22,7 @@ and general attitude of the actors towards the system rather than listing precis
 and measurable requirements.
 
 Not all intentions must be met within the study project but the might %TODO: Reference to scope section as soon as ready.
-impact architectural decisions. Relevant intentions are therefore listed here \relevantreq{emphasised}.
+impact architectural decisions. All intentions relevant for the study project are therefore listed here \relevantreq{emphasised}.
 
 
 \subsection{Intentions of a User}
@@ -33,8 +33,8 @@ on the topic of \textbf{backup creation}, \ldots{}
 \end{flushright}
 
 \begin{enumerate}
-	\item	I want my backups to take place automatically, silently and continuously so I do not forget.
-	\item	I want to get notified if the creation of a backup fails, but not for every little trivia.
+	\item	I want my backups to take place automatically in the background so I do not forget.
+	\item	I want to get notified if the creation of a backup fails, but not for every little trivia. For example, if the network connection breaks down temporary, the process should be retried several times before showing a notification.
 	\item	I want to get notified if I have not created a new backup for a suspicious amount of time (e.g. usually daily but suddenly no backups for a week).
 	\item	I want that the creation of a backup does not impact the performance of my device noticeably (CPU, RAM, network etc).
 	\item	I want to be able to stop/restart/suspend my device at any time even if a new backup is in the process of being created.
@@ -49,15 +49,16 @@ on the topic of \textbf{backup storage}, \ldots{}
 \begin{enumerate}
 	\enumcountrestore
 	\item	I want my backup data to be encrypted so that only I can restore it.
-	\item	I want to create backups from everywhere (especially not just from home).
-	\item   \relevantreq{I want my backup data to be stored in physical sites that I trust.}
-	\item	\relevantreq{I want my backups to be space efficient to safe cost.}
+	\item	I want to create backups any place with a working internet connection (especially not just from home).
+	\item   \relevantreq{I want my backup data to be stored only on physical sites that I trust.}
+	\item	\relevantreq{I want my backups to be space efficient to save cost.}
 	\item	\relevantreq{I want my data to be stored with a defined degree of redundancy so that it does not get lost.}
 	\item	\relevantreq{I want my data to be replicated to different places (e.g. buildings) in case one of them is subject to a catastrophic event (e.g. an earthquake, fire).}
-	\item	\relevantreq{I want that my data is intact, safe and secure at any time.}
-	\item	\relevantreq{I does not matter, where my data is replicated to within my trusted network as long as it stays safe.}
-	\item	\relevantreq{I don't care where within the trusted network my data is backed up to as long as the creation and restore of backups is not significantly slower.}
-	\item	\relevantreq{I want to create backups quickly. The acceptable duration depends on the amount of new and modified data.}
+	\item	\relevantreq{I want that my data is protected from unauthorised access at any time}
+	\item	\relevantreq{I want that my data is not lost if a storage medium is corrupted or breaks down.}
+	\item	\relevantreq{I does not matter, where my data is replicated to within my trusted network.}
+	\item	\relevantreq{I don't care where within the trusted network my data is backed up to as long as the creation and restore of backups does not take 30\% longer as if it were stored within the local network.}
+	\item	\relevantreq{I want that the duration of a backup is linearly dependent of the size of the data that has changed.}
 	\item	\relevantreq{I want to define how long backups are stored or use a reasonable default.}
 
 	\enumcountsave
@@ -81,7 +82,6 @@ on the topic of the \textbf{backup software}, \ldots{}
 
 \begin{enumerate}
 	\enumcountrestore
-	\item	I want the backup software to use as less space on the disk as possible because I want to use it for my data.
 	\item	I want be able to install and have the software up and running within five minutes.
 	\item	I don't want to perform updates manually.
 \end{enumerate}
@@ -102,7 +102,7 @@ on the topic of \textbf{backup system management}, \ldots{}
 	\item \relevantreq{I want to extend the storage capacity by plugging in a new disk and starting/connecting a new node.}
 	\item \relevantreq{I want to add new backup sites (and therefore nodes) to the system.}
 	\item \relevantreq{I want to scale the system up to 100 Nodes and down to 2.}
-	\item \relevantreq{I want to put large disks (e.g. 2TB) into a node so that I do not have to maintain an unjustifiably high number of nodes.}
+	\item \relevantreq{I want to put multiple large disks (e.g. 2TB) into a node so that I do not have to maintain an unjustifiably high number of nodes.}
 	\item \relevantreq{I want the system to operate properly if the management node is down (no single point of failure). The addition of new nodes may not be possible without management.}
 	\item \relevantreq{I want to perform updates including reboots without impacting the performance of the network.}
 	\item \relevantreq{I want to update the management server (including restart) without impacting the system (except for the configuration/monitoring part).}
