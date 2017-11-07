@@ -15,7 +15,7 @@ Figure \ref{fig:architecture-overview} presents an overview over the Redbackup \
 \subsection{Actors}
 
 \subsubsection{User}
-A typical \gls{user} does not want to interact with the \gls{system} at any time. All he/she wants is to be sure that all his/her data is safely backed up.
+A typical \gls{user} does not want to interact with the \gls{system} at any time. All he/she wants is to be sure that all his/her data is backed up.
 
 To simplify the implementation for the study project, the \gls{user} must instruct the \gls{client} manually (create and restore backup).
 
@@ -414,7 +414,7 @@ This scenario is described as it is implemented in the study project. It might b
 
 \subsubsection{Management Problems}\label{sec:scenario-management-problems}
 \begin{itemize}
-    \item The case, that the \gls{management} has outdated \gls{metadata} out of a data loss, will be ignored during this study project. A mechanism solving this problem, would probably be subject to significant changes in further development e.g.\ when implementing limited redundancy levels. %TODO: Counter in config in the future
+    \item The case that the \gls{management} has outdated \gls{metadata} due to data loss will be ignored during this study project.
 \end{itemize}
 
 \subsubsection{Network Availability Problems}\label{sec:scenario-network-errors}
