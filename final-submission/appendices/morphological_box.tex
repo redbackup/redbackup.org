@@ -101,4 +101,10 @@ Assuming we have $p=30^{21}$ files/chunks the system (which is equivalent to two
 
 If, however, a collision would happen after all, for example, if the used cryptographic hash function is flawed or the unlikely event occurs, it results in data loss.
 
+In theory, we could detect collisions on the client. To do so, every time an identifier is calculated, the client must verify that if a file with the same identifier exists already in the system, it has the exact same contents. If the contents differ, its a collision.This approach requires a lot of network traffic and can slow down the backup process significantly.
+
+Another place to detect collisions is on the node. A node can verify if the contents of a given file/chunk are equal to the contents already present in the system. The downside of this approach is that it requires the client always to send the full contents of every file, which means there is a lot of additional network traffic.
+
+Both of the described approaches for collision detection have significant costs that are not practical.
+
 As for the study project, we use the SHA-256 algorithm\cite{sha-256} and neglect the risk of hash collisions due to its low probability. Nonetheless, we prepare all protocols and components to use an interchangeable mechanism for the calculation and transmission of file/chunk identifiers.
