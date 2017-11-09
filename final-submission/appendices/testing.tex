@@ -34,6 +34,8 @@ On these two networks, the implemented scenarios as defined in Appendix \ref{sec
 
 The integration tests are to be run automatically at least on every tagged release (i.e. at least once every sprint).
 
+Tests for the fault tolerance, e.g. what happens if a node goes down during a backup, are implemented as integration tests as well.
+
 \subsubsection{Implementation}
 
 To bootstrap the infrastructure we utilise Docker Compose, a tool for defining and running multi-container Docker applications\cite{docker-compose}. The node application, as well as the client and a managment mockup are run in separate containers, connected over a virtual network.
