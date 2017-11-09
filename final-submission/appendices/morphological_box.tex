@@ -22,6 +22,10 @@ The \emph{one in charge} option is the most straightforward option to implement 
 \paragraph{Storage backend}
 Using the file system is the simplest possible solution for the study project and therefore selected option. Adding support for other backends in the future is still possible since the storage component is an isolated part of the architecture (See \fullref{sec:component-storage})
 
+The number of files in a folder is limited depending on the used file system, length of a filename and other factors. Some file systems (e.g. ext4) have a global limit for the maximal number of files. This limit is 4 billion files for ext4. \cite{ext4}
+
+We, therefore, use the ext4 file system to persist data in the study project.
+
 \paragraph{Removal of old backups}
 We propose to use a fixed \emph{physical time} that must be specified on backup creation. After expiration, the backup data may be removed by a garbage collector. This may be extended to allow only mutual garbage removal in the future.
 
