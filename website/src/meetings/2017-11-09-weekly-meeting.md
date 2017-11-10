@@ -22,29 +22,29 @@ minute-taker: rzimmerm
 
 1. Review revised documents
     - We thank MeF for the review!
-    - general feedback from MeF:
+    - General feedback from MeF:
         - Seems fine
         - The specification is too long and must be must be more concise. The chord paper for example is not that long but describes a very complex system.
         - We will write a more concise description of the system in the final submission document and keep the appendix as.
     - Requirements
-      - Write down additionally to the intentions the most important requirements (concise, 10-15 items)
+      - Additionally to the intentions, write down the most important requirements (concise, 10-15 items).
     - What do the annotations in Figure 1 and 3 mean?
       - It was unclear at the time of ready, that "storage" is a component itself and not a medium.
       - We will clarify this when we write the concise system description in the final submission document.
 2. Presentation of the minimal prototype
-    - The prototype seems fine so far
-    - We discussed the used frameworks Diesel and Tokio
+    - The prototype seems fine so far.
+    - We discussed the used frameworks Diesel and Tokio.
 3. Bachelor Thesis
     - For MeF, the product of the thesis must be "in use" for a 6.
     - redbackup is an option, if..
         - it is a working open source project (with downloads!)
-        - if we find an industry partner, that uses it.
+        - we find an industry partner, that uses it.
     - MeFs project ideas:
-        - low energy devices (power can turn off at every moment)
-        - A "Map" of a Git Repository for real insights (who contributed which code, filter, hot spots, ...)
+        - Low energy devices (power can turn off at every moment)
+        - A "map" of a Git repository for real insights (who contributed which code, filter, hot spots, ...)
         - Lambda calculus interpreter: Requires a really good user interface
         - DAB+ monitoring (lots of signal processing)
-        - light measurement with drones
+        - Light measurement with drones
         - "Dance platform" for the elderly
             - Lots of OCAML code
             - Improve tooling and code
@@ -58,7 +58,7 @@ minute-taker: rzimmerm
 _open issues must be completed before the next meeting_
 
 - MeF will send the complete project idea list
-- Write real requirements
+- Write real requirements: [REDPRO-98](https://project.redbackup.org/browse/REDPRO-98)
 
 ## Upcoming absences
 
