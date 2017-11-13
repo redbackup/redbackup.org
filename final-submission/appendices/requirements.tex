@@ -17,9 +17,9 @@ He/She wants to be sure that the system runs smoothly. If something goes
 wrong, he/she wants to be able to fix it within a few minutes.
 
 Because the actors can have very different levels that they tolerate it is hard to
-determine measurable requirements. We, therefore, decided to highlight the intentions
-and general attitude of the actors towards the system rather than listing precise
-and measurable requirements.
+determine measurable requirements. We, therefore, started to highlight the intentions
+and general attitude of the actors towards the system. Afterwards, we extrapolated the most
+important requirements.
 
 Not all intentions must be met within the study project but the might %TODO: Reference to scope section as soon as ready.
 impact architectural decisions. All intentions relevant for the study project are therefore listed here \relevantreq{emphasised}.
@@ -120,3 +120,74 @@ on the topic of \textbf{backup monitoring}, \ldots{}
 	\item \relevantreq{I want to be informed if a certain replication-degree cannot be met.}
 \end{enumerate}
 
+
+\subsection{Requirements}
+
+The following requirements are grouped according to ISO 9126 \cite{ISO9126}.
+
+\subsubsection{Functionality}
+
+\begin{enumerate}
+	\item An Administrator must be able to grant new users access to the backup system within less than 1 minute. (Suitability)
+	\item An Administrator must be able to see how much capacity in GB a given user is using within less than 1 minute. (Suitability)
+	\item A Node must guarantee when asked about files stored on it that all concerned files exist on it and are not corrupted (Accuracy)
+	\item All Data sent from a user must be encrypted according to BSI TR-02102-1 \cite{bsi-tr-02102-1} (Security)
+	\item A given node must only know the minimal amount of Data required to detect corrupted data and garbage collection, i.e. the encrypted binary data, an identifier that can be derived from the Encrypted Binary Data as well as the expiration date. (Security)
+	\item Nodes and Users that are not explicitly listed by an administrator are not allowed to participate in a given system and can therefore under no circumstances read or write data from or in the system. (Security)
+	\enumcountsave
+\end{enumerate}
+
+\subsubsection{Reliability}
+
+\begin{enumerate}
+	\enumcountrestore
+	\item An administrator must receive a notification via email within 10 minutes in case a disk, node or management fails. (Maturity, Fault tolerance)
+	\item An administrator must receive a notification via email within 10 minutes if a potential disk failure (using SMART-Results) is detected. (Maturity, Fault tolerance)
+	\item An administrator must receive a notification via email within 10 minutes if the replication-degree for a file/chunk cannot be met. (Maturity, Fault tolerance)
+	\item Data must be replicated on at least two nodes in the system 1 hour after its arrival in the system. (Fault tolerance)
+	\item A Storage must periodically verify the integrity of the data stored in it so that corruptions are detected after max. 24 hours. (Fault tolerance)
+	\item The replication process is not affected if the management cannot be reached. The only allowed exceptions are the addition of new nodes and planned leaving. (Recoverability)
+	\item If a user/administrator updates and reboots a client/node/management so that it is not down for more than 10 minutes, no notifications/warnings are sent nor must it trigger any recovery routines.(Recoverability)
+	\enumcountsave
+\end{enumerate}
+
+\subsubsection{Usability}
+\begin{enumerate}
+	\enumcountrestore
+	\item A user must be able to inspect the current progress of a backup/restore process in percent, time spent as well as an estimate for the remaining time (Understandability).
+	\item A user or administrator must be able to install the client/node/management software including all its dependencies within less than 5 minutes (excluding the time spent for downloads). (Operability, Attractiveness)
+	\item If a user pauses (e.g. system restart, suspension) his/her device during backup and restore, the client software must continue its work where it stopped. (Operability, Attractiveness)
+	\item A user must be able to define ignored files within less than 3 minutes. (Operability, Attractiveness)
+	\item A user must be able to restore a previous version of a (possibly deleted) file within less than five minutes if it is file size is less than 100MB. (Operability, Attractiveness)
+	\enumcountsave
+\end{enumerate}
+
+\subsubsection{Efficiency}
+\begin{enumerate}
+	\enumcountrestore
+	\item The time for the creation of a backup must be $O(n)$ where $n$ is the amount of changed data bytes.(Time behaviour)
+	\item The creation of a backup on the client should use more than 10\% of the systems resources (i.e. CPU and RAM). (Resource utilization)
+	\item A node must be able to persist data on more than two 2GB disks. (Resource utilization)
+	\enumcountsave
+\end{enumerate}
+
+\subsubsection{Maintainability}
+\begin{enumerate}
+	\enumcountrestore
+	\item Every interaction of a client/node/management including all their side effects (e.g. the persistence of data, sending data over the network) must be logged so that it in case of a failure every step can be reproduced (Analyzability)
+	\item Any component (i.e. Client, Node, Management) must not depend on any other component except sending messages so that it is possible to replace it with a version written in another technology. (Changeability)
+	\item A user/administrator must be able to change the configuration on a client/node/management using a configuration file.
+	\item The Hash-Algorithm used for the calculation of identifiers must be replaceable in the code within one working day. (Changeability)
+	\item Nodes/Clients must be able to upgrade Chunk-Identifiers to a new Hash-Algorithm in $O(n)$ where $n$ is the amount of chunks. (Changeability)
+	\item All components must be Testable with unit tests as well as integration tests to cover at least 80\% of all branches.
+	\enumcountsave
+\end{enumerate}
+
+\subsubsection{Portability}
+
+\begin{enumerate}
+	\enumcountrestore
+	\item All components must be published as docker images to simplify the deployment in docker environments. (Installability)
+	\item A user must be able to export and decrypt all his/hers Data in $O(n)$ where $n$ is the size of all his/hers data in bytes in order to switch to another backup solution (Replaceability)
+	\enumcountsave
+\end{enumerate}
