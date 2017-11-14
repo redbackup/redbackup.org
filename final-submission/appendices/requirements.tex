@@ -132,7 +132,7 @@ The following requirements are grouped according to ISO 9126 \cite{ISO9126}.
 	\item An Administrator must be able to see how much capacity in GB a given user is using within less than 1 minute. (Suitability)
 	\item A Node must guarantee when asked about files stored on it that all concerned files exist on it and are not corrupted (Accuracy)
 	\item All Data sent from a user must be encrypted according to BSI TR-02102-1 \cite{bsi-tr-02102-1} (Security)
-	\item A given node must only know the minimal amount of Data required to detect corrupted data and garbage collection, i.e. the encrypted binary data, an identifier that can be derived from the Encrypted Binary Data as well as the expiration date. (Security)
+	\item A given node must only know the minimal amount of data required to detect corrupted data and garbage collection, i.e. the encrypted binary data, an identifier that can be derived from the encrypted binary data as well as the expiration date. (Security)
 	\item Nodes and Users that are not explicitly listed by an administrator are not allowed to participate in a given system and can therefore under no circumstances read or write data from or in the system. (Security)
 	\enumcountsave
 \end{enumerate}
@@ -174,12 +174,12 @@ The following requirements are grouped according to ISO 9126 \cite{ISO9126}.
 \subsubsection{Maintainability}
 \begin{enumerate}
 	\enumcountrestore
-	\item Every interaction of a client/node/management including all their side effects (e.g. the persistence of data, sending data over the network) must be logged so that it in case of a failure every step can be reproduced (Analyzability)
+	\item Every interaction of a client/node/management including all their side effects (e.g. the persistence of data, sending data over the network) must be logged so that it in case of a failure every step can be reproduced (Analysability)
 	\item Any component (i.e. Client, Node, Management) must not depend on any other component except sending messages so that it is possible to replace it with a version written in another technology. (Changeability)
 	\item A user/administrator must be able to change the configuration on a client/node/management using a configuration file.
 	\item The Hash-Algorithm used for the calculation of identifiers must be replaceable in the code within one working day. (Changeability)
 	\item Nodes/Clients must be able to upgrade Chunk-Identifiers to a new Hash-Algorithm in $O(n)$ where $n$ is the amount of chunks. (Changeability)
-	\item All components must be Testable with unit tests as well as integration tests to cover at least 80\% of all branches.
+	\item All components must be testable with unit tests as well as integration tests to cover at least 80\% of all branches.
 	\enumcountsave
 \end{enumerate}
 
@@ -188,6 +188,6 @@ The following requirements are grouped according to ISO 9126 \cite{ISO9126}.
 \begin{enumerate}
 	\enumcountrestore
 	\item All components must be published as docker images to simplify the deployment in docker environments. (Installability)
-	\item A user must be able to export and decrypt all his/hers Data in $O(n)$ where $n$ is the size of all his/hers data in bytes in order to switch to another backup solution (Replaceability)
+	\item A user must be able to export and decrypt all his/hers Data in $O(n)$ where $n$ is the size of all his/hers data in order to switch to another backup solution (Replaceability)
 	\enumcountsave
 \end{enumerate}
