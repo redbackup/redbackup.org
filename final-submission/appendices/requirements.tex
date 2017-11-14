@@ -17,12 +17,12 @@ He/She wants to be sure that the system runs smoothly. If something goes
 wrong, he/she wants to be able to fix it within a few minutes.
 
 Because the actors can have very different levels that they tolerate it is hard to
-determine measurable requirements. We, therefore, decided to highlight the intentions
-and general attitude of the actors towards the system rather than listing precise
-and measurable requirements.
+determine measurable requirements. We, therefore, started to highlight the intentions
+and general attitude of the actors towards the system. Afterwards, we extrapolated the most
+important requirements.
 
 Not all intentions must be met within the study project but the might %TODO: Reference to scope section as soon as ready.
-impact architectural decisions. Relevant intentions are therefore listed here \relevantreq{emphasised}.
+impact architectural decisions. All intentions relevant for the study project are therefore listed here \relevantreq{emphasised}.
 
 
 \subsection{Intentions of a User}
@@ -33,8 +33,8 @@ on the topic of \textbf{backup creation}, \ldots{}
 \end{flushright}
 
 \begin{enumerate}
-	\item	I want my backups to take place automatically, silently and continuously so I do not forget.
-	\item	I want to get notified if the creation of a backup fails, but not for every little trivia.
+	\item	I want my backups to take place automatically in the background so I do not forget.
+	\item	I want to get notified if the creation of a backup fails, but not for every little trivia. For example, if the network connection breaks down temporary, the process should be retried several times before showing a notification.
 	\item	I want to get notified if I have not created a new backup for a suspicious amount of time (e.g. usually daily but suddenly no backups for a week).
 	\item	I want that the creation of a backup does not impact the performance of my device noticeably (CPU, RAM, network etc).
 	\item	I want to be able to stop/restart/suspend my device at any time even if a new backup is in the process of being created.
@@ -49,15 +49,16 @@ on the topic of \textbf{backup storage}, \ldots{}
 \begin{enumerate}
 	\enumcountrestore
 	\item	I want my backup data to be encrypted so that only I can restore it.
-	\item	I want to create backups from everywhere (especially not just from home).
-	\item   \relevantreq{I want my backup data to be stored in physical sites that I trust.}
-	\item	\relevantreq{I want my backups to be space efficient to safe cost.}
+	\item	I want to create backups any place with a working internet connection (especially not just from home).
+	\item   \relevantreq{I want my backup data to be stored only on physical sites that I trust.}
+	\item	\relevantreq{I want my backups to be space efficient to save cost.}
 	\item	\relevantreq{I want my data to be stored with a defined degree of redundancy so that it does not get lost.}
 	\item	\relevantreq{I want my data to be replicated to different places (e.g. buildings) in case one of them is subject to a catastrophic event (e.g. an earthquake, fire).}
-	\item	\relevantreq{I want that my data is intact, safe and secure at any time.}
-	\item	\relevantreq{I does not matter, where my data is replicated to within my trusted network as long as it stays safe.}
-	\item	\relevantreq{I don't care where within the trusted network my data is backed up to as long as the creation and restore of backups is not significantly slower.}
-	\item	\relevantreq{I want to create backups quickly. The acceptable duration depends on the amount of new and modified data.}
+	\item	\relevantreq{I want that my data is protected from unauthorised access at any time}
+	\item	\relevantreq{I want that my data is not lost if a storage medium is corrupted or breaks down.}
+	\item	\relevantreq{I does not matter, where my data is replicated to within my trusted network.}
+	\item	\relevantreq{I don't care where within the trusted network my data is backed up to as long as the creation and restore of backups does not take 30\% longer as if it were stored within the local network.}
+	\item	\relevantreq{I want that the duration of a backup is linearly dependent of the size of the data that has changed.}
 	\item	\relevantreq{I want to define how long backups are stored or use a reasonable default.}
 
 	\enumcountsave
@@ -81,7 +82,6 @@ on the topic of the \textbf{backup software}, \ldots{}
 
 \begin{enumerate}
 	\enumcountrestore
-	\item	I want the backup software to use as less space on the disk as possible because I want to use it for my data.
 	\item	I want be able to install and have the software up and running within five minutes.
 	\item	I don't want to perform updates manually.
 \end{enumerate}
@@ -102,7 +102,7 @@ on the topic of \textbf{backup system management}, \ldots{}
 	\item \relevantreq{I want to extend the storage capacity by plugging in a new disk and starting/connecting a new node.}
 	\item \relevantreq{I want to add new backup sites (and therefore nodes) to the system.}
 	\item \relevantreq{I want to scale the system up to 100 Nodes and down to 2.}
-	\item \relevantreq{I want to put large disks (e.g. 2TB) into a node so that I do not have to maintain an unjustifiably high number of nodes.}
+	\item \relevantreq{I want to put multiple large disks (e.g. 2TB) into a node so that I do not have to maintain an unjustifiably high number of nodes.}
 	\item \relevantreq{I want the system to operate properly if the management node is down (no single point of failure). The addition of new nodes may not be possible without management.}
 	\item \relevantreq{I want to perform updates including reboots without impacting the performance of the network.}
 	\item \relevantreq{I want to update the management server (including restart) without impacting the system (except for the configuration/monitoring part).}
@@ -120,3 +120,74 @@ on the topic of \textbf{backup monitoring}, \ldots{}
 	\item \relevantreq{I want to be informed if a certain replication-degree cannot be met.}
 \end{enumerate}
 
+
+\subsection{Requirements}
+
+The following requirements are grouped according to ISO 9126 \cite{ISO9126}.
+
+\subsubsection{Functionality}
+
+\begin{enumerate}
+	\item An administrator must be able to grant new users access to the backup system within less than 10 minutes. (suitability)
+	\item An administrator must be able to see how much capacity in GB a given user is using within less than 1 minute. (suitability)
+	\item A node must guarantee when asked about files stored on it that all concerned files exist on it and are not corrupted (accuracy)
+	\item All data sent from a user must be encrypted according to BSI TR-02102-1 \cite{bsi-tr-02102-1} (security)
+	\item A given node must only know the minimal amount of data required to detect corrupted data and garbage collection, i.e. the encrypted binary data, an identifier that can be derived from the encrypted binary data as well as the expiration date. (security)
+	\item Nodes and users that are not explicitly listed by an administrator are not allowed to participate in a given system and can therefore under no circumstances read or write data from or in the system. (security)
+	\enumcountsave
+\end{enumerate}
+
+\subsubsection{Reliability}
+
+\begin{enumerate}
+	\enumcountrestore
+	\item An administrator must receive a notification via email within 10 minutes in case a disk, node or management fails. (maturity, fault tolerance)
+	\item An administrator must receive a notification via email within 10 minutes if a potential disk failure (using SMART results) is detected. (maturity, fault tolerance)
+	\item An administrator must receive a notification via email within 10 minutes if the replication-degree for a file/chunk cannot be met. (maturity, fault tolerance)
+	\item Data must be replicated on at least two nodes in the system 1 hour after its arrival in the system. (fault tolerance)
+	\item A storage must periodically verify the integrity of the data stored in it so that corruptions are detected after max. 24 hours. (fault tolerance)
+	\item The replication process is not affected if the management cannot be reached. The only allowed exceptions are the addition of new nodes and planned leaving. (recoverability)
+	\item If a user/administrator updates and reboots a client/node/management so that it is not down for more than 10 minutes, no notifications/warnings are sent nor must it trigger any recovery routines.(recoverability)
+	\enumcountsave
+\end{enumerate}
+
+\subsubsection{Usability}
+\begin{enumerate}
+	\enumcountrestore
+	\item A user must be able to inspect the current progress of a backup/restore process in percent, time spent as well as an estimate for the remaining time (understandability).
+	\item A user or administrator must be able to install the client/node/management software including all its dependencies within less than 5 minutes (excluding the time spent for downloads). (operability, attractiveness)
+	\item If a user pauses (e.g. system restart, suspension) his/her device during backup and restore, the client software must continue its work where it stopped. (operability, attractiveness)
+	\item A user must be able to define ignored files within less than 3 minutes. (operability, attractiveness)
+	\item A user must be able to restore a previous version of a (possibly deleted) file within less than five minutes if it is file size is less than 100MB. (operability, attractiveness)
+	\enumcountsave
+\end{enumerate}
+
+\subsubsection{Efficiency}
+\begin{enumerate}
+	\enumcountrestore
+	\item The time for the creation of a backup must be $O(n)$ where $n$ is the amount of changed data bytes.(time behaviour)
+	\item The creation of a backup on the client should use more than 10\% of the systems resources (i.e. cPU and rAM). (resource utilization)
+	\item A node must be able to persist data on more than two 2TB disks. (Resource utilization)
+	\enumcountsave
+\end{enumerate}
+
+\subsubsection{Maintainability}
+\begin{enumerate}
+	\enumcountrestore
+	\item Every interaction of a client/node/management including all their side effects (e.g. the persistence of data, sending data over the network) must be logged so that it in case of a failure every step can be reproduced (analysability)
+	\item Any component (i.e. client, node, management) must not depend on any other component except sending messages so that it is possible to replace it with a version written in another technology. (changeability)
+	\item A user/administrator must be able to change the configuration on a client/node/management using a configuration file. (changeability)
+	\item The hash-Algorithm used for the calculation of identifiers must be replaceable in the code within one working day. (changeability)
+	\item Nodes/Clients must be able to upgrade chunk-Identifiers to a new hash-Algorithm in $O(n)$ where $n$ is the amount of chunks. (changeability)
+	\item All components must be testable with unit tests as well as integration tests to cover at least 80\% of all branches. (testability)
+	\enumcountsave
+\end{enumerate}
+
+\subsubsection{Portability}
+
+\begin{enumerate}
+	\enumcountrestore
+	\item All components must be published as docker images to simplify the deployment in docker environments. (installability)
+	\item A user must be able to export and decrypt all his/hers data in $O(n)$ where $n$ is the size of all his/hers binary data in order to switch to another backup solution (replaceability)
+	\enumcountsave
+\end{enumerate}

@@ -8,7 +8,7 @@ The chosen option should be as simple as possible for the prototype developed in
 The following paragraphs reason the selected entry in each dimension.
 
 \paragraph{Redundancy} 
-We originally planned to support \emph{client m-replication}. This, however, is a complex mechanism that requires sophisticated algorithms to work correctly and efficiently. We chose the system \emph{n-replication} option because it is simple to implement in a prototype. Changing this option in the future is hard because it requires fundamental changes in the replication process and the communication protocols.
+We originally planned to support \emph{client m-replication}, which means that the client defines a custom degree of redundancy from 1 to the number of nodes. This, however, is a complex mechanism that requires sophisticated algorithms to work correctly and efficiently. For the prototype, we chose the more straightforward to implement option system \emph{n-replication}, where the degree of redundancy for the whole system is equal to the number of nodes in it. Changing this option in the future is hard because it requires fundamental changes in the replication process and the communication protocols.
 
 \paragraph{Storage unit}
 The idea of \emph{chunks} come from Borg Backup. Files are partitioned into chunks using a rolling hash which allows deduplication as well as space efficient backups for large files \cite{borg-data-structures}. These are desired properties in a backup system to minimise network and disk usage.
@@ -21,6 +21,10 @@ The \emph{one in charge} option is the most straightforward option to implement 
 
 \paragraph{Storage backend}
 Using the file system is the simplest possible solution for the study project and therefore selected option. Adding support for other backends in the future is still possible since the storage component is an isolated part of the architecture (See \fullref{sec:component-storage})
+
+The number of files in a folder is limited depending on the used file system, length of a filename and other factors. Some file systems (e.g. ext4) have a global limit for the maximal number of files. This limit is 4 billion files for ext4. \cite{ext4}
+
+We, therefore, use the ext4 file system to persist data in the study project.
 
 \paragraph{Removal of old backups}
 We propose to use a fixed \emph{physical time} that must be specified on backup creation. After expiration, the backup data may be removed by a garbage collector. This may be extended to allow only mutual garbage removal in the future.
@@ -101,4 +105,10 @@ Assuming we have $p=30^{21}$ files/chunks the system (which is equivalent to two
 
 If, however, a collision would happen after all, for example, if the used cryptographic hash function is flawed or the unlikely event occurs, it results in data loss.
 
-As for the study project, we use the SHA-256 algorithm\cite{sha-256} and neglect the risk of hash collisions due to its low probability. Nonetheless, we prepare all protocols and components to use an interchangeable mechanism for the calculation and transmission of the identifiers.
+In theory, we could detect collisions on the client. To do so, every time an identifier is calculated, the client must verify that if a file with the same identifier exists already in the system, it has the exact same contents. If the contents differ, its a collision.This approach requires a lot of network traffic and can slow down the backup process significantly.
+
+Another place to detect collisions is on the node. A node can verify if the contents of a given file/chunk are equal to the contents already present in the system. The downside of this approach is that it requires the client always to send the full contents of every file, which means there is a lot of additional network traffic.
+
+Both of the described approaches for collision detection have significant costs that are not practical.
+
+As for the study project, we use the SHA-256 algorithm\cite{sha-256} and neglect the risk of hash collisions due to its low probability. Nonetheless, we prepare all protocols and components to use an interchangeable mechanism for the calculation and transmission of file/chunk identifiers.
