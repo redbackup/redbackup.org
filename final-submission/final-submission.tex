@@ -82,16 +82,25 @@
 
 \begin{abstract}
 \addchaptertocentry{\abstractname} % Add the abstract to the table of contents
-\begin{itemize}
-	\item Main Idea
-	\item Brief description of what is done
-	\item  Brief description of the results
-	\item  Remember: Abstract = decision aid.
-	\item  No References
-	\item  Present Tense
-	\item  See HSR-Module RKI
-	\item  See Chapter 2.3 in \url{https://wiki.hsr.ch/FarhadMehta/files/Writing_Scientific_Papers.pdf}
-\end{itemize}
+
+% Wie haben wir es gelöst (ganz kurz)
+
+% Hints for writing the abstract:
+% 
+% - Abstract = decision aid.
+% - No References allowed!
+% - Written in present Tense
+% - discuss the main Idea
+% - Brief description of what is done
+% - Brief description of the results
+% - Aus HSR-Modul RKI:
+%   - 100-200 Wörter
+%   - Ist in sich geschlossene und aussagekräftige Zusammenfassung
+%   - Enthält die Schlüsselbegriffe
+%   - Eigenständiger Text
+%   - Für SA: Informierende Abstracts, also Thema, Problem, Ziele, Vorgehen, Ergebnisse
+% - Siehe auch: Chapter 2.3 in https://wiki.hsr.ch/FarhadMehta/files/Writing_Scientific_Papers.pdf
+
 \end{abstract}
 
 %----------------------------------------------------------------------------------------
@@ -102,6 +111,15 @@
 \addchaptertocentry{\abstractname} % Add the abstract to the table of contents
 \emph{The Thesis Management is written here (and usually kept to just this page).}
 
+
+\section*{Motivation} % Auch Ausgangslage
+
+\section*{Goals / Approach / Technology}
+% Technology: Neue Sprache
+
+\section*{Results}
+
+
 %----------------------------------------------------------------------------------------
 %	ACKNOWLEDGEMENTS
 %----------------------------------------------------------------------------------------
@@ -110,10 +128,6 @@
 \addchaptertocentry{\acknowledgementname} % Add the acknowledgements to the table of contents
 We would like to thank our advisor, Prof.Dr. Farhad Mehta, for his continuous support.
 
-\begin{itemize}
-	\item we might want to use author-date citations over plain numbering.
-	\item Acknowledge HSR and reviewers...
-\end{itemize}
 \end{acknowledgements}
 
 %----------------------------------------------------------------------------------------
@@ -139,9 +153,8 @@ We would like to thank our advisor, Prof.Dr. Farhad Mehta, for his continuous su
 \pagestyle{thesis} % Return the page headers back to the "thesis" style
 
 \include{chapters/1_introduction}
-\include{chapters/2_background}
-\include{chapters/3_our_approach}
-\include{chapters/4_discussion_and_conclusion}
+\include{chapters/2_our_approach}
+\include{chapters/3_discussion_and_conclusion}
 
 \subsubsection*{} %This is needed, so that not the next page is referenced.
 \label{lastpage} %TODO: This label should be positioned below above the last paragraph
