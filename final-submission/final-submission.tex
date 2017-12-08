@@ -1,3 +1,4 @@
+% !TeX spellcheck = en_GB
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Masters/Doctoral Thesis 
 % LaTeX Template
@@ -82,9 +83,7 @@
 
 \begin{abstract}
 \addchaptertocentry{\abstractname} % Add the abstract to the table of contents
-
 % Wie haben wir es gelöst (ganz kurz)
-
 % Hints for writing the abstract:
 % 
 % - Abstract = decision aid.
@@ -101,6 +100,16 @@
 %   - Für SA: Informierende Abstracts, also Thema, Problem, Ziele, Vorgehen, Ergebnisse
 % - Siehe auch: Chapter 2.3 in https://wiki.hsr.ch/FarhadMehta/files/Writing_Scientific_Papers.pdf
 
+In this paper, we propose a possible architecture and demonstrate a prototype of a privately, distributed backup system.
+\vspace*{1em}
+
+Today, most individuals and small to medium enterprises have limited choice in regards to data backup storage. One possibility is the utilisation of local storage media, as e.g. hard disk drives, which usually lead to missing physical data redundancy and requires personal effort. A second possibility is a public cloud environment, which leads to privacy issues and a high dependency on third party storage providers. No easy to use, distributed backup systems with private data storage is available on the market today.
+\vspace*{1em}
+
+To address this issues, we propose an architecture for a redundantly distributed backup system, which respects data privacy as well as data security. The architecture consists of backup nodes, which exchange data with a peer-to-peer protocol, as well as a client application that creates and restores backups. Lastly, a management system is introduced to allow users to manage multiple backup nodes.
+\vspace*{1em}
+
+Finally, we present a prototype of the proposed client and node applications with a reduced feature set, implemented in the Rust programming language.
 \end{abstract}
 
 %----------------------------------------------------------------------------------------
