@@ -118,16 +118,45 @@ Finally, we present a prototype of the proposed client and node applications wit
 
 \chapter{Management Summary}
 \addchaptertocentry{\abstractname} % Add the abstract to the table of contents
-\emph{The Thesis Management is written here (and usually kept to just this page).}
+%The Thesis Management Summary is written here (and usually kept to just this page).
+% Das Management Summary richtet sich in der Praxis an die "Chefs des Chefs",
+%  d.h. an die Vorgesetzten des Auftraggebers (diese sind in der Regel keine Fachspezialisten).
+%  Die Sprache soll knapp, klar und stark untergliedert sein. Zu verwenden ist folgenden Gliederung:
+% - Ausgangslage
+% - Vorgehen, Technologien
+% - Ergebnisse
+% - Ausblick (optional)
+
 
 
 \section*{Motivation} % Auch Ausgangslage
+Today, most individuals and small to medium enterprises have limited choice in regards to data backup storage.
 
-\section*{Goals / Approach / Technology}
-% Technology: Neue Sprache
+One possibility is local storage media, as e.g. hard disk drives, which usually lead to missing copies in multiple locations and requires high personal effort. A second possibility is a public cloud environment, which leads to privacy issues, as the data is not stored on premise, as well as a high dependency on third parties.
+
+No easy to use, distributed backup systems with private data storage is available on the market today.
+
+\section*{Project Goals, Approach and Technology}
+A backup system, which solves this issues, must not only provide a secure and reliable application to create and store backups, but also permit users without further domain knowledge to install and configure the application.
+
+To meet this requirements, we further analysed and created a comprehensive architecture design.
+
+The subsequent implementation of a architecture prototype took place in the \emph{Rust} system programming language\footnote{For more information, see \url{https://www.rust-lang.org/}}, which we learned during the course of this project. Rust enabled us to create a very stable yet efficient backup prototype.
 
 \section*{Results}
+The architecture consists of backup nodes, which store and distribute data directly over a network connection, as well as a client application that creates and restores backups to or from nodes. Lastly, a management system is introduced to allow users to manage multiple backup nodes.
 
+The presented prototype demonstrates the viability of our proposed architecture, introducing a reduced feature set. The prototype can create, distribute and restore unencrypted backups.
+
+\section*{Prospects}
+
+To extend the prototype into a full functional backup system, there are multiple improvements may be implemented. Especially, the encryption and further splitting of backup data, the data distribution strategy and management application need to be extended.
+
+With our prototype, we demonstrate the viability of the architecture and pave the way for further implementations.
+
+% prototype demonstrates feasability
+% further conceptual refinement needed
+% implemenetation is complex - but doable.
 
 %----------------------------------------------------------------------------------------
 %	ACKNOWLEDGEMENTS
