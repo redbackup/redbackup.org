@@ -141,16 +141,16 @@ A backup system, which solves this issues, must not only provide a secure and re
 
 To meet this requirements, we further analysed and created a comprehensive architecture design.
 
-The subsequent implementation of a architecture prototype took place in the \emph{Rust} system programming language\footnote{For more information, see \url{https://www.rust-lang.org/}}, which we learned during the course of this project. Rust enabled us to create a very stable yet efficient backup prototype.
+The subsequent implementation of an architecture prototype took place in the \emph{Rust} system programming language\footnote{For more information, see \url{https://www.rust-lang.org/}}, which we learned during the course of this project. Rust enabled us to create a very stable yet efficient backup prototype.
 
 \section*{Results}
-The architecture consists of backup nodes, which store and distribute data directly over a network connection, as well as a client application that creates and restores backups to or from nodes. Lastly, a management system is introduced to allow users to manage multiple backup nodes.
+The architecture consists of backup nodes, which store and distribute data directly over a network connection and a client application that creates and restores backups to or from nodes. Lastly, a management system is introduced to allow users to manage multiple backup nodes.
 
 The presented prototype demonstrates the viability of our proposed architecture, introducing a reduced feature set. The prototype can create, distribute and restore unencrypted backups.
 
 \section*{Prospects}
 
-To extend the prototype into a full functional backup system, there are multiple improvements may be implemented. Especially, the encryption and further splitting of backup data, the data distribution strategy and management application need to be extended.
+To extend the prototype into a fully functional backup system, there are multiple functionalities and improvements that may be implemented. The main missing parts are backup encryption, splitting of backup data, advanced data distribution strategies and the management application.
 
 With our prototype, we demonstrate the viability of the architecture and pave the way for further implementations.
 
