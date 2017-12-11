@@ -59,6 +59,8 @@ A detailed description of these security mechanisms is out of scope for this stu
 
 To scale the redbackup system regarding availability and safety more \glspl{node} can be added to the redbackup system. If a given \gls{node} is overloaded, a \gls{client} can use another \gls{node} for its backup creation or restoral. Because both processes require approval of a chosen \gls{node} (See scenarios \fullref{sec:scenario-create-backup} and \fullref{sec:scenario-backup-restore}), an overloaded \gls{node} can finish work in progress backups/restores and reject new requests (following the patterns Finish Work In Progress and Shed Load \cite{fault-tolerance}). The data is replicated to the overloaded \glspl{node} eventually.
 
+We ensured that \glspl{node} are (mostly) stateles which simplifies scaling as well.
+
 Because the proposed system does currently only support \emph{n-replication} (See section \fullref{sec:fundamental-design-decisions}), the maximum storage capacity is the lowest common factor. Therefore, to increase storage capacity, the capacity of all \glspl{node} must be extended to the desired amount.
 
 To minimise network usage deduplication of data is used on the \gls{client}. Deduplication is  discussed in the paragraph Storage Unit in  \fullref{sec:fundamental-design-decisions}.
@@ -188,9 +190,148 @@ Both of the described approaches for collision detection have significant costs 
 
 As for the study project, we use the SHA-256 algorithm\cite{sha-256} and neglect the risk of hash collisions due to its low probability. Nonetheless, we prepare all protocols and components to use an interchangeable mechanism for the calculation and transmission of file/chunk identifiers.
 
-\subsection{Simplifications in this study project}
+\subsection{Simplifications for the prototype}
+
+Because the whole system as described in the previous sections is too large and complex to implement even in the form of a prototype we reduced the functionality to its core.
+
+Our prototype focused on the backup, restore and replication scenarios as described in appendix \fullref{sec:scenarios}.
+
+We also limited the supported plattforms to 64-Linux only as this is the operating system we use for development and continous integration.
+
 \subsubsection{Concrete Architecture}
 
+Figure \ref{fig:c4-overview} illustrates the system as implemented in our prototype.
+
+The \gls{client} and \gls{node} are delivered as single executables that can are configured and launched using the command line.
+
+The \gls{node} component binds itself to a provided network interface and port on which it provides the services for backup creation, backup restore and replication.
+
+The \gls{client} binary is relaunched for every operation, that is the creation of a backup,  listing all backups persisted on a given \gls{node} and the restoration of data.
+
+All components were implemented using the rust programming language. Installation instructions are documented in the project's repository.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\linewidth]{resources/c4-sa-container}
+	\caption[SA specific C4 Container diagram]{C4 Container diagram illustrating the high-level shape of the prototype and how responsibilities are distributed across it as implemented in the Study Project.}
+	\label{fig:c4-sa-container}
+\end{figure}
+
 \subsubsection{Client}
+
+
+The client executable bundles three components as shown in Figure \ref{fig:c4-client-container}. \emph{Client-cli} contains the command line specific logic that provides an uncluttered interface for advanced users and serves as an entry point in the client's core logic. We used the clap\footnote{\url{https://clap.rs/}}  library to implement this component.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\linewidth]{resources/c4-client-container}
+	\caption[Client specific C4 Container diagram]{C4 Container diagram illustrating the shape of the client and how responsibilities are distributed across it as implemented in the Study Project.}
+	\label{fig:c4-client-container}
+\end{figure}
+
+The \emph{client} component contains the actual logic for the creation and restoration of backups. It is organised as a library so that it can be used for other projects as well, e.g. if we provide a graphical user interface in the future. The client component creates metadata for every backup in a separate \emph{SQlite-database}. These databases are also the entry point for a restore. For database access, we used the Diesel\footnote{\url{https://diesel.rs/}} ORM-Library.
+
+The \gls{client} components make heavy use of a networking library called tokio \footnote{\url{https://tokio.rs/}} that provides an efficient event loop similar to the Reactor pattern \cite{POSA1}. Although tokio supports highly parallel networking code, we decided to implement all interactions from a \gls{client} to \glspl{node} serial to keep it simple and readable.
+
+The (de-) serialisation mechanisms for messages sent to \glspl{node} are encapsulated in the \emph{protocol} component (Forwarder Receiver Pattern Pattern \cite{POSA1}).
+
+The \gls{node} with which the \gls{client} interacts is passed to the client executable via command line arguments.
+
+
 \subsubsection{Node}
+
+The node executable bundles four components as shown in Figure \ref{fig:c4-node-container}.  
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\linewidth]{resources/c4-node-container}
+	\caption[Node specific C4 Container diagram]{C4 Container diagram illustrating the shape of the node and how responsibilities are distributed across it as implemented in the Study Project.}
+	\label{fig:c4-node-container}
+\end{figure}
+
+Analogous to the client implementation, the command line logic is encapsulated in a separate component called \emph{node-cli}.
+
+The core logic is implemented in the \emph{node} library. Like the client, the node component makes heavy use of the tokio and Diesel library. In contrast to the client, we used the parallel features of tokio. To keep the chosen technology as close to the client, we decided to use SQLite to store metadata about the data \glspl{chunk} present on the node as well. This must be changed in the future because SQLite locks the entire database when writing which makes concurrent updates impossible \cite{sqlite-locking}.
+
+We use the same \emph{protocol} component for (de-) serialisation of messages on the node and the client.
+
+The \emph{storage} component is also bundled directly in the node executable. It persists data in one single directory as described in \fullref{sec:fundamental-design-decisions}.
+
+Other known nodes are passed to the node executable via command line arguments.
+
+Because user authentication is complex and requires additional cryptographic efforts, the prototype accepts backups and replications from everyone.
+
 \section{Testing}\label{testing}
+
+In the following chapters we illustrate, how we tested our prototype and architecture.
+
+\subsection{Unit Tests}\label{unit-tests}
+We used test driven development (TDD) to develop the prototype as much as possible. Our Definition of Done\cite{project-plan} states that \emph{reasonable unit and integration tests [must] exist and pass.}
+
+Therefore, all unit tests were executed on every build run of our continuous integration, that is on every repository push and pull request.
+
+Some unit tests written for the prototype are not pure unit tests but minimal integration tests. Because Rust is not a traditional object-oriented language, it is not possible to introduce and use interfaces (Traits) in the same way as we were used to from other languages such as Java or C#. Due to the steep learning curve Rust has, we were not able to fully utilise the corresponding mechanisms. 
+
+\subsection{Integration Tests}\label{integration-tests}
+
+Our integration tests are split into two main environments: A minimal one as defined in Figure \ref{fig:integrationtestsmall} and a medium network, as defined in Figure \ref{fig:integrationtestmedium}.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.5\linewidth]{resources/integration_test_small}
+	\caption[Minimal integration test]{Minimal integration test with one client and two nodes.}
+	\label{fig:integrationtestsmall}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.5\linewidth]{resources/integration_test_medium}
+	\caption[Medium integration test]{Medium integration test with three clients and three nodes.}
+	\label{fig:integrationtestmedium}
+\end{figure}
+
+These two, rather small network styles will probably be the most commonly used deployments, yet cover most of the possible problems that may occur.
+
+The integration tests are run automatically at least on every tagged release (i.e. at least once every sprint). Because of the (yet) small set of integration tests we created in the prototype, we ran the tests on every build.
+
+To write integration tests as effective as possible, we created a testing library written in python that enabled us to write comprehensive black box tests. In this framework, the internals on how to launch and configure clients and nodes is encapsulated in classes. Using this abstraction, we decided to launch clients and nodes in separate docker containers, so that they are as isolated as possible. All containers used in a test case are connected to a dedicated docker network which eliminates possible interferences with other network services.
+
+We wrote integration tests that verify that a backup can be created, is replicated onto other nodes and is restored flawlessly.
+
+Tests for the fault tolerance, e.g. what happens if a node goes down during a backup, canb be implemented as integration tests as well.
+
+\subsection{Test coverage}
+
+Since Rust is still a young language with a relatively small ecosystem, tools for measuring code quality are still rare and immature. For our unit tests, we used Tarpaulin \footnote{\url{https://github.com/xd009642/tarpaulin}} to generate code coverage. Tarpaulin does not (yet) cover all language features and therefore returns a conservative coverage number. We achieved 53.5\% line coverage taking into account that this number would be significantly higher if all executed lines were counted (e.g. generated code using macros as well as compiler optimisations such as the removal of else statements are not counted).
+Code coverage achieved using the integration tests is not yet supported by any tool known to us and therefore undocumented. The integration tests do however cover all positive scenarios that were implemented.
+
+\subsection{Architecture tests}
+
+Architectural tests are special, manually run tests to verify the scalability of our software architecture.
+
+Our integration testing framework allowed us to write such tests in a simple fashion.
+
+\subsubsection{Size scalability}
+As per our requirements in Appendix \ref{requirements}, the architecture should scale up to 100 nodes. To test this scenario, we use the same underlying techniques as in our integration tests (see chapter \ref{integration-tests}), but scale the infrastructure up to the required limits.
+
+Due to the high memory consumption of our prototype, we were not able to conduct this test with a significant amount of data. We conducted one test, in which a file of 5MB was replicated to 99 Nodes which worked just fine.
+
+\subsubsection{Data capacity}
+Our requirements (Appendix \ref{requirements}) also state, that a node must be able to handle up to e.g. 2TB of data. To test this requirement, we planned to create large amounts of random data that has to be stored. This is a realistic requirement, as e.g. a compressed image, audio and movie collection might reach such sizes in practice.
+
+Both, the client and the server of the prototype use lots of memory during the creation of a backup. It was therefore not possible yet to create a single backup of 2TB. Performing multiple backups in a row of a smaller dataset (i.e. 5 files with a size of 500MB) did not show any sign of a decreasing performance.
+
+\subsubsection{Concurrent Backups}
+
+We ran a test in which 5 clients back up randomly generated data onto three randomly chosen Nodes. On average, the complete backup process of 1MB of data took 90-130ms from one docker container into another. In reality where clients and nodes are on separate physical machines this time will be higher of course.
+
+These test are however somewhat problematic because the creation of backups require lots of CPU power for the calculation of hashes. Running all clients on separate machine might would probably improve the performance slightly.
+
+
+
+\section{TODO}
+
+\begin{itemize}
+	\item we never discuss root handles and the conenction to SQLite databases.
+	\item should we reference the C4 model somewhere?
+\end{itemize}
