@@ -1,3 +1,4 @@
+% !TeX spellcheck = en_GB
 \input{../latex_template}
 
 \usepackage{tabu}
@@ -105,7 +106,7 @@ The project schedule is an iterative process based on elements of SCRUM.
 Due to the explorative nature of the project, we decided on a sprint duration of one week.
 \subsection{Iterations \& Milestones}
 
-\begin{figure}[h!]
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=1\linewidth]{resources/overview}
 	\caption{Overview of the 14 iterations}
@@ -114,12 +115,23 @@ Due to the explorative nature of the project, we decided on a sprint duration of
 
 The goals and milestones resulting from each sprint are shown in Figure \ref{fig:sprint-details}.
 
+\subsection{Deviations from Original Schedule}
+
+The tasks and milestones were continuously updated during the project course, as is evident from Figure \ref{fig:sprint-details}. The most notable additions and exclusions are noted hereafter.
+
+\begin{description}
+    \item[Research Report] After the underlying research at the project start, we decided to not further research and summarise possible data distribution mechanisms, as it would not have been possible to finish the report and project in time otherwise.
+    \item[Rust Programming Language] As we settled for the Rust programming language in the language evaluation, we introduced the additional task to get familiar with rust an its network stack.
+    \item[Retrospective 2] During the last standup meeting in sprint 6, we decided to not hold the retrospective meeting 2, as we both had no open topics to discuss.
+    \item[Presentation] We decided to not create a presentation during the project course as this is no mandatory part of the study project.
+\end{description}
+
 \begin{figure}[h]
 	\begin{sideways}
-	\includegraphics[scale=0.75]{resources/sprint_details}
+	\includegraphics[scale=0.75]{resources/sprint_details_updated}
 	\end{sideways}
 	\centering
-	\caption{Detailed overview with tasks and milestones of all 14 sprints.}
+	\caption{Detailed overview with tasks and milestones of all 14 sprints. \textit{Italic} and \sout{struck out} text mark deviations from the original project plan that occurred during the projects course.}
 	\label{fig:sprint-details}
 \end{figure}
 
@@ -128,7 +140,7 @@ The goals and milestones resulting from each sprint are shown in Figure \ref{fig
 
 The team works every Tuesday (10:00 - 17:00) together in the study project room and every Monday (08:00 - 17:00) remotely. Both days begin with a daily stand-up meeting taking no longer than 15 minutes. Sprint planning meetings are carried out on Tuesday at 10:00. Table \ref{meeting-time-budget} shows an overview of the total meeting time budget.
 
-\begin{table}[]
+\begin{table}[h]
 	\centering
 	\caption{Meeting Time Budget}
 	\label{meeting-time-budget}
