@@ -298,11 +298,11 @@ To write integration tests as effective as possible, we created a testing librar
 
 We wrote integration tests that verify that a backup can be created, is replicated onto other nodes and is restored flawlessly.
 
-Tests for the fault tolerance, e.g. what happens if a node goes down during a backup, canb be implemented as integration tests as well.
+Tests for the fault tolerance, e.g. what happens if a node goes down during a backup, can be implemented as integration tests as well.
 
 \subsection{Test coverage}
 
-Since Rust is still a young language with a relatively small ecosystem, tools for measuring code quality are still rare and immature. For our unit tests, we used Tarpaulin \footnote{\url{https://github.com/xd009642/tarpaulin}} to generate code coverage. Tarpaulin does not (yet) cover all language features and therefore returns a conservative coverage number. We achieved 53.5\% line coverage taking into account that this number would be significantly higher if all executed lines were counted (e.g. generated code using macros as well as compiler optimisations such as the removal of else statements are not counted).
+Since Rust is still a young language with a relatively small ecosystem, tools for measuring code quality are still rare and immature. For our unit tests, we used Tarpaulin\footnote{\url{https://github.com/xd009642/tarpaulin}} to generate code coverage. Tarpaulin does not (yet) cover all language features and therefore returns a conservative coverage number. We achieved 53.5\% line coverage taking into account that this number would be significantly higher if all executed lines were counted (e.g. generated code using macros as well as compiler optimisations such as the removal of else statements are not counted).
 Code coverage achieved using the integration tests is not yet supported by any tool known to us and therefore undocumented. The integration tests do however cover all positive scenarios that were implemented.
 
 \subsection{Architecture tests}
@@ -314,18 +314,18 @@ Our integration testing framework allowed us to write such tests in a simple fas
 \subsubsection{Size scalability}
 As per our requirements in Appendix \ref{requirements}, the architecture should scale up to 100 nodes. To test this scenario, we use the same underlying techniques as in our integration tests (see chapter \ref{integration-tests}), but scale the infrastructure up to the required limits.
 
-Due to the high memory consumption of our prototype, we were not able to conduct this test with a significant amount of data. We conducted one test, in which a file of 5MB was replicated to 99 Nodes which worked just fine.
+Due to the high memory consumption of our prototype, we were not able to conduct this test with a significant amount of data. We conducted one test, where a file of 5MB was replicated to 99 Nodes which worked just fine.
 
 \subsubsection{Data capacity}
 Our requirements (Appendix \ref{requirements}) also state, that a node must be able to handle up to e.g. 2TB of data. To test this requirement, we planned to create large amounts of random data that has to be stored. This is a realistic requirement, as e.g. a compressed image, audio and movie collection might reach such sizes in practice.
 
-Both, the client and the server of the prototype use lots of memory during the creation of a backup. It was therefore not possible yet to create a single backup of 2TB. Performing multiple backups in a row of a smaller dataset (i.e. 5 files with a size of 500MB) did not show any sign of a decreasing performance.
+Both, the client and the server of the prototype use a lot of memory during the creation of a backup. It was therefore not possible yet to create a single backup of 2TB. Performing multiple backups in a row of a smaller dataset (i.e. 5 files with a size of 500MB) did not show any sign of a decreasing performance.
 
 \subsubsection{Concurrent Backups}
 
-We ran a test in which 5 clients back up randomly generated data onto three randomly chosen Nodes. On average, the complete backup process of 1MB of data took 90-130ms from one docker container into another. In reality where clients and nodes are on separate physical machines this time will be higher of course.
+We ran a test in which 5 clients back up randomly generated data onto three randomly chosen Nodes. On average, the complete backup process of 1MB of data took 90-130ms from one docker container into another. In reality where clients and nodes are on separate physical machines this time will be higher due to network latency.
 
-These test are however somewhat problematic because the creation of backups require lots of CPU power for the calculation of hashes. Running all clients on separate machine might would probably improve the performance slightly.
+These test are however somewhat problematic because the creation of backups require a lot of CPU power for the calculation of hashes. Running all clients on separate machines would probably improve the performance slightly.
 
 
 
