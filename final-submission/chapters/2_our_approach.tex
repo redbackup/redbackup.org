@@ -8,16 +8,26 @@
 % Describe everything concise and with exact definitions.
 % Use schemes and flowcharts
 
-There are two kinds of actors interacting with the system. A typical \gls{user} wants to store backups in the redbackup system and restore them (partially) when needed. The other kind of actor is an \gls{administrator} that configures the system, e.g. extends storage capacity or replaces corrupted disks. Distinctive for both actors is that they do not want to interact directly with the system unless human interaction is inevitable. This takes the burden to create backups manually from the user including the risk of oblivion and minimises management efforts required by the administrator.  Both actors, as well as their intentions, are described in more detail in Appendix \fullref{sec:specification}. Figure \ref{fig:c4-overview} presents a high-level overview that illustrates the interactions of the actors with the redbackup system.
+There are two kinds of actors interacting with the system. A typical \gls{user} wants to store backups in the redbackup system and restore them (partially) when needed. The other kind of actor is an \gls{administrator} that configures the system, e.g. extends storage capacity or replaces corrupted disks.
+
+Distinctive for both actors is that they do not want to interact directly with the system unless human interaction is inevitable. This takes the burden to create backups manually from the user including the risk of oblivion and minimises management efforts required by the administrator.  
+
+Both actors, as well as their intentions, are described in more detail in Appendix \fullref{sec:specification}. Figure \ref{fig:c4-overview} presents a high-level overview that illustrates the interactions of the actors with the redbackup system.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\linewidth]{resources/c4-overview}
+	\includegraphics[width=0.7\linewidth]{resources/c4-overview}
 	\caption[C4 System Context diagram]{C4 System Context diagram showing the big picture}
 	\label{fig:c4-overview}
 \end{figure}
 
-The redbackup system consists of four core components as shown in the C4 Container diagram in Figure \ref{fig:c4-container}. A \gls{user} instructs a \gls{client} program running typically on the users machine to perform (unattended) backups and restores.  A client persists and loads its data from one or more interconnected \glspl{node}. A \gls{node} then is in charge of the data and its replication onto other nodes. \Glspl{node} persist the actual data in a separate component, a gls{storage}, to encapsulate persistence from replication and interaction to support different kinds of storage technologies (e.g. plain file systems or databases). A \gls{node} and its \gls{storage} are typically deployed on the same host. One central \gls{management} component orchestrates the configuration of the system by providing metadata, to clients and nodes. This metadata includes a set of all nodes in the system including their addresses and states,  user information and more. Clients and nodes can cache this metadata which ensures that a temporary unavailability of the management component does not compromise the replication and backup process. All components including their responsibilities and interactions are described in more detail in Appendix \fullref{sec:specification}.
+The redbackup system consists of four core components as shown in the C4 Container diagram in Figure \ref{fig:c4-container}. A \gls{user} instructs a \gls{client} program running typically on the users machine to perform (unattended) backups and restores.  A client persists and loads its data from one or more interconnected \glspl{node}.
+
+A \gls{node} then is in charge of the data and its replication onto other nodes. \Glspl{node} persist the actual data in a separate component, a \gls{storage}, to encapsulate persistence from replication and interaction to support different kinds of storage technologies (e.g. plain file systems or databases). A \gls{node} and its \gls{storage} are typically deployed on the same host.
+
+One central \gls{management} component orchestrates the configuration of the system by providing metadata to clients and nodes. This metadata includes a set of all nodes in the system including their addresses and states, user information and more. Clients and nodes can cache this metadata which ensures that a temporary unavailability of the management component does not compromise the replication and backup process.
+
+All components including their responsibilities and interactions are described in more detail in Appendix \fullref{sec:specification}.
 
 \begin{figure}[h]
 	\centering
@@ -26,13 +36,19 @@ The redbackup system consists of four core components as shown in the C4 Contain
 	\label{fig:c4-container}
 \end{figure}
 
-Redbackup specifies a high-level protocol that is used for internal communication (noted in all C4 diagrams as \emph{redbackup protocol}). We deliberately specified the communication on a high level to encapsulate the underlying protocol. In the prototype, we used a custom, minimal protocol that is based on TCP and sends framed Message Pack\footnote{\url{https://msgpack.org/}} encoded messages. We also encapsulated the (de-) serialisation mechanisms in forwarder and receiver components as specified in the Forwarder Receiver Pattern Pattern \cite{POSA1}.  If we decided to switch to HTTP as the underlying protocol in the future, e.g. to overcome firewall issues, only these forwarder and receiver components have to be adapted while the actual message format does not change. 
+Redbackup specifies a high-level protocol that is used for internal communication (noted in all C4 diagrams as \emph{redbackup protocol}). We deliberately specified the communication on a high level to encapsulate the underlying protocol.
+
+In the prototype, we used a custom, minimal protocol that is based on TCP and sends framed Message Pack\footnote{\url{https://msgpack.org/}} encoded messages. We also encapsulated the (de-) serialisation mechanisms in forwarder and receiver components as specified in the Forwarder Receiver Pattern Pattern \cite{POSA1}.
+
+If we decided to switch to e.g. HTTP as the underlying protocol to overcome firewall issues in the future, only these forwarder and receiver components have to be adapted while the actual message format does not change. 
 
 \subsection{Replication}
 % Planned and unplanned leaving of nodes
 % Management down
 
-As for this study project, we only specified n-replication (See \fullref{sec:fundamental-design-decisions}) because it is the most straightforward strategy to implement. A \gls{node} is in charge for all data stored on it. Each \gls{node} - hereafter called \gls{sending-node} -  picks $n$ random data \glspl{chunk} that are stored on it. It then randomly picks one other \gls{node} - hereafter called \gls{designated-node} - and requests which of the chosen data \glspl{chunk} are persisted on it. The \gls{designated-node} returns a subset of the requested \glspl{chunk} that consists of all \glspl{chunk} that are persent on it. Using this response, the \gls{sending-node} sends all missing \glspl{chunk} to the \gls{designated-node} which acknowledges after successful receipt.
+As for this study project, we only specified n-replication (See \fullref{sec:fundamental-design-decisions}) because it is the most straightforward strategy to implement.
+
+A \gls{node} is in charge for all data stored on it. Each \gls{node} - hereafter called \gls{sending-node} -  picks $n$ random data \glspl{chunk} that are stored on it. It then randomly picks one other \gls{node} - hereafter called \gls{designated-node} - and requests which of the chosen data \glspl{chunk} are persisted on it. The \gls{designated-node} returns a subset of the requested \glspl{chunk} that consists of all \glspl{chunk} that are persent on it. Using this response, the \gls{sending-node} sends all missing \glspl{chunk} to the \gls{designated-node} which acknowledges after successful receipt.
 
 \begin{figure}[h]
     \centering
@@ -47,6 +63,8 @@ One of our primary design goals was to ensure that once data is in the redbackup
 
 Because \glspl{node} can also be the target of randsomware attacks, each \gls{node}, or its associated \gls{storage} component respectively, must verify that a given data \gls{chunk}s contents are not corrupted using cryptographic hash functions, also known as checksums. To be able to do so, it must be possible to calculate the identifier of such a data \gls{chunk} from its contents. A discussion on the role of hash functions including the chosen algorithms for the study project is carried out in section \fullref{sec:hash-collisions}.
 
+\subsubsection{Data Encryption}
+
 A \gls{client} encrypts backup data \glspl{chunk} when creating a new backup. This ensures that no other participant in the redbackup system can inspect file contents (need-to-know principle \cite{security-patterns}). The encryption and decryption keys are only persisted on the client and must be backed up separately.
 
 All sent \glspl{message} should be signed by the sender. If so, transport layer encryption is not strictly necessary because all user data is already encrypted on the \gls{client} with the only exception of the \gls{expiration-date}.
@@ -57,11 +75,13 @@ A detailed description of these security mechanisms is out of scope for this stu
 
 \subsection{Partitioning \& Scaling}
 
-To scale the redbackup system regarding availability and safety more \glspl{node} can be added to the redbackup system. If a given \gls{node} is overloaded, a \gls{client} can use another \gls{node} for its backup creation or restoral. Because both processes require approval of a chosen \gls{node} (See scenarios \fullref{sec:scenario-create-backup} and \fullref{sec:scenario-backup-restore}), an overloaded \gls{node} can finish work in progress backups/restores and reject new requests (following the patterns Finish Work In Progress and Shed Load \cite{fault-tolerance}). The data is replicated to the overloaded \glspl{node} eventually.
+To scale the redbackup system regarding availability and safety, more \glspl{node} can be added to the redbackup system. If a given \gls{node} is overloaded, a \gls{client} can use another \gls{node} for its backup creation or restoral.
+
+Because both processes require approval of a chosen \gls{node} (See scenarios \fullref{sec:scenario-create-backup} and \fullref{sec:scenario-backup-restore}), an overloaded \gls{node} can finish work in progress backups/restores and reject new requests (following the patterns Finish Work In Progress and Shed Load \cite{fault-tolerance}). The data is replicated to the overloaded \glspl{node} eventually.
 
 We ensured that \glspl{node} are (mostly) stateles which simplifies scaling as well.
 
-Because the proposed system does currently only support \emph{n-replication} (See section \fullref{sec:fundamental-design-decisions}), the maximum storage capacity is the lowest common factor. Therefore, to increase storage capacity, the capacity of all \glspl{node} must be extended to the desired amount.
+Because the proposed system does currently only support \emph{n-replication} (See section \fullref{sec:fundamental-design-decisions}), the maximum storage capacity is the lowest storage size of any node. Therefore, to increase storage capacity, the capacity of all \glspl{node} must be extended to the desired amount.
 
 To minimise network usage deduplication of data is used on the \gls{client}. Deduplication is  discussed in the paragraph Storage Unit in  \fullref{sec:fundamental-design-decisions}.
 
@@ -79,9 +99,7 @@ In case the \gls{management} component is temporarily unavailable, \glspl{node} 
 
 \section{Fundamental Design Decisions}\label{sec:fundamental-design-decisions}
 
-We used the morphological box technique to explore different possible solutions (See Table \ref{tbl:morphological-box})
-
-The chosen option should be as simple as possible for the prototype developed in the study project but extensible for further adaption.
+We used the morphological box technique to explore different possible solutions (See Table \ref{tbl:morphological-box}). The chosen option should be as simple as possible for the prototype developed in the study project but extensible for further adaption.
 
 The following paragraphs reason the selected entry in each dimension.
 
@@ -192,7 +210,7 @@ As for the study project, we use the SHA-256 algorithm\cite{sha-256} and neglect
 
 \subsection{Simplifications for the prototype}
 
-Because the whole system as described in the previous sections is too large and complex to implement even in the form of a prototype we reduced the functionality to its core.
+Because the whole system as described in the previous sections is too large and complex to implement in the form of a study project prototype, we reduced the functionality to its core.
 
 Our prototype focused on the backup, restore and replication scenarios as described in appendix \fullref{sec:scenarios}.
 
@@ -200,15 +218,15 @@ We also limited the supported plattforms to 64-Linux only as this is the operati
 
 \subsubsection{Concrete Architecture}
 
-Figure \ref{fig:c4-overview} illustrates the system as implemented in our prototype.
+Figure \ref{fig:c4-sa-container} illustrates the system as implemented in our prototype.
 
-The \gls{client} and \gls{node} are delivered as single executables that can are configured and launched using the command line.
+The \gls{client} and \gls{node} are delivered as single executables that can be configured and launched using the command line.
 
 The \gls{node} component binds itself to a provided network interface and port on which it provides the services for backup creation, backup restore and replication.
 
 The \gls{client} binary is relaunched for every operation, that is the creation of a backup,  listing all backups persisted on a given \gls{node} and the restoration of data.
 
-All components were implemented using the rust programming language. Installation instructions are documented in the project's repository.
+All components were implemented using the Rust programming language \cite{rustlang-org}. Installation instructions are documented in the project's repository.
 
 \begin{figure}[h]
 	\centering
@@ -231,7 +249,7 @@ The client executable bundles three components as shown in Figure \ref{fig:c4-cl
 
 The \emph{client} component contains the actual logic for the creation and restoration of backups. It is organised as a library so that it can be used for other projects as well, e.g. if we provide a graphical user interface in the future. The client component creates metadata for every backup in a separate \emph{SQlite-database}. These databases are also the entry point for a restore. For database access, we used the Diesel\footnote{\url{https://diesel.rs/}} ORM-Library.
 
-The \gls{client} components make heavy use of a networking library called tokio \footnote{\url{https://tokio.rs/}} that provides an efficient event loop similar to the Reactor pattern \cite{POSA1}. Although tokio supports highly parallel networking code, we decided to implement all interactions from a \gls{client} to \glspl{node} serial to keep it simple and readable.
+The \gls{client} components make heavy use of a networking library called tokio\footnote{\url{https://tokio.rs/}} that provides an efficient event loop similar to the Reactor pattern \cite{POSA1}. Although tokio supports highly parallel networking code, we decided to implement all interactions from a \gls{client} to \glspl{node} serial to keep it simple and readable.
 
 The (de-) serialisation mechanisms for messages sent to \glspl{node} are encapsulated in the \emph{protocol} component (Forwarder Receiver Pattern Pattern \cite{POSA1}).
 
@@ -251,7 +269,7 @@ The node executable bundles four components as shown in Figure \ref{fig:c4-node-
 
 Analogous to the client implementation, the command line logic is encapsulated in a separate component called \emph{node-cli}.
 
-The core logic is implemented in the \emph{node} library. Like the client, the node component makes heavy use of the tokio and Diesel library. In contrast to the client, we used the parallel features of tokio. To keep the chosen technology as close to the client, we decided to use SQLite to store metadata about the data \glspl{chunk} present on the node as well. This must be changed in the future because SQLite locks the entire database when writing which makes concurrent updates impossible \cite{sqlite-locking}.
+The core logic is implemented in the \emph{node} library. Like the client, the node component makes heavy use of the tokio and Diesel library. In contrast to the client, we used the parallel features of tokio. To keep the chosen technology as close as possible to the client, we decided to use SQLite to store metadata about the data \glspl{chunk} present on the node as well. This must be changed in the future because SQLite locks the entire database when writing which makes concurrent updates impossible \cite{sqlite-locking}.
 
 We use the same \emph{protocol} component for (de-) serialisation of messages on the node and the client.
 
