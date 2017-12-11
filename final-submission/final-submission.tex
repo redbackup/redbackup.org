@@ -126,19 +126,17 @@ Finally, we present a prototype of the proposed client and node applications wit
 % - Ergebnisse
 % - Ausblick (optional)
 
-
-
 \section*{Motivation} % Auch Ausgangslage
-Today, most individuals and small to medium enterprises have limited choice in regards to data backup storage.
+Today, most individuals and small to medium enterprises make backups on cloud environments or local storage media as e.g. hard disk drives or network attached storage systems (NAS).
 
-One possibility is local storage media, as e.g. hard disk drives, which usually lead to missing copies in multiple locations and requires high personal effort. A second possibility is a public cloud environment, which leads to privacy issues, as the data is not stored on premise, as well as a high dependency on third parties.
+These solutions require either high personal efforts to maintain local storage media or a high level of trust in third party storage provider.
 
-No easy to use, distributed backup systems with private data storage is available on the market today.
+Currently, there are no backup systems available on the market which are both easy to use and provide the user with a high level of data security and privacy.
 
 \section*{Project Goals, Approach and Technology}
-A backup system, which solves this issues, must not only provide a secure and reliable application to create and store backups, but also permit users without further domain knowledge to install and configure the application.
+A backup system which solves this issues must not only provide a secure and reliable application to create and store backups, but also permit users without further domain knowledge to install and configure the application.
 
-To meet this requirements, we further analysed and created a comprehensive architecture design.
+To meet this requirements, we further analysed and created a comprehensive architectural design.
 
 The subsequent implementation of an architecture prototype took place in the \emph{Rust} system programming language\footnote{For more information, see \url{https://www.rust-lang.org/}}, which we learned during the course of this project. Rust enabled us to create a very stable yet efficient backup prototype.
 
