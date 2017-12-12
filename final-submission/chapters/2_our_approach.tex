@@ -78,6 +78,10 @@ The detailed scenario description including all edge cases are described in Appe
     \caption{Backup Restore UML Sequence Diagram}
 \end{figure}
 
+The restore mechanism starts identically to the backup process until a \gls{designated-node} is chosen.
+
+Next, the \glspl{client} loads all \glspl{root-handle} from the \gls{designated-node}. The \glspl{client} can decrypt the backup metadata, the \gls{chunk-table}, from the returned \glspl{chunk-content}. Based on this information, the \gls{client} can provide multiple restore options to the \gls{user}, e.g. to restore a particular version of a given file.
+Based on the user input and the previously fetched \glspl{chunk-table}, the \glspl{client} can calculate which \glspl{chunk} must be requested from the \gls{designated-node}. These \glspl{chunk-content} are then loaded at regular intervals from the \gls{designated-node}, decrypted and combined.
 
 \subsection{Replication}
 % Planned and unplanned leaving of nodes
