@@ -1,21 +1,49 @@
+% !TeX spellcheck = en_GB
 \chapter{Introduction}
 \label{sec:introduction}
 
 \section{Motivation}
 % Rough introduction of the topic. Details are covered in Chapter "Background"
-
-% TODO: Rephrase, this paragraph was copied from https://eprints.hsr.ch/523/1/Data%20over%20DAB.pdf !
-With this chapter we legitimate this work, explain why this work is valuable and how the products of this labour can be brought to use for good.
+In this chapter, we legitimate this work and explain the value and applicability of our proposed solution.
 
 \subsection{Present situation}
 % What (free) backup solutions exist and why do we need another one?
 % Has someone else published the same idea before?
+With the ongoing fast digitisation, the demand for reliable and easy-to-use backup solutions is growing fast. Not only small companies have a high dependency on the safety of digital resources, but also most individuals depend on large sets of digital documents and other data.
 
-\subsubsection{Problem}
+Today, most individuals and small companies have limited choice with regards to data backup storage.
+
+\paragraph{Various cloud providers} offer many users high quantities of comfortable, easy to use backup storage. In most cases, this solutions post either a encrypted or unencrypted copies of all data into a public cloud environment using a custom application.
+
+\paragraph{Local backup solutions,} for instance local hard disk drives or network attached storage systems (NAS) offer a high level of data privacy. 
+
+Existing software solutions, for instance Borg Backup\footnote{\url{https://www.borgbackup.org/}}, rdedup\footnote{\url{https://github.com/dpc/rdedup}} or custom implementations with rsync and ceph\footnote{\url{https://ceph.com/}} allow for safe, deduplicated backups.
+
+An example for a common backup solution that comes bundled with a storage medium is the Apple Time Machine\footnote{\url{https://support.apple.com/en-us/ht201250}}.
+
+
+\subsection{Problem}
 % What problem do we solve with our proposal? / Why do we write this concept? New idea?
 % Which problems have we found / are common for this topic?
+The backup solutions described in the previous section come with several liabilities.
 
-\subsection{Possible applications}
+\paragraph{Cloud backup storage} requires a high level of trust in a third party provider. It is not evident, what level of data security and availability a user is provided with.
+
+Furthermore, such solutions may raise privacy concerns or even legal issues, as data is not kept safely on premises but in a data center, possibly in another legal domain.
+
+\paragraph{Local backup solutions} require a high level of personal maintenance, e.g. by managing and exchanging hard disk drives.
+
+Another problem that is often encountered are missing backup copies. For instance, backups are only stored on a hard disk drive in one location - which might lead to data loss, e.g. in case of a fire.
+
+Most of these solutions are non-trivial to set up and require a high level of knowledge to operate.
+
+Secondly, most of these solutions create backups directly to a writeable storage medium from the client computer and do not prevent data loss in case of malware infections~\cite{young-cryptovirology}.
+
+\subsection{Solution}
+
+The problems listed in the previous sections should be solved by a fast, easy to use, and secure backup system. The system should combine privacy benefits of local backups with automated data distribution, to provide high safety guarantees.
+
+The main target user of such a system are individuals (e.g. families) and small companies.
 
 \section{Goals and Tasks}
 
