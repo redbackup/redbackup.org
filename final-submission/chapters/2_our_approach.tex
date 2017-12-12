@@ -21,7 +21,7 @@ We illustrate architecture structure using the C4 model for software architectur
 	\label{fig:c4-overview}
 \end{figure}
 
-Distinctive for both actors is that they do not want to interact directly with the system unless human interaction is inevitable. This takes the burden to manually create backups from the user including the risk of oblivion and minimises management efforts required by the administrator.  
+Distinctive for both actors is that they do not want to interact directly with the system unless human interaction is inevitable. This takes the burden to manually create backups from the user including the risk of oblivion and minimises \gls{management} efforts required by the administrator.  
 
 Both actors, as well as their intentions, are described in more detail in Appendix \fullref{sec:specification}. Figure \ref{fig:c4-overview} presents a high-level overview that illustrates the interactions of the actors with the redbackup system.
 
@@ -41,7 +41,7 @@ The redbackup system consists of four core components as shown in the C4 Contain
 A \gls{node} then is in charge of the data \glspl{chunk} including their replication onto other \glspl{node}. \Glspl{node} persist the actual data in a separate component, a \gls{storage}, to encapsulate persistence from replication and interaction to support different kinds of storage technologies (e.g. plain file systems or databases). A \gls{node} and its \gls{storage} are typically deployed on the same host.
 
 \paragraph{Management}
-One central \gls{management} component orchestrates the configuration of the system by providing metadata to \glspl{client} and \glspl{node}. This metadata includes user information and a set of all \glspl{node} in the system including their addresses and states. Clients and \glspl{node} must cache this metadata which ensures that a temporary unavailability of the management component does not compromise the replication and backup process.
+One central \gls{management} component orchestrates the configuration of the system by providing metadata to \glspl{client} and \glspl{node}. This metadata includes user information and a set of all \glspl{node} in the system including their addresses and states. Clients and \glspl{node} must cache this metadata which ensures that a temporary unavailability of the \gls{management} component does not compromise the replication and backup process.
 
 All components including their responsibilities and interactions are described in more detail in Appendix \fullref{sec:specification}.
 
@@ -106,7 +106,7 @@ Additionally to the above-discussed mechanisms for fault tolerance regarding sec
 
 \paragraph{Reporting} Most issues that occur on a \gls{node} are reported to the \gls{management} component (following the pattern Someone in Charge \cite{fault-tolerance}). The \gls{management} can then decide to notify the system administrator or execute error mitigation processes, e.g. suspend a given \gls{node} temporarily.
 
-If a \gls{node} tries to connect to another \gls{node} that is not available, it notifies the management component (following the pattern System Monitor\cite{fault-tolerance}).
+If a \gls{node} tries to connect to another \gls{node} that is not available, it notifies the \gls{management} component (following the pattern System Monitor\cite{fault-tolerance}).
 
 Each \gls{node} periodically verifies the persisted contents for possible corruption using the checksum mechanisms discussed in \fullref{sec:security-and-encryption} (following the Pattern Routine Audits \cite{fault-tolerance}). If a corruption is detected, the \gls{storage} notifies the \gls{node} which notifies the \gls{management}.
 
@@ -140,7 +140,7 @@ We propose to use a fixed \emph{physical time} that must be specified on backup 
 
 A significant problem that \emph{physical time} addresses is the safety of backup data in case a user computer is infected with malware. An illicit application might command the removal of backups, or create new backups to initiate a garbage collection process to free storage capacity.
 
-Nevertheless, the use of \emph{physical time} has the downside of possible data loss due to wrong system times. To mitigate this risk, the system should use multiple distinct upstream time-servers. This is given with a high probability, as the proposed redundancy model motivates users to expand the system across multiple physical locations. Furthermore, the client, \glspl{node} and management should verify a reasonable accurate time when communicating mutually.
+Nevertheless, the use of \emph{physical time} has the downside of possible data loss due to wrong system times. To mitigate this risk, the system should use multiple distinct upstream time-servers. This is given with a high probability, as the proposed redundancy model motivates users to expand the system across multiple physical locations. Furthermore, the client, \glspl{node} and \gls{management} should verify a reasonable accurate time when communicating mutually.
 
 \paragraph{Programming Language / Ecosystem}
 A complete language evaluation can be found in \fullref{sec:language-evaluation}.
