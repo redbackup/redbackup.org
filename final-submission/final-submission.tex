@@ -112,19 +112,20 @@
 %   - Eigenständiger Text
 %   - Für SA: Informierende Abstracts, also Thema, Problem, Ziele, Vorgehen, Ergebnisse
 % - Siehe auch: Chapter 2.3 in https://wiki.hsr.ch/FarhadMehta/files/Writing_Scientific_Papers.pdf
-Today, most individuals and small to medium enterprises have limited choice with regards to data backup storage.
+Today, most individuals and small companies have a limited choice with regards to how and where they back up their data.
 
-One possibility is the utilisation of local storage media, as e.g. hard disk drives, which requires personal effort that usually leads to missing physical backup redundancy. A second possibility is a public cloud environment, which leads to privacy issues and a high dependency on third party providers.
+One possibility is via local storage media, for instance using external hard disk drives. This requires manual effort and may lead to a single point of failure, since location redundancy requires extra effort. A second possibility is via some publicly provided cloud service. This may lead to issues of privacy and a high dependency on third party providers. 
 
-No easy to use, distributed backup systems with private data storage is available on the market today. \\
+No easy to use, distributed backup systems with private data storage is available on the market today.\\
 \vspace*{1ex}
 
-\noindent To address this issue, we propose an architecture for a redundant distributed backup system which respects data privacy as well as data security.
-
-The architecture consists of backup nodes which exchange data with a peer-to-peer protocol, as well as a client application that creates and restores backups. A management system is introduced to allow users to manage multiple backup nodes.
+\noindent We propose a redundant distributed backup system to address this issue.\\
 \vspace*{1ex}
 
-\noindent Finally, we present a prototype of the proposed client and node applications with a reduced feature set, implemented in the Rust programming language.
+\noindent The architecture of this system consists of backup nodes which exchange data using a peer-to-peer protocol, as well as a client application that creates and restores backups. A management system is introduced to allow users to manage multiple backup nodes.\\
+\vspace*{1ex}
+
+\noindent As a proof of concept, a prototype of the proposed client and node applications with a reduced feature set has been implemented in the Rust programming language. 
 \end{abstract}
 
 %----------------------------------------------------------------------------------------
