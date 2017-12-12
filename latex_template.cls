@@ -246,7 +246,7 @@
 
 \usepackage{xcolor} % Required for specifying custom colours
 
-\colorlet{mdtRed}{red!50!black}
+\colorlet{mdtRed}{blue!50!black}
 
 %----------------------------------------------------------------------------------------
 %	MARGINS
@@ -415,7 +415,7 @@ KOMA-script documentation for details.}]{fancyhdr}
 %----------------------------------------------------------------------------------------
 
 \usepackage{xcolor}
-\colorlet{mdtRed}{red!50!black}
+\colorlet{mdtRed}{blue!50!black}
 \newcommand{\acknowledgementname}{Acknowledgements}
 \providecaptionname{american,australian,british,canadian,english,newzealand,UKenglish,USenglish} {\acknowledgementname}{Acknowledgements} % Acknowledgement text for English countries
 \providecaptionname{german,ngerman,austrian,naustrian}{\acknowledgementname}{Danksagung} % Acknowledgement text for Germanic countries

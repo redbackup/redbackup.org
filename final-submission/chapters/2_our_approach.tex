@@ -50,10 +50,34 @@ All components including their responsibilities and interactions are described i
 In the prototype, we used a custom, minimal protocol that is based on TCP and sends framed Message Pack\footnote{\url{https://msgpack.org/}} encoded messages. If we decided to switch to e.g. HTTP as the underlying protocol to overcome firewall issues in the future, only these forwarder and receiver components have to be adapted while the actual message format does not change. 
 
 \subsection{Backup creation}
-% TODO
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{resources/create_backup}
+    \caption{Create Backup UML Sequence Diagram}
+\end{figure}
+
+To create a backup, a \gls{client} loads a set of \glspl{node} including their addresses from the \gls{management}. The \gls{client} caches this set and chooses one of them as \gls{designated-node}. This selection can either be random or based on heuristics, e.g. by analysing the round trip time to the \gls{node}.
+
+The \gls{client} then requests permission to perform a backup on a given \gls{designated-node} by sending a \emph{get designation} message that includes an estimated backup size and the \gls{expiration-date}. If the \gls{designated-node} has the storage capacity as well as other resources available (i.e. it is not under overload), it confirms the designation request.
+
+By now, the \gls{client} must start to build up backup metadata - hereafter called \gls{chunk-index} - by walking recursively through all directories to back up. Each file that is not explicitly excluded is split up into one or more data \glspl{chunk} using a rolling hash\cite{borg-data-structures}. Each of these \glspl{chunk} are then encrypted individually. Afterwards the \gls{client} derives the identifier of every \gls{chunk} based on its contents. This mechanism enables deduplication. Section \fullref{sec:fundamental-design-decisions} discusses \glspl{chunk} and \glspl{chunk-identifier} detail.
+
+The \gls{client} sends the calculated \glspl{chunk-identifier} at regular intervals to the \gls{designated-node}. The \gls{designated-node} returns a subset of all \glspl{chunk-identifier} of the \glspl{chunk} that are already present on it.
+
+The \gls{client} then posts the missing data \glspl{chunk} to the \gls{designated-node} which acknowledges after successful receipt.
+
+When all \glspl{chunk} are transmitted successful, the client encrypts the backup metadata as well and sends to the \gls{designated-node} using the same mechanism as for any other \gls{chunk}. The only difference is that an additional flag - hereafter called \gls{root-handle} - is set so that it can be found again for restore.
+
+The detailed scenario description including all edge cases are described in Appendix \fullref{sec:scenario-create-backup}.
 
 \subsection{Backup restore}
-% TODO
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{resources/backup_restore.pdf}
+    \caption{Backup Restore UML Sequence Diagram}
+\end{figure}
+
 
 \subsection{Replication}
 % Planned and unplanned leaving of nodes
