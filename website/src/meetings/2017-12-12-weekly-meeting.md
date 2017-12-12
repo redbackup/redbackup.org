@@ -17,7 +17,7 @@ minute-taker: rzimmerm
 2. Discuss abstract
 3. Sign the task description
 4. Discuss license of the documentation
-5. Questins regarding final submission
+5. Questions regarding final submission
 
 ## Discussion / Decisions
 
@@ -43,8 +43,8 @@ minute-taker: rzimmerm
     - Spiral binding
     - CD with all data
     - Deadline is 21. December 17:00
-      - If MeF is not at his office, the document is submitted in his mailbox in Building 4.
-      - Everything that is on the CD will additionaly send to MeF via E-Mail
+      - If MeF is not at his office, the document is submitted in his mailbox in HSR Campus Building 4.
+      - Everything that is on the CD will additionaly be sent to MeF via E-Mail
 
 ## Open issues
 
