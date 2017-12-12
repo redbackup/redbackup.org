@@ -3,7 +3,7 @@
 
 We propose and discuss a system architecture for a backup system in the first section of this chapter and explain the underlying design decisions in the second section. The third section presents the structure and testing results of a prototype, which implements a subset of the proposed system.
 
-We illustrate architecture structure using the C4 model for software architecture \footnote{\url{https://c4model.com/}}.
+We illustrate architecture structure using the C4 model for software architecture\footnote{\url{https://c4model.com/}}.
 
 \section{System Architecture}
 % Brief introdcution of all actors, components and messages
@@ -17,7 +17,7 @@ We illustrate architecture structure using the C4 model for software architectur
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\linewidth]{resources/c4-overview}
-	\caption[C4 System Context diagram]{C4 System Context diagram showing the big picture}
+	\caption[C4 System Context diagram]{C4 System Context diagram showing the big picture.}
 	\label{fig:c4-overview}
 \end{figure}
 
@@ -35,21 +35,19 @@ The redbackup system consists of four core components as shown in the C4 Contain
 	\label{fig:c4-container}
 \end{figure}
 
-\paragraph{Client } A \gls{user} instructs a \gls{client} program typically running on the users machine to perform (unattended) backups and restores.  A client persists and loads its data from one or more interconnected \glspl{node}.
+\paragraph{Client} A \gls{user} instructs a \gls{client} program typically running on the users machine to perform (unattended) backups and restores.  A \gls{client} persists and loads its data from one or more interconnected \glspl{node}.
 
 \paragraph{Node}
-A \gls{node} then is in charge of the data chunks including their replication onto other nodes. \Glspl{node} persist the actual data in a separate component, a \gls{storage}, to encapsulate persistence from replication and interaction to support different kinds of storage technologies (e.g. plain file systems or databases). A \gls{node} and its \gls{storage} are typically deployed on the same host.
+A \gls{node} then is in charge of the data \glspl{chunk} including their replication onto other \glspl{node}. \Glspl{node} persist the actual data in a separate component, a \gls{storage}, to encapsulate persistence from replication and interaction to support different kinds of storage technologies (e.g. plain file systems or databases). A \gls{node} and its \gls{storage} are typically deployed on the same host.
 
 \paragraph{Management}
-One central \gls{management} component orchestrates the configuration of the system by providing metadata to clients and nodes. This metadata includes user information and a set of all nodes in the system including their addresses and states. Clients and nodes must cache this metadata which ensures that a temporary unavailability of the management component does not compromise the replication and backup process.
+One central \gls{management} component orchestrates the configuration of the system by providing metadata to \glspl{client} and \glspl{node}. This metadata includes user information and a set of all \glspl{node} in the system including their addresses and states. Clients and \glspl{node} must cache this metadata which ensures that a temporary unavailability of the management component does not compromise the replication and backup process.
 
 All components including their responsibilities and interactions are described in more detail in Appendix \fullref{sec:specification}.
 
 \paragraph{Protocols} Redbackup specifies a high-level protocol that is used for internal communication (noted in all C4 diagrams as \emph{redbackup protocol}). We deliberately specified the communication on a high level to encapsulate the underlying protocol.
 
-In the prototype, we used a custom, minimal protocol that is based on TCP and sends framed Message Pack\footnote{\url{https://msgpack.org/}} encoded messages. We also encapsulated the (de-) serialisation mechanisms in forwarder and receiver components as specified in the Forwarder Receiver Pattern \cite{POSA1}.
-
-If we decided to switch to e.g. HTTP as the underlying protocol to overcome firewall issues in the future, only these forwarder and receiver components have to be adapted while the actual message format does not change. 
+In the prototype, we used a custom, minimal protocol that is based on TCP and sends framed Message Pack\footnote{\url{https://msgpack.org/}} encoded messages. If we decided to switch to e.g. HTTP as the underlying protocol to overcome firewall issues in the future, only these forwarder and receiver components have to be adapted while the actual message format does not change. 
 
 \subsection{Backup creation}
 % TODO
@@ -61,14 +59,14 @@ If we decided to switch to e.g. HTTP as the underlying protocol to overcome fire
 % Planned and unplanned leaving of nodes
 % Management down
 
-We deliberately specified \emph{n-replication} only, which means the degree of redundancy for the whole system is equal to the amount of nodes in the system (see \fullref{sec:fundamental-design-decisions}).
+We deliberately specified \emph{n-replication} only, which means the degree of redundancy for the whole system is equal to the amount of \glspl{node} in the system (see \fullref{sec:fundamental-design-decisions}).
 
 A \gls{node} is in charge for all data stored on it. Each \gls{node} - hereafter called \gls{sending-node} - randomly picks $n$ of its data \glspl{chunk}. It then picks one other \gls{node} randomly - hereafter called \gls{designated-node} - and requests which of the chosen data \glspl{chunk} are persisted on the \gls{designated-node}. The \gls{designated-node} returns a subset of the requested \glspl{chunk} that consists of all \glspl{chunk} that it owns. Using this response, the \gls{sending-node} sends all missing \glspl{chunk} to the \gls{designated-node} which acknowledges after successful receipt.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.6\linewidth]{resources/data_replication.pdf}
-    \caption{Data Replication Sequence Diagram}
+    \caption{Data Replication UML Sequence Diagram}
 \end{figure}
 
 This scenario is described in more detail in the Appendix \fullref{sec:scenario-data-replication}.
@@ -84,7 +82,7 @@ A discussion on the role of hash functions including the chosen algorithms for t
 
 \paragraph{Data Integrity on the Management} The \gls{management} component has no knowledge of the persisted data in the system and has only knowledge of the configuration (need-to-know principle \cite{security-patterns}).
 
-\paragraph{Data Encryption} A \gls{client} encrypts backup data \glspl{chunk} when creating a new backup. This ensures that no other participant in the redbackup system can inspect file contents (need-to-know principle \cite{security-patterns}). The encryption and decryption keys are only persisted on the client and must be backed up separately.
+\paragraph{Data Encryption} A \gls{client} encrypts backup data \glspl{chunk} when creating a new backup. This ensures that no other participant in the redbackup system can inspect file contents (need-to-know principle \cite{security-patterns}). The encryption and decryption keys are only persisted on the \gls{client} and must be backed up separately.
 
 \paragraph{Transport Security} All sent \glspl{message} should be signed by the sender. If so, transport layer encryption is not strictly necessary because all user data is already encrypted on the \gls{client} with the only exception of the \gls{expiration-date}.
 
@@ -92,13 +90,13 @@ A detailed description of these security mechanisms is out of scope for this stu
 
 \subsection{Partitioning \& Scaling}
 
-\paragraph{Availability \& Overload} To scale the redbackup system regarding availability and safety, more \glspl{node} can be added to the redbackup system. If a given \gls{node} is overloaded, a \gls{client} can use another \gls{node} for its backup creation or restoral.
+\paragraph{Availability \& Overload} To scale the redbackup system regarding availability and safety, more \glspl{node} can be added to the redbackup system. If a given \gls{node} is overloaded, a \gls{client} can use another \gls{node} for its backup creation or restore.
 
 Because both processes require approval of a chosen \gls{node} (see scenarios \fullref{sec:scenario-create-backup} and \fullref{sec:scenario-backup-restore}), an overloaded \gls{node} can finish work in progress backups/restores and reject new requests (following the patterns Finish Work In Progress and Shed Load \cite{fault-tolerance}). The data is replicated to the overloaded \glspl{node} eventually.
 
 We ensured that \glspl{node} are (mostly) stateles which simplifies scaling as well.
 
-\paragraph{Storage Scalability} Because the proposed system does currently only support \emph{n-replication} (see section \fullref{sec:fundamental-design-decisions}), the maximum storage capacity is the lowest storage size of any node. Therefore, to increase storage capacity, the capacity of all \glspl{node} must be extended to the desired amount.
+\paragraph{Storage Scalability} Because the proposed system does currently only support \emph{n-replication} (see section \fullref{sec:fundamental-design-decisions}), the maximum storage capacity is the lowest storage size of any \gls{node}. Therefore, to increase storage capacity, the capacity of all \glspl{node} must be extended to the desired amount.
 
 To minimise network usage deduplication of data is used on the \gls{client}. Deduplication is  discussed in the paragraph Storage Unit in  \fullref{sec:fundamental-design-decisions}.
 
@@ -108,7 +106,7 @@ Additionally to the above-discussed mechanisms for fault tolerance regarding sec
 
 \paragraph{Reporting} Most issues that occur on a \gls{node} are reported to the \gls{management} component (following the pattern Someone in Charge \cite{fault-tolerance}). The \gls{management} can then decide to notify the system administrator or execute error mitigation processes, e.g. suspend a given \gls{node} temporarily.
 
-If a node tries to connect to another node that is not available, it notifies the management node (following the pattern System Monitor\cite{fault-tolerance}).
+If a \gls{node} tries to connect to another \gls{node} that is not available, it notifies the management component (following the pattern System Monitor\cite{fault-tolerance}).
 
 Each \gls{node} periodically verifies the persisted contents for possible corruption using the checksum mechanisms discussed in \fullref{sec:security-and-encryption} (following the Pattern Routine Audits \cite{fault-tolerance}). If a corruption is detected, the \gls{storage} notifies the \gls{node} which notifies the \gls{management}.
 
@@ -121,30 +119,30 @@ We used the morphological box technique to explore different possible solutions 
 The following paragraphs reason the selected entry in each dimension.
 
 \paragraph{Redundancy}
-We originally planned to support \emph{client m-replication}, which means that the client defines a custom degree of redundancy from 1 to the number of nodes in the system. However, this is a complex mechanism that requires sophisticated algorithms to work correctly and efficiently. For the prototype, we chose the more straightforward to implement option system \emph{n-replication}, where the degree of redundancy for the whole system is equal to the number of nodes in it. Changing this option in the future is hard because it requires fundamental changes in the replication process and the communication protocols.
+We originally planned to support \emph{client m-replication}, which means that the \gls{client} defines a custom degree of redundancy from 1 to the number of \glspl{node} in the system. However, this is a complex mechanism that requires sophisticated algorithms to work correctly and efficiently. For the prototype, we chose the more straightforward to implement option system \emph{n-replication}, where the degree of redundancy for the whole system is equal to the number of \glspl{node} in it. Changing this option in the future is hard because it requires fundamental changes in the replication process and the communication protocols.
 
-\paragraph{Storage unit}
+\paragraph{Storage Unit}
 The idea of \emph{chunks} come from Borg Backup. Files are partitioned into chunks using a rolling hash which enables deduplication and space efficient backups for large files \cite{borg-data-structures}. These are desired properties in a backup system to minimise network and disk usage.
 
 \emph{Encrypting chunks} means that deduplication of the same file coming from different users is not possible anymore but is a necessity for privacy. Encryption is not trivial and requires a user concept that is out of scope of the prototype developed in the study project.
-We chose the \emph{plain files} option for the study project to simplify the client implementation. Supporting \emph{encrypted chunks} in the future is possible by just modifying the client.
+We chose the \emph{plain files} option for the study project to simplify the \gls{client} implementation. Supporting \emph{encrypted chunks} in the future is possible by just modifying the \gls{client}.
 
-\paragraph{Role of the management}
+\paragraph{Role of the Management}
 The \emph{one in charge} option is the most straightforward option to implement, but conflicts with many intentions of the administrator (see \fullref{sec:adminstrator-intention}). We also intended to avoid a single point of failure. We chose the option \emph{autonomous replication} because it guarantees that replication is always ensured and keeps communication relatively simple.
 
-\paragraph{Storage backend}
+\paragraph{Storage Backend}
 Using the file system is the simplest possible solution for the study project and therefore selected option. Adding support for other backends in the future is still possible since the storage component is an isolated part of the architecture (see \fullref{sec:component-storage}).
 
 The number of files in a folder is limited depending on the used file system, length of a filename and other factors. Some file systems (e.g. ext4) have a global limit for the maximal number of files. This limit is 4 billion files for ext4. \cite{ext4}. Therefore we use the ext4 file system to persist data in the study project.
 
-\paragraph{Removal of old backups}\label{sec:removal-of-old-backups}
+\paragraph{Removal of Old Backups}\label{sec:removal-of-old-backups}
 We propose to use a fixed \emph{physical time} that must be specified on backup creation. After expiration, the backup data may be removed by a garbage collector. This may be extended to allow only mutual garbage removal in the future.
 
 A significant problem that \emph{physical time} addresses is the safety of backup data in case a user computer is infected with malware. An illicit application might command the removal of backups, or create new backups to initiate a garbage collection process to free storage capacity.
 
-Nevertheless, the use of \emph{physical time} has the downside of possible data loss due to wrong system times. To mitigate this risk, the system should use multiple distinct upstream time-servers. This is given with a high probability, as the proposed redundancy model motivates users to expand the system across multiple physical locations. Furthermore, the client, nodes and management should verify a reasonable accurate time when communicating mutually.
+Nevertheless, the use of \emph{physical time} has the downside of possible data loss due to wrong system times. To mitigate this risk, the system should use multiple distinct upstream time-servers. This is given with a high probability, as the proposed redundancy model motivates users to expand the system across multiple physical locations. Furthermore, the client, \glspl{node} and management should verify a reasonable accurate time when communicating mutually.
 
-\paragraph{Programming language / ecosystem}
+\paragraph{Programming Language / Ecosystem}
 A complete language evaluation can be found in \fullref{sec:language-evaluation}.
 
 \begin{sidewaystable}
@@ -155,9 +153,9 @@ A complete language evaluation can be found in \fullref{sec:language-evaluation}
 		\hline
           \textbf{Redundancy}
           & No redundancy
-          & Client m-replication: The client defines a custom degree of redundancy (from 1 to the number of nodes).
-          & System m-replication: The administrator defines the degree of redundancy for the whole system (from 1 to the number of nodes).
-          & \textbf{System n-replication}: The degree of redundancy for the whole system is equal to the amount of nodes in the system.
+          & Client m-replication: The \gls{client} defines a custom degree of redundancy (from 1 to the number of \glspl{node}).
+          & System m-replication: The administrator defines the degree of redundancy for the whole system (from 1 to the number of \glspl{node}).
+          & \textbf{System n-replication}: The degree of redundancy for the whole system is equal to the amount of \glspl{node} in the system.
           \\ \hline
 
           \textbf{Storage unit}
@@ -170,9 +168,9 @@ A complete language evaluation can be found in \fullref{sec:language-evaluation}
 
           \textbf{Role of the management}
           & One in charge: The management knows and controls everything (e.g. the location of every file/chunk).
-          & Configuration only: The management must be up for administrative tasks only. The nodes are mostly autonomous.
+          & Configuration only: The management must be up for administrative tasks only. The \glspl{node} are mostly autonomous.
           & \textbf{Autonomous replication}: The management must be available for most of the tasks but replication also works if the management is down.
-          & No management: Every node is completely autonomous.
+          & No management: Every \gls{node} is completely autonomous.
           \\ \hline
 
 
@@ -188,7 +186,7 @@ A complete language evaluation can be found in \fullref{sec:language-evaluation}
           & \textbf{Physical time}: Data is removed on a specified physical time.
           & User command: The user commands removal of data.
           & Free storage: Data is removed, as soon as capacity issues occur.
-          & Physical time with mutual agreement: All nodes must agree before data is removed.
+          & Physical time with mutual agreement: All \glspl{node} must agree before data is removed.
           \\ \hline
 
 
@@ -215,9 +213,9 @@ Assuming we have $p=30^{21}$ files/chunks the system (which is equivalent to two
 
 However, if a collision would happen after all, for example, if the used cryptographic hash function is flawed or the unlikely event occurs, it results in data loss.
 
-In theory, we could detect collisions on the client. To do so, every time an identifier is calculated, the client must verify that if a file with the same identifier exists already in the system, it has the exact same contents. If the contents differ, it is a collision. This approach requires a lot of network traffic and can slow down the backup process significantly.
+In theory, we could detect collisions on the \gls{client}. To do so, every time an identifier is calculated, the \gls{client} must verify that if a file with the same identifier exists already in the system, it has the exact same contents. If the contents differ, it is a collision. This approach requires a lot of network traffic and can slow down the backup process significantly.
 
-Another place to detect collisions is on the node. A node can verify if the contents of a given file/chunk are equal to the contents already present in the system. The downside of this approach is that it requires the client always to send the full contents of every file, which means there is a lot of additional network traffic.
+Another place to detect collisions is on the \gls{node}. A \gls{node} can verify if the contents of a given file/chunk are equal to the contents already present in the system. The downside of this approach is that it requires the \gls{client} always to send the full contents of every file, which means there is a lot of additional network traffic.
 
 Both of the described approaches for collision detection have significant costs that are not practical.
 
@@ -239,31 +237,31 @@ The \gls{client} and \gls{node} are delivered as executables that are be configu
 
 The \gls{node} component binds itself to a provided network interface and port on which it provides the services for backup creation, backup restore and replication.
 
-The \gls{client} binary is started individually for every operation, that is the creation of a backup, listing all backups persisted on a given \gls{node} and the restoration of data.
+The \gls{client} binary is started individually for every operation, that is the creation of a backup, listing all backups persisted on a given \gls{node} and data restore.
 
 All components are implemented using the Rust programming language \cite{rustlang-org}. Installation instructions are documented in the project's repository.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=1\linewidth]{resources/c4-sa-container}
-	\caption[SA specific C4 Container diagram]{C4 Container diagram illustrating the high-level shape of the prototype and how responsibilities are distributed as implemented in the Study Project.}
+	\caption[SA specific C4 Container diagram]{C4 Container diagram illustrating the high-level shape of the prototype and how responsibilities are distributed as implemented in the study project.}
 	\label{fig:c4-sa-container}
 \end{figure}
 
 \subsubsection{Client}
 
-The client executable bundles three components as shown in Figure \ref{fig:c4-client-container}.
+The \gls{client} executable bundles three components as shown in Figure \ref{fig:c4-client-container}.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=1\linewidth]{resources/c4-client-container}
-	\caption[Client specific C4 Container diagram]{C4 Container diagram illustrating the shape of the client and how responsibilities are distributed as implemented in the Study Project.}
+	\caption[Client specific C4 Container diagram]{C4 Container diagram illustrating the shape of the \gls{client} and how responsibilities are distributed as implemented in the study project.}
 	\label{fig:c4-client-container}
 \end{figure}
 
 \emph{Client-cli} contains the command line specific logic that provides an uncluttered interface for advanced users and serves as an entry point in the client's core logic. We used the clap\footnote{\url{https://clap.rs/}}  library to implement this component.
 
-The \emph{client} component contains the actual logic for the creation and restoration of backups. It is organised as a library so that it can be used for other projects as well, e.g. if we provide a graphical user interface in the future. The client component creates metadata for every backup in a separate \emph{SQlite-database}. These databases are also the entry point for a restore. For database access, we used the Diesel\footnote{\url{https://diesel.rs/}} ORM-library.
+The \emph{client} component contains the actual logic for creating and restoring backups. It is organised as a library so that it can be used for other projects as well, e.g. if we provide a graphical user interface in the future. The \gls{client} component creates metadata for every backup in a separate \emph{SQlite-database}. These databases are also the entry point for a restore. For database access, we used the Diesel\footnote{\url{https://diesel.rs/}} ORM-library.
 
 The \gls{client} components make heavy use of a networking library called tokio\footnote{\url{https://tokio.rs/}} that provides an efficient event loop similar to the Reactor pattern \cite{POSA1}. Although tokio supports highly parallel networking code, we decided to implement all interactions from a \gls{client} to \glspl{node} serial to keep it simple and readable.
 
@@ -278,19 +276,19 @@ The \gls{node} executable bundles four components as shown in Figure \ref{fig:c4
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=1\linewidth]{resources/c4-node-container}
-	\caption[Node specific C4 Container diagram]{C4 Container diagram illustrating the shape of the node and how responsibilities are distributed as implemented in the Study Project.}
+	\caption[Node specific C4 Container diagram]{C4 Container diagram illustrating the shape of the \gls{node} and how responsibilities are distributed as implemented in the study project.}
 	\label{fig:c4-node-container}
 \end{figure}
 
-Exactly like the client implementation, the command line logic is encapsulated in a separate component called \emph{node-cli}.
+Exactly like the \gls{client} implementation, the command line logic is encapsulated in a separate component called \emph{node-cli}.
 
-The core logic is implemented in the \emph{node} library. Like the client, the node component makes heavy use of the tokio and Diesel library. In contrast to the client, we used the parallel features of tokio. To keep the chosen technology close to the client, we decided to use SQLite to store metadata about the data \glspl{chunk} present on the node as well. This must be changed in the future because SQLite locks the entire database when writing, which makes concurrent updates impossible \cite{sqlite-locking}.
+The core logic is implemented in the \emph{node} library. Like the client, the \gls{node} component makes heavy use of the tokio and Diesel library. In contrast to the client, we used the parallel features of tokio. To keep the chosen technology close to the client, we decided to use SQLite to store metadata about the data \glspl{chunk} present on the \gls{node} as well. This must be changed in the future because SQLite locks the entire database when writing, which makes concurrent updates impossible \cite{sqlite-locking}.
 
-We use the same \emph{protocol} component for (de-) serialisation of messages on the node and the client.
+We use the same \emph{protocol} component for (de-) serialisation of messages on the \gls{node} and the \gls{client}.
 
-The \emph{storage} component is also bundled directly in the node executable. It persists data in one single directory as described in \fullref{sec:fundamental-design-decisions}.
+The \emph{storage} component is also bundled directly in the \gls{node} executable. It persists data in one single directory as described in \fullref{sec:fundamental-design-decisions}.
 
-Other known nodes are passed to the node executable via command line arguments.
+Other known \glspl{node} are passed to the \gls{node} executable via command line arguments.
 
 Because user authentication is complex and requires additional cryptographic efforts, the prototype accepts backups and replications from everyone.
 
@@ -312,14 +310,14 @@ Our integration tests are split into two main environments: A minimal one as def
 \begin{figure}
 	\centering
 	\includegraphics[width=0.5\linewidth]{resources/integration_test_small}
-	\caption[Minimal integration test]{Minimal integration test with one client and two nodes.}
+	\caption[Minimal integration test]{Minimal integration test with one \gls{client} and two \glspl{node}.}
 	\label{fig:integrationtestsmall}
 \end{figure}
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.5\linewidth]{resources/integration_test_medium}
-	\caption[Medium integration test]{Medium integration test with three clients and three nodes.}
+	\caption[Medium integration test]{Medium integration test with three \glspl{client} and three \glspl{node}.}
 	\label{fig:integrationtestmedium}
 \end{figure}
 
@@ -327,11 +325,11 @@ These two rather small network styles will probably be the most commonly used de
 
 The integration tests are run automatically at least on every tagged release (i.e. at least once every sprint). Because of the (yet) small set of integration tests we wrote for the prototype, we ran the tests on every build.
 
-To write comprehensive black box integration tests, we created a testing library written in Python\footnote{\url{https://www.python.org/}}. In this framework, the internals on how to launch and configure clients and nodes is encapsulated in classes. Using this abstraction, we decided to launch clients and nodes in separate Docker\footnote{\url{https://www.docker.com/}} containers, so that they are as isolated as possible. All containers used in a test case are connected to a dedicated Docker network, which eliminates possible interferences with other network services.
+To write comprehensive black box integration tests, we created a testing library written in Python\footnote{\url{https://www.python.org/}}. In this framework, the internals on how to launch and configure \glspl{client} and \glspl{node} is encapsulated in classes. Using this abstraction, we decided to launch \glspl{client} and \glspl{node} in separate Docker\footnote{\url{https://www.docker.com/}} containers, so that they are as isolated as possible. All containers used in a test case are connected to a dedicated Docker network, which eliminates possible interferences with other network services.
 
-We wrote integration tests that verify that a backup are flawlessly created, restored and replicated onto other nodes.
+We wrote integration tests that verify that a backup are flawlessly created, restored and replicated onto other \glspl{node}.
 
-Tests for fault tolerance, e.g. what happens if a node goes down during a backup, can be implemented as integration tests as well.
+Tests for fault tolerance, e.g. what happens if a \gls{node} goes down during a backup, can be implemented as integration tests as well.
 
 \subsubsection{Test coverage}
 
@@ -344,20 +342,20 @@ Architectural tests are special and manually run tests to verify the scalability
 
 Our integration testing framework allowed us to write such tests in a simple fashion.
 
-\paragraph{Size scalability}
-As per our requirements in Appendix \ref{requirements}, the architecture should scale up to 100 nodes.
+\paragraph{Size Scalability}
+As per our requirements in Appendix \ref{requirements}, the architecture should scale up to 100 \glspl{node}.
 
 To test this scenario, we used the same underlying techniques as in our integration tests (see chapter \ref{integration-tests}), but scale the infrastructure up to the required limits.
 
 Due to the high memory consumption of our prototype, we were not able to conduct this test with a significant amount of data. We conducted one test, where a file of 5MB was replicated to 99 Nodes which did not show any loss in performance.
 
-\paragraph{Data capacity}
-Our requirements (Appendix \ref{requirements}) also state, that a node must be able to handle up to e.g. 2TB of data. To test this requirement, we planned to create large amounts of random data that has to be stored. This is a realistic requirement, as e.g. a compressed image, audio and movie collection might reach such sizes in practice.
+\paragraph{Data Capacity}
+Our requirements (Appendix \ref{requirements}) also state, that a \gls{node} must be able to handle up to e.g. 2TB of data. To test this requirement, we planned to create large amounts of random data that has to be stored. This is a realistic requirement, as e.g. a compressed image, audio and movie collection might reach such sizes in practice.
 
-Both, the client and the \gls{node} of the prototype, use a lot of memory during the creation of a backup. It was therefore not possible yet to create a single backup of 2TB. Performing multiple backups in a row of a smaller dataset (i.e. 5 files with a size of 500MB) has not shown a decrease in performance.
+Both, the \gls{client} and the \gls{node} of the prototype, use a lot of memory during the creation of a backup. It was therefore not possible yet to create a single backup of 2TB. Performing multiple backups in a row of a smaller dataset (i.e. 5 files with a size of 500MB) has not shown a decrease in performance.
 
 \paragraph{Concurrent Backups}
 
-We ran a test in which 5 clients back up randomly generated data onto three randomly chosen \glspl{nodes}. On average, the complete backup process of 1MB data \gls{chunk} took 90-130ms from one docker container into another. In reality, where clients and nodes are on separate physical machines,  this time will be higher due to network latency.
+We ran a test in which 5 \glspl{client} back up randomly generated data onto three randomly chosen \glspl{node}. On average, the complete backup process of 1MB data \gls{chunk} took 90-130ms from one docker container into another. In reality, where \glspl{client} and \glspl{node} are on separate physical machines,  this time will be higher due to network latency.
 
-These tests are however are partly problematic because the creation of backups require a lot of CPU time for the calculation of hashes. Running all clients on separate machines would probably improve the performance slightly.
+These tests are however are partly problematic because the creation of backups require a lot of CPU time for the calculation of hashes. Running all \glspl{client} on separate machines would probably improve the performance slightly.
