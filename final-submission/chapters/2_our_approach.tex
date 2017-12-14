@@ -147,7 +147,7 @@ We used the morphological box technique to explore different possible solutions 
 The following paragraphs reason the selected entry in each dimension.
 
 \paragraph{Redundancy}
-We originally planned to support \emph{client m-replication}, which means that the \gls{client} defines a custom degree of redundancy from 1 to the number of \glspl{node} in the system. However, this is a complex mechanism that requires sophisticated algorithms to work correctly and efficiently. For the prototype, we chose the more straightforward to implement option system \emph{n-replication}, where the degree of redundancy for the whole system is equal to the number of \glspl{node} in it. Changing this option in the future is hard because it requires fundamental changes in the replication process and the communication protocols.
+We originally planned to support \gls{client-m-replication}, which means that the \gls{client} defines a custom degree of redundancy from 1 to the number of \glspl{node} in the system. However, this is a complex mechanism that requires sophisticated algorithms to work correctly and efficiently. For the prototype, we chose the more straightforward to implement option system \emph{n-replication}, where the degree of redundancy for the whole system is equal to the number of \glspl{node} in it. Changing this option in the future is hard because it requires fundamental changes in the replication process and the communication protocols.
 
 \paragraph{Storage Unit}
 The idea of \emph{chunks} come from Borg Backup. Files are partitioned into chunks using a rolling hash which enables deduplication and space efficient backups for large files \cite{borg-data-structures}. These are desired properties in a backup system to minimise network and disk usage.
@@ -181,7 +181,7 @@ A complete language evaluation can be found in \fullref{sec:language-evaluation}
 		\hline
           \textbf{Redundancy}
           & No redundancy
-          & Client m-replication: The \gls{client} defines a custom degree of redundancy (from 1 to the number of \glspl{node}).
+          & \Gls{client-m-replication}: The \gls{client} defines a custom degree of redundancy (from 1 to the number of \glspl{node}).
           & System m-replication: The administrator defines the degree of redundancy for the whole system (from 1 to the number of \glspl{node}).
           & \textbf{System n-replication}: The degree of redundancy for the whole system is equal to the amount of \glspl{node} in the system.
           \\ \hline
