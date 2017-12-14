@@ -19,15 +19,18 @@ With this chapter we legitimate this work, explain why this work is valuable and
 
 \section{Goals and Tasks}
 % TODO: Rephrase, this paragraph was copied from https://eprints.hsr.ch/523/1/Data%20over%20DAB.pdf !
-In the following sections, the revised goals and reasons for deviations of the original goals are presented. The context of these goals is apparent from the \nameref{sec:task-description}.
+This section presents the revised goals and deviations from the original goals.
 
 \subsection{Initial Goals}
-
-The initial goals of this thesis where specified by the authors in cooperation with Prof.~Farhad~Mehta and are also defined in the \nameref{sec:task-description}. 
+The initial goals of this study project where specified by the authors in cooperation with Prof.~Farhad~Mehta in the \nameref{sec:task-description}. 
 
 \subsection{Revised Goals}
+This section lists the revised goals that were specified during the beginning of the project. All deviations from the \nameref{sec:task-description} are noted in the following Chapter \fullref{sec:deviations-from-original-goals}.
+% leicht angepasst, beschreibung im nächsten abschnitt
+% sehr früh im projekt angepasst, sobald abgezeichnet
+
 \begin{enumerate}
-    \item Writing of a theoretical concept to address following issues:
+    \item Elaboration of following issues in a theoretical concept and architecture:
         \begin{enumerate}
             \item joining of nodes
             \item planned and unplanned leaving of nodes
@@ -37,23 +40,19 @@ The initial goals of this thesis where specified by the authors in cooperation w
             \item retrieving stored data
             \item scalability for up to several 100 nodes where every node can store a data volume of up to 2 terabytes.
         \end{enumerate}
-    \item Evaluation to find an appropriate implementation language for the prototype
+    \item Evaluation of an appropriate implementation language for the prototype
     \item Implementation of a prototype, demonstrating the core features as specified in the concept paper.
 \end{enumerate}
 
-\subsection{Deviations from Original Goals}
+\subsection{Deviations from the Original Goals}\label{sec:deviations-from-original-goals}
 
-\subsubsection{Details of Defined Degree Redundancy Distribution}
-
-While researching redundancy strategies for the prototype, we realised that the full specification of a defined-degree redundancy was not a feasible goal during the study project, because of the high complexity and limited time.
-
-We therefore did not specify any details of this mechanism, but designed the architecture such that it would be extensible in the future.
+\subsubsection{Degree of Redundancy}
+While researching data redundancy strategies, we realised that the full specification of \gls{client-m-replication} is not a feasible goal during the study project. The reason for this is the high complexity and limited time, as discussed in Chapter \fullref{sec:fundamental-design-decisions}.
 
 \subsubsection{Simplifications for Prototype}
+Due to time constrains of the study project, it was not possible to implement the full specified architecture in the prototype. Hence, we decided to implement the core backup, restore and distribution mechanisms, to prove that the concept works.
 
-Due to time constrains of the study project, it was not possible to implement the full specified architecture in the prototype. Hence, we decided to implement the basic backup, restore and distribution mechanisms.
-
-More details on prototype simplifications can be found in Chapter~\ref{sec:our-approach}.
+Simplifications for the prototype are discussed in Chapter~\fullref{sec:our-approach}.
 
 \section{State of the Art}
 % previous / related work in this area
