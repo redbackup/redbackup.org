@@ -291,7 +291,7 @@ The \gls{client} executable bundles three components as shown in Figure \ref{fig
 
 The \emph{client} component contains the actual logic for creating and restoring backups. It is organised as a library so that it can be used for other projects as well, e.g. if we provide a graphical user interface in the future. The \gls{client} component creates metadata for every backup in a separate \emph{SQlite-database}. These databases are also the entry point for a restore. For database access, we used the Diesel\footnote{\url{https://diesel.rs/}} ORM-library.
 
-The \gls{client} components make heavy use of a networking library called tokio\footnote{\url{https://tokio.rs/}} that provides an efficient event loop similar to the Reactor pattern \cite{POSA1}. Although tokio supports highly parallel networking code, we decided to implement all interactions from a \gls{client} to \glspl{node} serial to keep it simple and readable.
+The \gls{client} components make heavy use of a networking library called tokio\cite{tokio-rs} that provides an efficient event loop similar to the Reactor pattern \cite{POSA1}. Although tokio supports highly parallel networking code, we decided to implement all interactions from a \gls{client} to \glspl{node} serial to keep it simple and readable.
 
 The (de-) serialisation mechanisms for messages sent to \glspl{node} are encapsulated in the \emph{protocol} component (Forwarder Receiver Pattern \cite{POSA1}).
 
