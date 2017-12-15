@@ -124,16 +124,21 @@ As a result of the combined difficulties with Diesel and SQLite, we spent consid
 In hindsight, we should have further evaluated other database systems including an in-memory database for the \gls{client}.
 
 \section{Future work}
-% How to procede?
 
-% - Improve the protocol
-% - evtl. address the CPU issue
-% - implement encryption & Conduct more tests
-% - implement joining, leaving & Conduct more tests
-% Finish the implementation :D
+We laid out the fundamental architecture in this study project. On this basis, various aspects can be evolved and improved.
 
+\subsection{Reduce Memory and CPU consumption}
+As already stated in section \fullref{sec:overall-performance}, the memory consumption and CPU usage can be improved.
 
-% pointing out new research lines
+\subsection{Further demonstrate the architecture}
+
+As discussed, we did not yet implement all functionality as described in the architecture specification. Some crucial aspects that we left out still have to be demonstrated, especially joining and leaving of nodes as well as chunk encryption and splitting.
+
+\subsection{Client-m-replication}
+As carried out in chapter 2, the details of \gls{client-n-replication} are unresolved and have to be carried out. 
+
+\subsection{Evolve the Prototype into a Working Product}
+If all remaining aspects of the architecture have been demonstrated, an actual working product shall be implemented that is not only a proof of concept but a tool that end users want to use.
 
 \section{Conclusion}
 % compare with (papers) problems addressed in the background section
