@@ -114,12 +114,12 @@ An \gls{administrator} wants to interact with the \gls{system} as less as possib
 \paragraph{Responsibilities}
 
 \begin{itemize}
-    \item Send \gls{metadata} periodically (Messages \emph{get nodes metadata} and \emph{post nodes metadata}) in order to ...
+    \item Send \gls{node-metadata} periodically (Messages \emph{get nodes metadata} and \emph{post nodes metadata}) in order to ...
     \begin{itemize}
         \item Perform initialization
         \item Learn about other \glspl{node}
         \item Start the \emph{leaving} process and notify the \gls{management} when it is completed
-        \item Send \gls{metadata} to the \gls{management} so that it can perform health-checks (e.g. verify the timestamp)
+        \item Send \gls{node-metadata} to the \gls{management} so that it can perform health-checks (e.g. verify the timestamp)
     \end{itemize}
     \item Maintain the \gls{chunk-table}
     \begin{itemize}
@@ -169,14 +169,14 @@ An \gls{administrator} wants to interact with the \gls{system} as less as possib
 \begin{itemize}
     \item The \gls{administrator} is the only Actor interacting with the \gls{management}. He/She sends instructions (e.g. add new \gls{node}) and is notified by the \gls{management} about any anomalies.
     \item \glspl{client} fetch a list of all \glspl{node} from the \gls{management} (See Component \ref{sec:component-client} \nameref{sec:component-client} for further details). As for the study project, the \gls{management} does not have any information about \glspl{client}, but this might change when authentication is implemented in the future.
-    \item The \gls{management} maintains \gls{metadata} for each \gls{node} in the \gls{system} and sends that information every \gls{node} when they post their \gls{metadata}.
+    \item The \gls{management} maintains \gls{node-metadata} for each \gls{node} in the \gls{system} and sends that information every \gls{node} when they post their \gls{node-metadata}.
 \end{itemize}
 
 \paragraph{Responsibilities}
 \begin{itemize}
     \item Add and remove \glspl{node}
     \item Notify the \gls{administrator} e.g. if a \gls{node} leaves unexpectedly.
-    \item Receive \gls{metadata} from the \glspl{node} and reply with \gls{metadata}
+    \item Receive \gls{node-metadata} from the \glspl{node} and reply with \gls{node-metadata}
     \item Send list of \glspl{node} to the \glspl{client}
 \end{itemize}
 
@@ -299,14 +299,14 @@ This scenario is described as it is implemented in the study project. It might b
 
 \begin{enumerate}
     \item The \gls{new-node} is registered by an \gls{administrator} in the \gls{management} using its \gls{node-identifier}. A \gls{location} must also be assigned to the \gls{node}. %TODO: Data
-    \item The \gls{new-node} queries \gls{metadata} from the \gls{management} (message: \emph{get nodes metadata}) on startup.
-    \item The \gls{new-node} configures itself based on its \gls{node-identifier} and received \gls{metadata} from \gls{management}.
+    \item The \gls{new-node} queries \gls{node-metadata} from the \gls{management} (message: \emph{get nodes metadata}) on startup.
+    \item The \gls{new-node} configures itself based on its \gls{node-identifier} and received \gls{node-metadata} from \gls{management}.
         \begin{itemize}
             \item If the \gls{management} has no information available (yet) or is unavailable, the \gls{new-node} retries after a certain timeout (e.g.\ 5min).
         \end{itemize}
-    \item Other \glspl{node} learn about the \gls{new-node} through periodical \gls{metadata} queries (message: \emph{post nodes metadata})
+    \item Other \glspl{node} learn about the \gls{new-node} through periodical \gls{node-metadata} queries (message: \emph{post nodes metadata})
         \begin{enumerate}
-            \item If the \gls{new-node} contacts an existing \gls{node}, before the existing \gls{node} updates its \gls{metadata}, the existing \gls{node} should query the \gls{management} (message: \emph{get nodes metadata})
+            \item If the \gls{new-node} contacts an existing \gls{node}, before the existing \gls{node} updates its \gls{node-metadata}, the existing \gls{node} should query the \gls{management} (message: \emph{get nodes metadata})
             \item If the \gls{management} is unavailable, the \gls{new-node} ignores all communication attempts.
         \end{enumerate}
 \end{enumerate}
@@ -368,7 +368,7 @@ This scenario is described as it is implemented in the study project. It might b
 
 \begin{enumerate}
     \item The \gls{sending-node} picks $n$ random entries from its \gls{chunk-table}. In the future, these entries might be selected based on heuristics.
-    \item The \gls{sending-node} picks one random \gls{designated-node} from its \gls{metadata}. In the future, the \gls{designated-node} might be selected based on heuristics.
+    \item The \gls{sending-node} picks one random \gls{designated-node} from its \gls{node-metadata}. In the future, the \gls{designated-node} might be selected based on heuristics.
     \item The \gls{sending-node} sends the \glspl{chunk-identifier} of the chosen entries to the \gls{designated-node} with a \emph{get chunk states} message.
     \item The \gls{designated-node} checks, if all \glspl{chunk-identifier} received from the \gls{sending-node} are present in its \gls{chunk-table}.
         \begin{itemize}
@@ -414,7 +414,7 @@ This scenario is described as it is implemented in the study project. It might b
 
 \subsubsection{Management Problems}\label{sec:scenario-management-problems}
 \begin{itemize}
-    \item The case that the \gls{management} has outdated \gls{metadata} due to data loss will be ignored during this study project.
+    \item The case that the \gls{management} has outdated \gls{node-metadata} due to data loss will be ignored during this study project.
 \end{itemize}
 
 \subsubsection{Network Availability Problems}\label{sec:scenario-network-errors}
@@ -428,7 +428,7 @@ If a \gls{node} cannot reach other \glspl{node}, it notifies the \gls{management
 See first case in scenario~\fullref{sec:scenario-network-errors}
 
 \paragraph{Behaviour in case nodes have different states of management information}
-The redundancy is temporary reduced to the \glspl{node} which the group of old \glspl{node} know, but will eventually be resolved as \glspl{node} fetch \gls{metadata}.
+The redundancy is temporary reduced to the \glspl{node} which the group of old \glspl{node} know, but will eventually be resolved as \glspl{node} fetch \gls{node-metadata}.
 
 
 \subsection{Messages}\label{sec:messages}
