@@ -48,9 +48,41 @@ The problems listed in the previous sections should be solved by a fast, easy to
 The target users of such a system are individuals (e.g. families) and small enterprises.
 
 \section{Goals and Tasks}
-
 % TODO: Rephrase, this paragraph was copied from https://eprints.hsr.ch/523/1/Data%20over%20DAB.pdf !
-In this chapter we write about our goals, the problems we had to face and how we finally satisfied the mentioned goals.
+This section presents the revised goals and provides a rationale for the deviations from the original goals.
+
+\subsection{Initial Goals}
+The initial goals of this study project where specified by us in cooperation with Prof.~Farhad~Mehta in the \nameref{sec:task-description}.
+
+\subsection{Revised Goals}
+This section lists the revised goals that were specified during the beginning of the project. All deviations from the \nameref{sec:task-description} are noted in the following Chapter \fullref{sec:deviations-from-original-goals}.
+% leicht angepasst, beschreibung im nächsten abschnitt
+% sehr früh im projekt angepasst, sobald abgezeichnet
+
+\begin{enumerate}
+    \item Elaboration of following issues in a theoretical concept and architecture:
+        \begin{enumerate}
+            \item joining of nodes
+            \item planned and unplanned leaving of nodes
+            \item distribution of data within the network
+            \item uploading data into the distributed system
+            \item addressing within the distributed system
+            \item retrieving stored data
+            \item scalability for up to several 100 nodes where every node can store a data volume of up to 2 terabytes.
+        \end{enumerate}
+    \item Evaluation of an appropriate implementation language for the prototype
+    \item Implementation of a prototype, demonstrating the core features as specified in the concept paper.
+\end{enumerate}
+
+\subsection{Deviations from the Original Goals}\label{sec:deviations-from-original-goals}
+
+\subsubsection{Degree of Redundancy}
+While researching data redundancy strategies, we realised that the full specification of \gls{client-m-replication} is not a feasible goal during the study project. The reason for this is its complexity and the limited time of the study project, as discussed in Chapter \fullref{sec:fundamental-design-decisions}.
+
+\subsubsection{Simplifications for Prototype}
+Due to time constrains of the study project, it was not possible to implement the full specified architecture in the prototype. Hence, we decided to implement the core backup, restore and distribution mechanisms, to prove that the concept works.
+
+Simplifications for the prototype are discussed in Chapter~\fullref{sec:our-approach}.
 
 \section{State of the Art}
 % previous / related work in this area
@@ -60,6 +92,12 @@ In this chapter we write about our goals, the problems we had to face and how we
 % Details are covered in Chapter "Our Approach"
 % Summarize the Goals as described in the Task description and clarify it.
 % Technology?
+
+\subsubsection{Architecture}
+
+\subsubsection{Prototype}
+
+
 
 \subsection{Satisfaction}
 % What goals were satisfied? How and why?
