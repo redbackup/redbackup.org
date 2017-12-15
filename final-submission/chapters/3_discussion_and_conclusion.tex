@@ -1,19 +1,80 @@
 % !TeX spellcheck = en_GB
 \chapter{Discussion and Conclusion}
 \label{sec:discussion-and-conclusion}
-% TODO: Write this paragraph in past tense or present perfect
-
-% TODO: Rephrase, this paragraph was copied from https://eprints.hsr.ch/523/1/Data%20over%20DAB.pdf !
-This chapter contains our conclusion to our decisions, our lapses and the whole project.
+This chapter contains our achieved results and lessons learned, discusses future work and closes with a conclusion.
 
 \section{Achieved Result}
-% What is the result of this study project?
-% - Specification
-% - Minimal working prototype
-% - Not production ready but works stable
-% discuss the validity of the new proposal
-% compare with (papers) problems addressed in the background section
-% Discuss (performance) measurements
+
+\subsection{Prototype}
+
+We implemented the basic concepts described in our architecture in a limited form in our prototype. Rust was undoubtedly an excellent choice as a programming language for the prototype regarding robustness and performance but turned out to have a very steep learning curve. The same applies to the used frameworks tokio and Diesel. For this reason, we had to compromise to demonstrate as much of the architecture as possible without spending too much time on learning Rust.
+
+Nevertheless, our implementation is solid and proves that the proposed architecture is robust and can be pursued further.
+
+\subsection{Prototype Test Results}
+
+\paragraph{Unit Tests}
+We used test driven development (TDD) to develop the prototype as much as possible, which turned out to work great in the Rust ecosystem.
+
+Some unit tests written for the prototype are not pure unit tests but minimal integration tests. Because Rust is not a traditional object-oriented language, it is not possible to introduce and use interfaces (Traits) in the same way as we were used to from other languages such as Java or C\#. Due to the steep learning curve Rust has, we were not able to fully utilise the corresponding mechanisms.
+
+\paragraph{Integration Tests}
+
+To write comprehensive black box integration tests, we created a testing library written in Python\footnote{\url{https://www.python.org/}}. In this framework, the internals on how to launch and configure \glspl{client} and \glspl{node} is encapsulated in classes. Using this abstraction, we decided to launch \glspl{client} and \glspl{node} in separate Docker\footnote{\url{https://www.docker.com/}} containers, so that they are as isolated as possible. All containers used in a test case are connected to a dedicated Docker network, which eliminates possible interferences with other network services.
+
+We wrote integration tests that verify that a backup are flawlessly created, restored and replicated onto other \glspl{node}.
+
+\paragraph{Test coverage}
+
+Because Rust is still a young language with a relatively small ecosystem, tools for measuring code quality are still rare and immature. For our unit tests, we used Tarpaulin\footnote{\url{https://github.com/xd009642/tarpaulin}} to generate code coverage. Tarpaulin does not (yet) cover all language features and therefore returns a conservative coverage number. We achieved 53.5\% line coverage. This number would be significantly higher if all executed lines were counted correctly  (e.g. generated code using macros as well as compiler optimisations are not counted).
+
+Code coverage achieved using the integration tests is not yet supported by any tool known to us and therefore undocumented. The integration tests do however cover all positive scenarios that were implemented.
+
+Our integration testing framework allowed us to write such tests in a simple fashion.
+
+\subsection{Architecture}
+
+The architecture we elaborated in Chapter 2 and Appendix \ref{sec:specification} turned out to to be stable. It has paid off that we did not specify too many details at the beginning (for example, the protocol) but focused on the high-level view.
+
+\subsection{Architecture Test Results}
+
+To ensure the validity of the proposed architecture, we manually ran architecture tests. We focused on scalability, data capacity and concurrent backups. We used our integration test framework for these tests as well.
+
+\subsubsection{Overall Performance}
+
+The conducted architecture tests on the prototype have shown a solid overall performance. Unfortunately, we observed significant memory consumption and cpu utilisation during most test scenarios.
+
+\paragraph{CPU Utilisation}
+Replication and the creation of a backup require a lot of CPU time on the node and client components. The client components must execute many hash functions during the creation of chunks. A node must verify that the provided chunk identifiers can be derived from the sent chunk contents during backup creation and replication.
+
+Intensive CPU utilisation can be problematic, especially on a node. This is somewhat an inherit problem of the propsed architecture because these calculation are required to ensure the integrity of the data stored in the system.
+
+To mitigate this issue, a queuing mechanism can be implemented on the node component that temporarly accepts chunks without performing integrity checks. These integrity checks can be performed in the near future and the sent chunks can afterwards be added definetly to the chunk table. The backup and replication protocol need to be adapted to signal this temporary queuing on a node to clients or other nodes. A new state (e.g. queuing) could be sent instead of an acknowledgement that instructs clients and nodes to ask again for acknowledgement later.
+
+It has to be investigated whether specific CPU acceleration for hash calculation could mitigate this problem as well.
+
+\paragraph{Memory Concumption}
+To prevent premature optimisation, which Donald Knuth famously pointed out is the root of all evil \cite{knuth-optimise}, we implemented Messages without streaming support. We implemented the high-level redbackup protocol as framed Message Pack\footnote{\url{https://msgpack.org/}} encoded messages based directly on TCP. Such a Message Pack message is (de-)serialised at once. In other words, whenever a message is created or received, all its contents including the payload is loaded into memory. This decision, in combination with the design decision to not split up large files into multiple chunks, has led to significant memory concumption.
+
+The protocol details must be clarified in the future to allow message streaming. Refactoring the protocol component to use streaming mechanisms is feasible since tokio provides these mechanisms\cite{tokio-streaming}. 
+
+\subsubsection{Size Scalability Test Results}
+As per our requirements in Appendix \ref{requirements}, the architecture should scale up to 100 \glspl{node}.
+
+To test this scenario, we used the same underlying techniques as in our integration tests, but scaled the infrastructure up to 100 \glspl{node}.
+
+Due to the high memory consumption, we were not able to conduct this test with a significant amount of data. A test run during which a 5MB file was replicated to 99 Nodes did not show any loss in performance.
+
+\subsubsection{Data Capacity Test Results}
+Our requirements (Appendix \ref{requirements}) also state, that a \gls{node} must be able to handle up to e.g. 2TB of data. To test this requirement, we planned to create large amounts of random data that has to be stored. This is a realistic requirement, as e.g. a compressed image, audio and movie collection might reach such sizes in practice.
+
+It was not possible yet to create one single backup of 2TB at once due to the currently high memory concumption. Performing multiple backups in a row of a smaller dataset (i.e. 5 files with a size of 500MB) has not shown a decrease in performance.
+
+\subsubsection{Concurrent Test Results}
+
+We ran a test in which 5 \glspl{client} back up randomly generated data onto three randomly chosen \glspl{node}. On average, the entire backup process of 1MB data \gls{chunk} took 90-130ms from one docker container into another. These results clearly support our proposed architecture.
+
+In reality, where \glspl{client} and \glspl{node} are on separate physical machines, this time will be significantly higher due to network latency. Also, because the creation of backups require a lot of CPU time, running all \glspl{client} on one machine is somewhat problematic. It is likely, that running all clients and nodes on separate machines would improve the performance slightly.
 
 \section{Lessons Learned}
 % Describe what worked well and what went wrong (Lapses)
@@ -64,8 +125,17 @@ In hindsight, we should have further evaluated other database systems including 
 
 \section{Future work}
 % How to procede?
+
+% - Improve the protocol
+% - evtl. address the CPU issue
+% - implement encryption & Conduct more tests
+% - implement joining, leaving & Conduct more tests
+% Finish the implementation :D
+
+
 % pointing out new research lines
 
 \section{Conclusion}
+% compare with (papers) problems addressed in the background section
 % Final Conclusion - are we happy, did we expect more,...
 
