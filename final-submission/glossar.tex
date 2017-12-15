@@ -36,7 +36,7 @@
 \newglossaryentry{node-identifier}
 {
     name={node identifier},
-    description={A unique identifier assigned to any node to distinguish it from other.}
+    description={A unique identifier assigned to any node to distinguish it from other \glspl{nodes}.}
 }
 \newglossaryentry{location}
 {
@@ -82,7 +82,7 @@
 \newglossaryentry{chunk-index}
 {
     name={chunk index},
-    description={A \gls{client}-side data structure that maps files on filesystem to chunks and describes their folder structures.}
+    description={A \gls{client}-side data structure that stores file attributes, folders and the file to \glspl{chunk} mapping.}
 }
 \newglossaryentry{chunk-table}
 {
@@ -92,7 +92,7 @@
 \newglossaryentry{file}
 {
     name={file},
-    description={A document on a client system that shall be backed up. A file is represented in the system by multiple \glspl{chunk}.}
+    description={A document on a client system that shall be backed up. A file is represented in the system by one or more \glspl{chunk}.}
 }
 \newglossaryentry{expiration-date}
 {
