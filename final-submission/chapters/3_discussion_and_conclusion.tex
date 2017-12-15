@@ -40,9 +40,9 @@ The architecture we elaborated in Chapter 2 and Appendix \ref{sec:specification}
 
 To ensure the validity of the proposed architecture, we manually ran architecture tests. We focused on scalability, data capacity and concurrent backups. We used our integration test framework for these tests as well.
 
-\subsubsection{Overall Performance}
+\subsubsection{Overall Performance}\label{sec:overall-performance}
 
-The conducted architecture tests on the prototype have shown a solid overall performance. Unfortunately, we observed significant memory consumption and cpu utilisation during most test scenarios.
+The conducted architecture tests on the prototype have shown a solid overall performance. Unfortunately, we observed significant memory consumption and CPU utilisation during most test scenarios.
 
 \paragraph{CPU Utilisation}
 Replication and the creation of a backup require a lot of CPU time on the node and client components. The client components must execute many hash functions during the creation of chunks. A node must verify that the provided chunk identifiers can be derived from the sent chunk contents during backup creation and replication.
