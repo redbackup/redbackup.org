@@ -11,10 +11,10 @@
 <body>
     <header class="container grid-960 navbar">
       <section class="navbar-banner column col-1 col-md-2 col-xs-12">
-        <a class="navbar-brand" href="{{rootPath}}"><img src="{{rootPath}}images/redback.png" class="logo"/></a>
+        <a class="navbar-brand" href="{{rootPath}}{{#archive}}index.html{{/archive}}"><img src="{{rootPath}}images/redback.png" class="logo"/></a>
       </section>
       <section class="navbar-banner column col-5 col-md-10 col-xs-12">
-        <a href="{{rootPath}}" class="navbar-brand"><span class="red">red</span>backup <span class="sub">{{slogan}}</span></a>
+        <a href="{{rootPath}}{{#archive}}index.html{{/archive}}" class="navbar-brand"><span class="red">red</span>backup <span class="sub">{{slogan}}</span></a>
       </section>
       <section class="column col-3 col-md-6 col-xs-12">
           <ul>
@@ -26,9 +26,15 @@
       </section>
       <section class="column col-3 col-md-6 col-xs-12">
           <ul>
+              {{#archive}}
+              <li><a href="{{rootPath}}../project-management/jira-issue-export.html" class="btn btn-link">🗃 Project Tracker</a></li>
+              <li><a href="{{rootPath}}../sources/" class="btn btn-link">📄 Source Code</a></li>
+              <li><a href="{{rootPath}}../binary/" class="btn btn-link">🏗️ Binary Builds</a></li>
+              {{else}}
               <li><a href="https://project.redbackup.org/projects/REDPRO" class="btn btn-link">🗃 Project Tracker</a></li>
               <li><a href="https://git.redbackup.org/projects/RED" class="btn btn-link">📄 Source Code</a></li>
               <li><a href="https://ci.redbackup.org/browse/RED-REDPRO/latestSuccessful/artifact" class="btn btn-link">🏗️ Binary Builds</a></li>
+              {{/archive}}
           </ul>
       </section>
     </header>

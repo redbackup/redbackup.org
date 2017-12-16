@@ -4,6 +4,7 @@ const layouts = require('metalsmith-layouts');
 const permalinks = require('metalsmith-permalinks');
 const rootPath = require('metalsmith-rootpath');
 const discoverPartials = require('metalsmith-discover-partials');
+const inPlace = require('metalsmith-in-place')
 
 const watch = require('metalsmith-watch');
 const serve = require('metalsmith-serve');
@@ -17,12 +18,13 @@ const metadata = {
         url: 'https://www.redbackup.org/',
 };
 
-function generate(isDev) {
+function generate(isDev, isArchive) {
     return Metalsmith(__dirname)
-      .metadata(Object.assign({ dev: isDev }, metadata))
+      .metadata(Object.assign({ dev: isDev, archive: isArchive}, metadata))
       .source('./src/')
       .destination('./output')
       .clean(true)
+      .use(inPlace())
       .use(markdown())
       .use(permalinks({ relative: false }))
       .use(rootPath())
@@ -36,8 +38,8 @@ function generate(isDev) {
     }));
 }
 
-function build() {
-    generate(false).build((err) => {
+function build(archive = false) {
+    generate(false, archive).build((err) => {
       if (err) { throw err; }
     });
 }
@@ -63,6 +65,8 @@ function main() {
         build();
     } else if (process.argv.length === 3 && process.argv[2] === 'serve') {
         dev();
+    } else if (process.argv.length === 3 && process.argv[2] === 'archive') {
+        build(true);
     } else {
         console.log('Usage: node build.js [serve]');
         process.exit(1);
