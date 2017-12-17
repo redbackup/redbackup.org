@@ -24,43 +24,43 @@ In this section, we describe unexpected project events and the lessons we learne
 
 \subsection{Project course}
 \subsubsection{Documentation}
-While discussing the documentation efforts in mini retrospective two, we noted that some terms (like metadata or chunks) were not well defined and used in different contexts. To standardise these, we decided to introduce an advanced glossary system.
+While discussing the documentation efforts in mini-retrospective two, we noted that some terms like metadata or chunks were not defined unambiguously and therefore used for different concepts in varying contexts. To standardise these, we decided to introduce a glossary that uniquely and precisely defines each of these terms.
 
-When we were working on the project architecture, we started researching on advanced data distribution mechanisms and consensus algorithms. We were both very interested in these topics, but after a discussion with Prof.~Mehta and retrospective one, we realised that the study project would not suffice to realise such advanced algorithms.
+While elaborating the architecture, we started researching advanced data distribution mechanisms and consensus algorithms. We were both very interested in these topics, but after a discussion with Prof.~Mehta and retrospective one, we realised that the time frame of the study project would not suffice to realise such advanced algorithms.
 
-At the beginning, we frequently underestimated the documentation efforts, particularly the time required for reviewing. We reacted to that by estimating more time and increase the sprint risk for documentation issues. Also, it was decided that we would halt earlier on issues which took longer than expected.
+We frequently underestimated the documentation efforts, particularly the time required for reviewing. We responded by estimating more time and increase the risk reserve time for documentation issues. Besides, we also agreed we would stop and reassess earlier on issues that took longer than expected.
 
 \subsubsection{Rust Formatting and Documentation}
-During retrospective 2, we noted that the source code was not fully formatted according to the Rust Style Guide\footnote{https://github.com/rust-lang-nursery/fmt-rfcs/blob/master/guide/guide.md} and that the source code documentation was not complete. To ensure a consistent code formatting, we added the RustFmt\footnote{https://github.com/rust-lang-nursery/rustfmt\#rustfmt---} tool as acceptance criterion to our Definition of Done \cite{project-plan} and created a task to complete any missing documentation.
+During retrospective two, we noted that the source code was not fully formatted according to the Rust Style Guide\footnote{https://github.com/rust-lang-nursery/fmt-rfcs/blob/master/guide/guide.md} and that the source code documentation was not complete. To ensure a consistent code formatting, we added the RustFmt\footnote{https://github.com/rust-lang-nursery/rustfmt\#rustfmt---} tool as acceptance criterion to our Definition of Done \cite{project-plan} and created a task to complete the documentation.
 
 \subsubsection{Project management}
-During the first mini retrospective and first full retrospective, we discussed several small improvements regarding the task management and how, respectively, where we would work together. During the second sprint we also neglected to plan time for the supervision meetings and infrastructure updates, which we met by creating a sprint-planning-checklist.
+During the first mini-retrospective and first full retrospective, we discussed several small improvements regarding the task management and how, respectively, where we would work together. During the second sprint, we also neglected to plan time for the supervision meetings and infrastructure updates, which we met by creating a checklist for sprint planning.
 
-A month into the project during the second mini retrospective, we agreed that we should create more issues with shorted running times and make sure that we reviewed issues as soon as possible. Also, the logged working hours were only narrowly lined up to the hours we had planned at the project start. Therefore, we decided to log the working hours more precisely and intensify the work efforts.
+A month into the project during the second mini-retrospective, we agreed that we should create more issues with shorted running times and make sure that we reviewed issues as soon as possible. Also, the logged working hours were only narrowly lined up to the hours we had planned at the project start. Therefore, we decided to log the working hours more precisely and intensify the work efforts.
 
 
 \subsection{Decisions}
 \subsubsection{Redundancy: \gls{system-m-replication}}
-For the prototype, we decided to implement a \gls{system-m-replication} replication. This decision worked out as we expected and allowed us to create a very simple yet efficient way to replicate \glspl{chunk}.
+For the prototype, we decided to implement a \gls{system-m-replication} replication. This decision worked out as we expected and allowed us to create a straightforward yet efficient way to replicate \glspl{chunk}.
 
-\subsubsection{Programming Language / Ecosystem}
+\subsubsection{Programming Language and Ecosystem}
 During the language evaluation, we decided for using Rust to implement the prototype (See \fullref{sec:language-evaluation} for details on this decision).
 
-While we still think, that Rust is the right choice for the implementation of a backup application as presented in this report, we would have been more productive with a language we already had experience in, like Python or Java. For a prototype these languages would also have sufficed, despite probably not being as stable and fast as a Rust implementation.
+While we still think, that Rust is the right choice for the implementation of a backup application as presented in this report, we would have been more productive with a language we already had experience in, like Python or Java. For a prototype, these languages would also have sufficed, despite probably not being as stable and fast as a Rust implementation.
 
 \subsubsection{Frameworks: Tokio and Diesel}
-As discussed in Chapter \fullref{sec:our-approach}, we utilised the Tokio and Diesel frameworks. While offering a good feature set considered the relative young Rust environment, we had to realise that the documentation was not very comprehensive for both frameworks.
+As discussed in Chapter \fullref{sec:our-approach}, we utilised the Tokio and Diesel frameworks. While offering an advanced feature set considered the relative young Rust environment, we found that the documentation for both frameworks was not sufficiently comprehensible.
 
-Also, the Diesel framework only offered a very limited set of type implementations for SQLite, and did not allow an easy extensibility e.g.~to add support for timezoned timestamps.
+Also, the Diesel framework offers an insufficient set of type implementations for SQLite and lacks extensibility e.g.~adding support for timezone timestamps.
 
 \subsubsection{Storage: Database with SQLite}
 As we started implementing the prototype, using SQLite seemed an obvious choice, as it is both easy to use and lightweight.
 
-This decision turned out to be suboptimal, as SQLite is not very well suited for concurrent access \cite{sqlite-locking} and offers only a very limited set of data types \cite{sqlite-datatypes}. For example, SQLite only allows signed 32 bit integers to be used as record identifiers, which effectively limits the number of \glspl{file}, folders or \glspl{chunk} to $2^{31}-1$ each in the prototype.
+This decision turned out to be suboptimal, as SQLite is not very well suited for concurrent write access \cite{sqlite-locking} and offers an insufficient set of data types \cite{sqlite-datatypes}. For example, SQLite only allows signed 32-bit integers to be used as record identifiers, which effectively limits the number of \glspl{file}, folders or \glspl{chunk} to $2^{31}-1$ each in the prototype.
 
-As a result of the combined difficulties with Diesel and SQLite, we spent considerably more time on the database than was originally planned.
+As a result of the combined difficulties with Diesel and SQLite, we spent considerably more time implementing the database access than initially planned.
 
-In hindsight, we should have further evaluated other choices or even a in-memory database for the \gls{client}.
+In hindsight, we should have further evaluated other database systems including an in-memory database for the \gls{client}.
 
 \section{Future work}
 % How to procede?
