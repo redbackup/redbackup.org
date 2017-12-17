@@ -19,7 +19,7 @@ Examples for such cloud backup storage providers are Dropbox\footnote{\url{https
 
 \paragraph{Local backup solutions,} for instance external hard disk drives or network attached storage systems (NAS) offer a high level of data privacy. 
 
-Existing software solutions, for instance Borg Backup\footnote{\url{https://www.borgbackup.org/}}, rdedup\footnote{\url{https://github.com/dpc/rdedup}} or custom implementations with rsync and ceph\footnote{\url{https://ceph.com/}} allow for safe, deduplicated backups.
+Existing software solutions, for instance Borg Backup~\cite{borg-backup}, rdedup~\cite{rdedup} or custom implementations with rsync~\cite{rsync} and ceph~\cite{ceph} allow for safe, deduplicated backups.
 
 An existing solution which is easy to use for the Apple Mac platform, is Apple Time Machine combined with a Apple Time Capsule\footnote{\url{https://www.apple.com/airport-time-capsule/}}.
 
@@ -77,7 +77,7 @@ This section lists the revised goals that were specified during the beginning of
 \subsection{Deviations from the Original Goals}\label{sec:deviations-from-original-goals}
 
 \subsubsection{Degree of Redundancy}
-While researching data redundancy strategies, we realised that the full specification of \gls{client-m-replication} is not a feasible goal during the study project. The reason for this is its complexity and the limited time of the study project, as discussed in Chapter \fullref{sec:fundamental-design-decisions}.
+While researching data redundancy strategies, we realised that the full specification and implementation of \gls{client-m-replication} is not a feasible goal during the study project. The reason for this is its complexity and the limited time of the study project, as discussed in Chapter \fullref{sec:fundamental-design-decisions}.
 
 \subsubsection{Simplifications for Prototype}
 Due to time constrains of the study project, it was not possible to implement the full specified architecture in the prototype. Hence, we decided to implement the core backup, restore and distribution mechanisms, to prove that the concept works.
@@ -86,19 +86,45 @@ Simplifications for the prototype are discussed in Chapter~\fullref{sec:our-appr
 
 \section{State of the Art}
 % previous / related work in this area
+In this chapter, we describe previous work and existing applications in this area. To summarise, the goals of this report might be split into three categories:
+
+\subsection{Backup Applications}
+During our research, we primarily focused on software that was either described in academic papers or available under open source licenses.
+
+\paragraph{Borg Backup} \cite{borg-backup} was the most promising candidate of a deduplicating, encrypting backup system, providing most of the described features.
+
+Borg also has the ability to create backups to remote locations (e.g. over SSH), with a server-mode Borg instance running on the remote location. The downside of this implementation is that the \gls{client} still needs full write access to the backup server, and hence would permit malware to possibly delete backups.
+
+\paragraph{Rdedup} \cite{rdedup} is an implementation of a backup software similar to Borg in Rust. It is still in an early development stage and is not yet able to create backups to remote destinations.
+
+\paragraph{Rsync,} \cite{rsync} originally designed for file synchronisation, is also often used to create backups today. With the help of filesystem-hardlinks it has file-deduplicating capabilities and can also sync files to remote locations, so that old backup cannot be modified.
+
+The two most major downsides of rsync are that it must be combined with several other applications (e.g. ssh, bash scripts, ceph) to provide a secure backup solution and that it is relatively complicated to set up and configure.
+
+
+
+\subsection{Peer-to-Peer Backup Storage}
+
+There exist many approaches to create distributed, encrypted peer-to-peer storage systems. Two notable representatives, that create such a system decentralised over the internet, are Tahoe-LAFS \cite{tahoe-lafs} and IPFS \cite{ipfs}.
+
+These systems distribute data over multiple (third) parties, consuming and providing data storage. As such, the data security is based on encryption algorithms only.
+
+Another wide and well researched market are distributed filesystems, with prominent representatives as the Andrew File System~\cite{afs} and ceph~\cite{ceph}. These filesystems are commonly used in low latency, directly connected environments as data centers.
+
+There also exist multiple concept papers on peer-to-peer distributed backup storages. The reports ''Adaptive Redundancy Management for Durable P2P
+Backup''~\cite{p2p-redundancy} and ''On Scheduling and Redundancy for P2P Backup''~\cite{p2p-scheduling} examine ways how such a system might distribute data in an efficient manner.
 
 \subsection{Goals}
 % Discuss Main goal of the paper
 % Details are covered in Chapter "Our Approach"
 % Summarize the Goals as described in the Task description and clarify it.
 % Technology?
-
-\subsubsection{Architecture}
-
-\subsubsection{Prototype}
-
-
+In our paper we focus mainly on a concrete backup software, introducing a practical solution that might be used by small enterprises and individuals. The architecture should provide developers with a clear guideline, how to implement such a system, with a prototype demonstrating a minimal implementation of such a system.
 
 \subsection{Satisfaction}
 % What goals were satisfied? How and why?
 % Details are covered in Chapter "Discussion and Conclusion"
+% Note that this is very similar to the management summary result section.
+The proposed architecture consists of backup nodes, which store and distribute data directly over a network connection and a client application that creates and restores backups to or from nodes. Lastly, a management system is introduced to allow users to manage multiple backup nodes.
+
+The presented prototype demonstrates the viability of our proposed architecture, introducing a reduced feature set. The prototype can create, distribute and restore unencrypted backups.
