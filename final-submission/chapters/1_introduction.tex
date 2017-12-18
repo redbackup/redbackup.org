@@ -86,7 +86,7 @@ Simplifications for the prototype are discussed in Chapter~\fullref{sec:our-appr
 
 \section{State of the Art}
 % previous / related work in this area
-In this section, we describe previous work and existing applications in this area. To summarise, the goals of this report might be split into three categories:
+In this section, we describe previous work and existing applications in this area.
 
 \subsection{Backup Applications}
 During our research, we primarily focused on software that was either described in academic papers or available under open source licenses.
@@ -101,10 +101,7 @@ Borg can also create backups to remote locations (e.g. over SSH) where a server-
 
 The two most significant downsides of rsync are that it must be combined with several other applications (e.g. ssh, bash scripts, ceph) to provide a secure backup solution and that it is relatively complicated to set up and configure.
 
-
-
 \subsection{Peer-to-Peer Backup Storage}
-
 There exist different approaches to create distributed, encrypted peer-to-peer storage systems. Two notable representatives that create such a system decentralised over the internet are Tahoe-LAFS \cite{tahoe-lafs} and IPFS \cite{ipfs}.
 
 These systems distribute data over multiple (third) parties, consuming and providing data storage. As such, the data security is based on encryption algorithms only.
@@ -120,11 +117,3 @@ Backup''~\cite{p2p-redundancy} and ''On Scheduling and Redundancy for P2P Backup
 % Summarize the Goals as described in the Task description and clarify it.
 % Technology?
 In our paper we focus mainly on a concrete backup software, introducing a practical solution that might be used by small enterprises and individuals. The architecture should provide developers with a clear guideline on how to implement such a system. Additionally, the prototype demonstrates a minimal implementation of such a system.
-
-\subsection{Satisfaction}
-% What goals were satisfied? How and why?
-% Details are covered in Chapter "Discussion and Conclusion"
-% Note that this is very similar to the management summary result section.
-The proposed architecture consists of backup nodes, which store and distribute data directly over a network connection and a client application that creates and restores backups to or from nodes. Lastly, a management system is introduced to allow users to manage multiple backup nodes.
-
-The presented prototype demonstrates the viability of our proposed architecture, introducing a reduced feature set. The prototype can create, distribute and restore unencrypted backups.
