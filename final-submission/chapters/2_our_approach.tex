@@ -41,13 +41,11 @@ The redbackup system consists of four core components as shown in the C4 Contain
 A \gls{node} then is in charge of the data \glspl{chunk} including their replication onto other \glspl{node}. \Glspl{node} persist the actual data in a separate component, a \gls{storage}, to encapsulate persistence from replication and interaction to support different kinds of storage technologies (e.g. plain file systems or databases). A \gls{node} and its \gls{storage} are typically deployed on the same host.
 
 \paragraph{Management}
-One central \gls{management} component orchestrates the configuration of the system by providing metadata to \glspl{client} and \glspl{node}. This metadata includes user information and a set of all \glspl{node} in the system including their addresses and states. Clients and \glspl{node} must cache this metadata which ensures that a temporary unavailability of the \gls{management} component does not compromise the replication and backup process.
+One central \gls{management} component orchestrates the configuration of the system by providing metadata to \glspl{client} and \glspl{node}. This metadata includes user information and a set of all \glspl{node} in the system including their addresses and states. \Glspl{client} and \glspl{node} must cache this metadata which ensures that a temporary unavailability of the \gls{management} component does not compromise the replication and backup process.
 
 All components including their responsibilities and interactions are described in more detail in Appendix \fullref{sec:specification}.
 
 \paragraph{Protocols} Redbackup specifies a high-level protocol that is used for internal communication (noted in all C4 diagrams as \emph{redbackup protocol}). We deliberately specified the communication on a high level to encapsulate the underlying protocol.
-
-In the prototype, we used a custom, minimal protocol that is based on TCP and sends framed Message Pack\footnote{\url{https://msgpack.org/}} encoded messages. If we decided to switch to e.g. HTTP as the underlying protocol to overcome firewall issues in the future, only these forwarder and receiver components have to be adapted while the actual message format does not change. 
 
 \subsection{Backup creation}
 \begin{figure}[h]
@@ -86,7 +84,7 @@ Based on the user input and the previously fetched \glspl{chunk-table}, the \gls
 \subsection{Replication}\label{sec:replication}
 % Planned and unplanned leaving of nodes
 % Management down
-
+%TODO: n-replication from glossary (currently in different branch)
 We deliberately specified \emph{n-replication} only, which means the degree of redundancy for the whole system is equal to the amount of \glspl{node} in the system (see \fullref{sec:fundamental-design-decisions}).
 
 A \gls{node} is in charge for all data stored on it. Each \gls{node} - hereafter called \gls{sending-node} - randomly picks $n$ of its data \glspl{chunk}. It then picks one other \gls{node} randomly - hereafter called \gls{designated-node} - and requests which of the chosen data \glspl{chunk} are persisted on the \gls{designated-node}. The \gls{designated-node} returns a subset of the requested \glspl{chunk} that consists of all \glspl{chunk} that it owns. Using this response, the \gls{sending-node} sends all missing \glspl{chunk} to the \gls{designated-node} which acknowledges after successful receipt.
@@ -147,7 +145,8 @@ We used the morphological box technique to explore different possible solutions 
 The following paragraphs reason the selected entry in each dimension.
 
 \paragraph{Redundancy}
-We originally planned to support \gls{client-m-replication}, which means that the \gls{client} defines a custom degree of redundancy from 1 to the number of \glspl{node} in the system. However, this is a complex mechanism that requires sophisticated algorithms to work correctly and efficiently. For the prototype, we chose the more straightforward to implement option system \emph{n-replication}, where the degree of redundancy for the whole system is equal to the number of \glspl{node} in it. Changing this option in the future is hard because it requires fundamental changes in the replication process and the communication protocols.
+
+We originally planned to support \gls{client-m-replication}, which means that the \gls{client} defines a custom degree of redundancy from 1 to the number of \glspl{node} in the system. However, this is a complex mechanism that requires sophisticated algorithms to work correctly and efficiently. For the prototype, we chose the more straightforward to implement option system \emph{n-replication}, where the degree of redundancy for the whole system is equal to the number of \glspl{node} in it. Changing this option in the future is not trivial because it requires additional changes in the replication process and the communication protocols.
 
 \paragraph{Storage Unit}
 The idea of \emph{chunks} come from Borg Backup. Files are partitioned into chunks using a rolling hash which enables deduplication and space efficient backups for large files \cite{borg-data-structures}. These are desired properties in a backup system to minimise network and disk usage.
@@ -322,14 +321,12 @@ Because user authentication is complex and requires additional cryptographic eff
 
 \subsection{Testing}\label{testing}
 
-In the following subsections, we describe how we tested our prototype and architecture.
+In the following subsections, we describe how the prototype and architecture can be tested.
 
 \subsubsection{Unit Tests}\label{unit-tests}
-We used test driven development (TDD) to develop the prototype as much as possible. Our Definition of Done\cite{project-plan} states that \emph{reasonable unit and integration tests [must] exist and pass.}
+Test Driven Development (TDD) \cite{TDD} should be used as much as possible. Our Definition of Done\cite{project-plan} states that \emph{reasonable unit and integration tests [must] exist and pass.}
 
-All unit tests were executed on every build run of our continuous integration. That is on every repository push and pull request.
-
-Some unit tests written for the prototype are not pure unit tests but minimal integration tests. Because Rust is not a traditional object-oriented language, it is not possible to introduce and use interfaces (Traits) in the same way as we were used to from other languages such as Java or C\#. Due to the steep learning curve Rust has, we were not able to fully utilise the corresponding mechanisms.
+All unit tests are executed on every build run of our continuous integration. That is on every repository push and pull request.
 
 \subsubsection{Integration Tests}\label{integration-tests}
 
@@ -351,39 +348,10 @@ Our integration tests are split into two main environments: A minimal one as def
 
 These two rather small network styles will probably be the most commonly used deployments, yet cover most of the possible problems that may occur.
 
-The integration tests are run automatically at least on every tagged release (i.e. at least once every sprint). Because of the (yet) small set of integration tests we wrote for the prototype, we ran the tests on every build.
-
-To write comprehensive black box integration tests, we created a testing library written in Python\footnote{\url{https://www.python.org/}}. In this framework, the internals on how to launch and configure \glspl{client} and \glspl{node} is encapsulated in classes. Using this abstraction, we decided to launch \glspl{client} and \glspl{node} in separate Docker\footnote{\url{https://www.docker.com/}} containers, so that they are as isolated as possible. All containers used in a test case are connected to a dedicated Docker network, which eliminates possible interferences with other network services.
-
-We wrote integration tests that verify that a backup are flawlessly created, restored and replicated onto other \glspl{node}.
+The integration tests are run automatically at least on every tagged release (i.e. at least once every sprint). Because of the (yet) well managable set of integration tests for the prototype, these tests can run on every build as well.
 
 Tests for fault tolerance, e.g. what happens if a \gls{node} goes down during a backup, can be implemented as integration tests as well.
-
-\subsubsection{Test coverage}
-
-Because Rust is still a young language with a relatively small ecosystem, tools for measuring code quality are still rare and immature. For our unit tests, we used Tarpaulin\footnote{\url{https://github.com/xd009642/tarpaulin}} to generate code coverage. Tarpaulin does not (yet) cover all language features and therefore returns a conservative coverage number. We achieved 53.5\% line coverage taking into account that this number would be significantly higher if all executed lines were counted (e.g. generated code using macros as well as compiler optimisations are not counted).
-Code coverage achieved using the integration tests is not yet supported by any tool known to us and therefore undocumented. The integration tests do however cover all positive scenarios that were implemented.
 
 \subsubsection{Architecture tests}
 
 Architectural tests are special and manually run tests to verify the scalability of our software architecture.
-
-Our integration testing framework allowed us to write such tests in a simple fashion.
-
-\paragraph{Size Scalability}
-As per our requirements in Appendix \ref{requirements}, the architecture should scale up to 100 \glspl{node}.
-
-To test this scenario, we used the same underlying techniques as in our integration tests (see chapter \ref{integration-tests}), but scale the infrastructure up to the required limits.
-
-Due to the high memory consumption of our prototype, we were not able to conduct this test with a significant amount of data. We conducted one test, where a file of 5MB was replicated to 99 Nodes which did not show any loss in performance.
-
-\paragraph{Data Capacity}
-Our requirements (Appendix \ref{requirements}) also state, that a \gls{node} must be able to handle up to e.g. 2TB of data. To test this requirement, we planned to create large amounts of random data that has to be stored. This is a realistic requirement, as e.g. a compressed image, audio and movie collection might reach such sizes in practice.
-
-Both, the \gls{client} and the \gls{node} of the prototype, use a lot of memory during the creation of a backup. It was therefore not possible yet to create a single backup of 2TB. Performing multiple backups in a row of a smaller dataset (i.e. 5 files with a size of 500MB) has not shown a decrease in performance.
-
-\paragraph{Concurrent Backups}
-
-We ran a test in which 5 \glspl{client} back up randomly generated data onto three randomly chosen \glspl{node}. On average, the complete backup process of 1MB data \gls{chunk} took 90-130ms from one docker container into another. In reality, where \glspl{client} and \glspl{node} are on separate physical machines,  this time will be higher due to network latency.
-
-These tests are however are partly problematic because the creation of backups require a lot of CPU time for the calculation of hashes. Running all \glspl{client} on separate machines would probably improve the performance slightly.
