@@ -54,7 +54,7 @@ All components including their responsibilities and interactions are described i
     \caption[Create Backup UML Sequence Diagram]{UML sequence diagram illustrating the communication during the creation of a backup.}
 \end{figure}
 
-To create a backup, a \gls{client} loads \glspl{node}-metadata, that includes the addresses, from the \gls{management}. The \gls{client} caches this set and chooses one of them as \gls{designated-node}. This selection can either be random or based on heuristics, e.g. by analysing the round trip time to a \gls{node}.
+To create a backup, a \gls{client} loads all \gls{node}-metadata, that includes the addresses, from the \gls{management}. The \gls{client} caches this set and chooses one of them as \gls{designated-node}. This selection can either be random or based on heuristics, e.g. by analysing the round trip time to a \gls{node}.
 
 The \gls{client} then requests permission to perform a backup on a given \gls{designated-node} by sending a \emph{get designation} message that includes an estimated backup size and the \gls{expiration-date}. If the \gls{designated-node} has the storage capacity as well as other resources available (i.e. it is not under overload), it confirms the designation request.
 
