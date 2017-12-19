@@ -76,6 +76,17 @@ We ran a test in which 5 \glspl{client} back up randomly generated data onto thr
 
 In reality, where \glspl{client} and \glspl{node} are on separate physical machines, this time will be significantly higher due to network latency. Also, because the creation of backups require a lot of CPU time, running all \glspl{client} on one machine is somewhat problematic. It is likely, that running all \glspl{client} and \glspl{node} on separate machines would improve the performance slightly.
 
+\subsection{Requirements and Intentions}
+We started this study project by analysing the interactions of all actors with the system.
+As we aimed for a fully automated backups, we also specified all actor intentions.
+
+Many of these intentions only describe expectations of the system and are therefore not measurable. For this reason, we were only able to derive a limited set of specific requirements.
+
+The intentions and requirements are described in Appendix~\fullref{requirements}.
+
+With our architecture and prototype we were able to address all specified intentions and requirements.
+
+
 \section{Lessons Learned}
 % Describe what worked well and what went wrong (Lapses)
 % What took us time?
