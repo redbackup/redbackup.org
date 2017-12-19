@@ -296,7 +296,7 @@ The \gls{client} components make heavy use of a networking library called tokio\
 
 The (de-) serialisation mechanisms for messages sent to and received from \glspl{node} are encapsulated in the \emph{protocol} component, following the Forwarder Receiver Pattern \cite{POSA1}.
 
-We opted for Diesel and tokio because there are currently no comparable alternatives on the marked for both.
+We opted for Diesel and tokio because there are currently no comparable alternatives on the marked in both application areas.
 
 In the prototype, the \gls{client} interacts with one \gls{node} at a time to maintain simplicity. The \gls{node} to interact with is passed to the \gls{client} executable via command line arguments.
 
@@ -350,7 +350,7 @@ We defined two primary environments for the integration tests: A minimal network
 	\label{fig:integrationtestmedium}
 \end{figure}
 
-These two rather small network styles will most commonly be deployed, yet they can produce most of the possible problems.
+These two rather small network styles will most commonly be deployed, yet they can expose most of the possible problems.
 
 The integration tests are run automatically at least on every tagged release (i.e. at least once every sprint). Because of the (yet) well managable set of integration tests for the prototype, these tests can run on every build as well.
 

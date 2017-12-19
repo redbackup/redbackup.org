@@ -90,9 +90,9 @@ In this section, we describe previous work and existing applications in this are
 \subsection{Backup Applications}
 During our research, we primarily focused on software that was either described in academic papers or available under open source licenses.
 
-\paragraph{Borg Backup} \cite{borg-backup} was the most promising candidate of a deduplicating, encrypting backup system, providing most of the described features.
+\paragraph{Borg Backup} \cite{borg-backup} is the most promising candidate of a deduplicating, encrypting backup system, providing most of the described features.
 
-Borg can also create backups to remote locations (e.g. over SSH) where a server-mode Borg instance is running on the remote location. The downside of this implementation is that the \gls{client} still needs full write access to the backup server and hence would permit malware to delete backups possibly.
+Borg can also create backups to remote locations (e.g. over SSH) where a server-mode Borg instance is running on the remote location. The downside of this implementation is that the client still needs full write access to the backup server and hence would permit malware to delete backups possibly.
 
 \paragraph{Rdedup} \cite{rdedup} is an implementation of a backup software similar to Borg in Rust. It is still in an early development stage and is not yet able to create backups to remote destinations.
 
