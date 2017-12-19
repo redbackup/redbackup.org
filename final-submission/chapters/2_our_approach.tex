@@ -1,7 +1,7 @@
 \chapter{Our Approach}
 \label{sec:our-approach}
 
-We propose and discuss a system architecture for a backup system in the first section of this chapter and explain the underlying design decisions in the second section. The third section presents the structure and testing results of a prototype, which implements a subset of the proposed system.
+In the first section of this chapter, we propose and discuss a system architecture for a backup system. In the second section, we explain the underlying design decisions. The third section presents the structure and test results of our prototype, which implements a subset of the proposed system.
 
 We illustrate architecture structure using the C4 model for software architecture\footnote{\url{https://c4model.com/}}.
 
@@ -12,7 +12,7 @@ We illustrate architecture structure using the C4 model for software architectur
 % Describe everything concise and with exact definitions.
 % Use schemes and flowcharts
 
-\paragraph{Actors} There are two kinds of actors interacting with the system. A typical \gls{user} wants to store backups in the redbackup system and restore them (partially) when needed. The other kind of actor is an \gls{administrator} that configures the system, e.g. extends storage capacity or replaces corrupted disks.
+\paragraph{Actors} There are two kinds of actors interacting with the system. A typical \gls{user} wants to store backups in the redbackup system and restore them (partially) when needed. The other kind of actor is an \gls{administrator} who configures the system, e.g. extends storage capacity or replaces corrupted disks.
 
 \begin{figure}[h]
 	\centering
@@ -21,7 +21,7 @@ We illustrate architecture structure using the C4 model for software architectur
 	\label{fig:c4-overview}
 \end{figure}
 
-Distinctive for both actors is that they do not want to interact directly with the system unless human interaction is inevitable. This takes the burden to manually create backups from the user including the risk of oblivion and minimises \gls{management} efforts required by the administrator.  
+Distinctive of both actors is that they do not want to interact directly with the system unless human interaction is inevitable. This takes the burden of manually creating backups away from the user including the risk of oblivion and minimises management efforts required by the administrator.  
 
 Both actors, as well as their intentions, are described in more detail in Appendix \fullref{sec:specification}. Figure \ref{fig:c4-overview} presents a high-level overview that illustrates the interactions of the actors with the redbackup system.
 
@@ -38,14 +38,14 @@ The redbackup system consists of four core components as shown in the C4 Contain
 \paragraph{Client} A \gls{user} instructs a \gls{client} program typically running on the users machine to perform (unattended) backups and restores.  A \gls{client} persists and loads its data from one or more interconnected \glspl{node}.
 
 \paragraph{Node}
-A \gls{node} then is in charge of the data \glspl{chunk} including their replication onto other \glspl{node}. \Glspl{node} persist the actual data in a separate component, a \gls{storage}, to encapsulate persistence from replication and interaction to support different kinds of storage technologies (e.g. plain file systems or databases). A \gls{node} and its \gls{storage} are typically deployed on the same host.
+A \gls{node} is in charge of data \glspl{chunk} including their replication onto other \glspl{node}. \Glspl{node} persist the actual data in a separate component, a \gls{storage}, to encapsulate persistence from replication and interaction to support different kinds of storage technologies (e.g. plain file systems or databases). A \gls{node} and its \gls{storage} are typically deployed on the same host.
 
 \paragraph{Management}
 One central \gls{management} component orchestrates the configuration of the system by providing metadata to \glspl{client} and \glspl{node}. This metadata includes user information and a set of all \glspl{node} in the system including their addresses and states. \Glspl{client} and \glspl{node} must cache this metadata which ensures that a temporary unavailability of the \gls{management} component does not compromise the replication and backup process.
 
 All components including their responsibilities and interactions are described in more detail in Appendix \fullref{sec:specification}.
 
-\paragraph{Protocols} Redbackup specifies a high-level protocol that is used for internal communication (noted in all C4 diagrams as \emph{redbackup protocol}). We deliberately specified the communication on a high level to encapsulate the underlying protocol.
+\paragraph{Protocols} Redbackup specifies a high-level protocol that is used for internal communication (noted in all C4 diagrams as \emph{redbackup protocol}). We deliberately specified the communication on a high level to encapsulate the underlying transport mechanisms.
 
 \subsection{Backup creation}
 \begin{figure}[h]
@@ -54,19 +54,19 @@ All components including their responsibilities and interactions are described i
     \caption{Create Backup UML Sequence Diagram}
 \end{figure}
 
-To create a backup, a \gls{client} loads a set of \glspl{node} including their addresses from the \gls{management}. The \gls{client} caches this set and chooses one of them as \gls{designated-node}. This selection can either be random or based on heuristics, e.g. by analysing the round trip time to the \gls{node}.
+To create a backup, a \gls{client} loads \glspl{node}-metadata, that includes the addresses, from the \gls{management}. The \gls{client} caches this set and chooses one of them as \gls{designated-node}. This selection can either be random or based on heuristics, e.g. by analysing the round trip time to a \gls{node}.
 
 The \gls{client} then requests permission to perform a backup on a given \gls{designated-node} by sending a \emph{get designation} message that includes an estimated backup size and the \gls{expiration-date}. If the \gls{designated-node} has the storage capacity as well as other resources available (i.e. it is not under overload), it confirms the designation request.
 
-By now, the \gls{client} must start to build up backup metadata - hereafter called \gls{chunk-index} - by walking recursively through all directories to back up. Each file that is not explicitly excluded is split up into one or more data \glspl{chunk} using a rolling hash\cite{borg-data-structures}. Each of these \glspl{chunk} are then encrypted individually. Afterwards the \gls{client} derives the identifier of every \gls{chunk} based on its contents. This mechanism enables deduplication. Section \fullref{sec:fundamental-design-decisions} discusses \glspl{chunk} and \glspl{chunk-identifier} detail.
+By now, the \gls{client} must start to build up backup metadata - hereafter called \gls{chunk-index} - by walking recursively through all directories to back up. Each file that is not explicitly excluded is split up into one or more data \glspl{chunk} using a rolling hash\cite{borg-data-structures}. Each of these \glspl{chunk} are then encrypted individually. Afterwards the \gls{client} derives the identifier of every \gls{chunk} based on its contents. This mechanism enables deduplication. Section \fullref{sec:fundamental-design-decisions} discusses \glspl{chunk} and \glspl{chunk-identifier} in detail.
 
 The \gls{client} sends the calculated \glspl{chunk-identifier} at regular intervals to the \gls{designated-node}. The \gls{designated-node} returns a subset of all \glspl{chunk-identifier} of the \glspl{chunk} that are already present on it.
 
-The \gls{client} then posts the missing data \glspl{chunk} to the \gls{designated-node} which acknowledges after successful receipt.
+The \gls{client} then posts the missing \glspl{chunk} to the \gls{designated-node} which acknowledges successful receipt.
 
-When all \glspl{chunk} are transmitted successful, the client encrypts the backup metadata as well and sends to the \gls{designated-node} using the same mechanism as for any other \gls{chunk}. The only difference is that an additional flag - hereafter called \gls{root-handle} - is set so that it can be found again for restore.
+When all \glspl{chunk} are transmitted successfully, the client encrypts the \gls{chunk-index} as well and sends it to the \gls{designated-node} using the same mechanism as for any other \gls{chunk}. The only difference is that an additional flag - hereafter called \gls{root-handle} - is set so that it can be found again for restore.
 
-The detailed scenario description including all edge cases are described in Appendix \fullref{sec:scenario-create-backup}.
+The detailed backup scenario can be found in Appendix \fullref{sec:scenario-create-backup}.
 
 \subsection{Backup restore}
 
@@ -76,18 +76,17 @@ The detailed scenario description including all edge cases are described in Appe
     \caption{Backup Restore UML Sequence Diagram}
 \end{figure}
 
-The restore mechanism starts identically to the backup process until a \gls{designated-node} is chosen.
+The restore mechanism works identical to the backup process up to the point where a \gls{designated-node} is chosen.
 
-Next, the \glspl{client} loads all \glspl{root-handle} from the \gls{designated-node}. The \glspl{client} can decrypt the backup metadata, the \gls{chunk-table}, from the returned \glspl{chunk-content}. Based on this information, the \gls{client} can provide multiple restore options to the \gls{user}, e.g. to restore a particular version of a given file.
-Based on the user input and the previously fetched \glspl{chunk-table}, the \glspl{client} can calculate which \glspl{chunk} must be requested from the \gls{designated-node}. These \glspl{chunk-content} are then loaded at regular intervals from the \gls{designated-node}, decrypted and combined.
+Next, the \gls{client} loads all \glspl{root-handle} from the \gls{designated-node}. The \gls{client} can decrypt the \glspl{chunk-table} from the returned \glspl{chunk-content}. Based on this information, the \gls{client} can provide multiple restore options to the \gls{user}, e.g. to restore a particular version of a given file.
+With the user input and the previously fetched \glspl{chunk-table}, the \glspl{client} can calculate which \glspl{chunk} must be requested from the \gls{designated-node}. \Glspl{chunk-content} are then downloaded at regular intervals from the \gls{designated-node}, decrypted and combined.
 
 \subsection{Replication}\label{sec:replication}
 % Planned and unplanned leaving of nodes
 % Management down
-%TODO: n-replication from glossary (currently in different branch)
-We deliberately specified \emph{n-replication} only, which means the degree of redundancy for the whole system is equal to the amount of \glspl{node} in the system (see \fullref{sec:fundamental-design-decisions}).
+We deliberately only specified \gls{system-n-replication}, which means the degree of redundancy for the whole system is equal to the amount of \glspl{node} in the system (see \fullref{sec:fundamental-design-decisions}).
 
-A \gls{node} is in charge for all data stored on it. Each \gls{node} - hereafter called \gls{sending-node} - randomly picks $n$ of its data \glspl{chunk}. It then picks one other \gls{node} randomly - hereafter called \gls{designated-node} - and requests which of the chosen data \glspl{chunk} are persisted on the \gls{designated-node}. The \gls{designated-node} returns a subset of the requested \glspl{chunk} that consists of all \glspl{chunk} that it owns. Using this response, the \gls{sending-node} sends all missing \glspl{chunk} to the \gls{designated-node} which acknowledges after successful receipt.
+A \gls{node} is in charge of all data stored on it. Each \gls{node} - hereafter called \gls{sending-node} - randomly picks $n$ of its data \glspl{chunk}. It then picks one other \gls{node} randomly - hereafter called \gls{designated-node} - and requests which of the chosen data \glspl{chunk} remain persisted on the \gls{designated-node}. The \gls{designated-node} returns a subset of the requested \glspl{chunk} that consists of all \glspl{chunk} that it owns. Using this response, the \gls{sending-node} sends all missing \glspl{chunk} to the \gls{designated-node} which acknowledges successful receipt.
 
 \begin{figure}[h]
     \centering
@@ -98,31 +97,33 @@ A \gls{node} is in charge for all data stored on it. Each \gls{node} - hereafter
 This scenario is described in more detail in the Appendix \fullref{sec:scenario-data-replication}.
 
 \subsection{Security and Encryption}\label{sec:security-and-encryption}
-\paragraph{Data Integrity} One of our primary design goals is to ensure that once data is in the redbackup system, it can not be altered or deleted from a \gls{client} to prevent ransomware attacks \cite{young-cryptovirology}. To achieve this, each backup is created with an \gls{expiration-date} on which \glspl{node} are allowed to remove the associated data. 
+\paragraph{Data Integrity} One of our primary design goals is to ensure that once data is in the redbackup system, it cannot be altered or deleted from a \gls{client} to prevent ransomware attacks \cite{young-cryptovirology}. To achieve this, each backup is provided with an \gls{expiration-date} on which \glspl{node} are allowed to remove the associated data. 
 
-Reasoning and potential risks of physical time are discussed in paragraph \fullref{sec:removal-of-old-backups}.
+Reasoning and potential risks of physical time are discussed in section \fullref{sec:removal-of-old-backups}.
 
-\paragraph{Data Integrity on Nodes} Because \glspl{node} can also be the target of randsomware attacks, each \gls{node}, or more precisely its associated \gls{storage} component, must verify that given data \gls{chunk} contents are not corrupted using cryptographic hash functions, also known as checksums. To be able to do so, it must be possible to calculate the identifier of such a data \gls{chunk} from its contents.
+\paragraph{Data Integrity on Nodes} Because \glspl{node} can also be the target of randsomware attacks, each \gls{node}, or more precisely its associated \gls{storage} component, must verify that given \glspl{chunk-content} are not corrupted. To be able to do so, it must be possible to calculate the identifier of such a data \gls{chunk} from its contents, using cryptographic hash functions.
 
 A discussion on the role of hash functions including the chosen algorithms for the study project is carried out in section \fullref{sec:hash-collisions}.
 
-\paragraph{Data Integrity on the Management} The \gls{management} component has no knowledge of the persisted data in the system and has only knowledge of the configuration (need-to-know principle \cite{security-patterns}).
+\paragraph{Data Integrity on the Management} The \gls{management} component has no knowledge of the persisted data in the system. It only manages configuration and must not have detailed knowledge of \glspl{chunk} (need-to-know principle \cite{security-patterns}).
 
-\paragraph{Data Encryption} A \gls{client} encrypts backup data \glspl{chunk} when creating a new backup. This ensures that no other participant in the redbackup system can inspect file contents (need-to-know principle \cite{security-patterns}). The encryption and decryption keys are only persisted on the \gls{client} and must be backed up separately.
+\paragraph{Data Encryption} A \gls{client} encrypts \glspl{chunk} when creating a new backup. This ensures that no other participant in the redbackup system can inspect file contents (need-to-know principle \cite{security-patterns}). The encryption and decryption keys are only stored on the \gls{client} and must be backed up separately.
 
 \paragraph{Transport Security} All sent \glspl{message} should be signed by the sender. If so, transport layer encryption is not strictly necessary because all user data is already encrypted on the \gls{client} with the only exception of the \gls{expiration-date}.
+\\
+\vspace{1em}
 
-A detailed description of these security mechanisms is out of scope for this study project and has to be carried out in the future.
+\noindent A detailed description of these security mechanisms would be out of scope for this study project and will have to be carried out in a next step.
 
 \subsection{Partitioning \& Scaling}
 
-\paragraph{Availability \& Overload} To scale the redbackup system regarding availability and safety, more \glspl{node} can be added to the redbackup system. If a given \gls{node} is overloaded, a \gls{client} can use another \gls{node} for its backup creation or restore.
+\paragraph{Availability \& Overload} To scale the redbackup system regarding availability, more \glspl{node} can be added to the redbackup system. If a given \gls{node} is overloaded, a \gls{client} can use another \gls{node} for backup creation or restore.
 
-Because both processes require approval of a chosen \gls{node} (see scenarios \fullref{sec:scenario-create-backup} and \fullref{sec:scenario-backup-restore}), an overloaded \gls{node} can finish work in progress backups/restores and reject new requests (following the patterns Finish Work In Progress and Shed Load \cite{fault-tolerance}). The data is replicated to the overloaded \glspl{node} eventually.
+Because the backup and restore processes require approval of a \gls{designated-node} (see scenarios \fullref{sec:scenario-create-backup} and \fullref{sec:scenario-backup-restore}), an overloaded \gls{node} can finish work in progress backups/restores and reject new requests (following the patterns Finish Work In Progress and Shed Load \cite{fault-tolerance}). The data is replicated to overloaded \glspl{node} eventually.
 
-We ensured that \glspl{node} are (mostly) stateles which simplifies scaling as well.
+We ensured that \glspl{node} are (mostly) stateless which simplifies scaling as well.
 
-\paragraph{Storage Scalability} Because the proposed system does currently only support \emph{n-replication} (see section \fullref{sec:fundamental-design-decisions}), the maximum storage capacity is the lowest storage size of any \gls{node}. Therefore, to increase storage capacity, the capacity of all \glspl{node} must be extended to the desired amount.
+\paragraph{Storage Scalability} Because the proposed system currently only supports \gls{system-n-replication} (see section \fullref{sec:fundamental-design-decisions}), the maximum storage capacity is equal to that of the \gls{node} with the smallest storage. Therefore, to increase storage capacity, the capacity of all \glspl{node} must be extended to meet the desired amount.
 
 To minimise network usage deduplication of data is used on the \gls{client}. Deduplication is  discussed in the paragraph Storage Unit in  \fullref{sec:fundamental-design-decisions}.
 
@@ -134,9 +135,9 @@ Additionally to the above-discussed mechanisms for fault tolerance regarding sec
 
 If a \gls{node} tries to connect to another \gls{node} that is not available, it notifies the \gls{management} component (following the pattern System Monitor\cite{fault-tolerance}).
 
-Each \gls{node} periodically verifies the persisted contents for possible corruption using the checksum mechanisms discussed in \fullref{sec:security-and-encryption} (following the Pattern Routine Audits \cite{fault-tolerance}). If a corruption is detected, the \gls{storage} notifies the \gls{node} which notifies the \gls{management}.
+Each \gls{node} periodically checks the persisted contents for possible corruption using the checksum mechanisms discussed in \fullref{sec:security-and-encryption} (following the Pattern Routine Audits \cite{fault-tolerance}). If a corruption is detected, the \gls{storage} notifies the \gls{node} which notifies the \gls{management}.
 
-\paragraph{Single Point of Failure} In case the \gls{management} component is temporarily unavailable, \glspl{node} and \glspl{client} cache configuration data, e.g. information about other \glspl{node}. Using this caches, \glspl{node} can perform replication and \glspl{client} manage their backups without interruption. Any notifications that were not successfully transmitted to the \gls{management} must be buffered on the \glspl{node} as well to ensure their delivery.
+\paragraph{Single Point of Failure} For the case that the \gls{management} component is temporarily unavailable, \glspl{node} and \glspl{client} cache metadata, e.g. information about other \glspl{node}. Using these caches, \glspl{node} can perform replication and \glspl{client} manage their backups without interruption. Any notifications that were not successfully transmitted to the \gls{management} must be buffered on the \glspl{node} in order to ensure their delivery.
 
 \section{Fundamental Design Decisions}\label{sec:fundamental-design-decisions}
 
@@ -146,7 +147,7 @@ The following paragraphs reason the selected entry in each dimension.
 
 \paragraph{Redundancy}
 
-We originally planned to support \gls{client-m-replication}, which means that the \gls{client} defines a custom degree of redundancy from 1 to the number of \glspl{node} in the system. However, this is a complex mechanism that requires sophisticated algorithms to work correctly and efficiently. For the prototype, we chose the more straightforward to implement option system \emph{n-replication}, where the degree of redundancy for the whole system is equal to the number of \glspl{node} in it. Changing this option in the future is not trivial because it requires additional changes in the replication process and the communication protocols.
+We originally planned to support \gls{client-m-replication}, which means that the \gls{client} defines a custom degree of redundancy from 1 to the number of \glspl{node} in the system. However, this is a complex mechanism that requires sophisticated algorithms to work correctly and efficiently. For the prototype, we chose the more straightforward to implement option system \gls{system-n-replication}, where the degree of redundancy for the whole system is equal to the number of \glspl{node} in it. Changing this option in the future is not trivial because it requires additional changes in the replication process and the communication protocols.
 
 \paragraph{Storage Unit}
 The idea of \emph{chunks} come from Borg Backup. Files are partitioned into chunks using a rolling hash which enables deduplication and space efficient backups for large files \cite{borg-data-structures}. These are desired properties in a backup system to minimise network and disk usage.
@@ -182,7 +183,7 @@ A complete language evaluation can be found in \fullref{sec:language-evaluation}
           & No redundancy
           & \Gls{client-m-replication}: The \gls{client} defines a custom degree of redundancy (from 1 to the number of \glspl{node}).
           & \Gls{system-m-replication}: The administrator defines the degree of redundancy for the whole system (from 1 to the number of \glspl{node}).
-          & \textbf{System n-replication}: The degree of redundancy for the whole system is equal to the amount of \glspl{node} in the system.
+          & \textbf{\Gls{system-n-replication}}: The degree of redundancy for the whole system is equal to the amount of \glspl{node} in the system.
           \\ \hline
 
           \textbf{Storage unit}
