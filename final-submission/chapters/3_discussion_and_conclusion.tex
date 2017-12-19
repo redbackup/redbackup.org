@@ -20,13 +20,13 @@ Some unit tests written for the prototype are not pure unit tests but minimal in
 
 \paragraph{Integration Tests}
 
-To write comprehensive black box integration tests, we created a testing library written in Python\footnote{\url{https://www.python.org/}}. In this framework, the internals on how to launch and configure \glspl{client} and \glspl{node} is encapsulated in classes. Using this abstraction, we decided to launch \glspl{client} and \glspl{node} in separate Docker\footnote{\url{https://www.docker.com/}} containers, so that they are as isolated as possible. All containers used in a test case are connected to a dedicated Docker network, which eliminates possible interferences with other network services.
+To write comprehensive black box integration tests, we implemented a testing library written in Python\footnote{\url{https://www.python.org/}}. In this framework, the internals on how to launch and configure \glspl{client} and \glspl{node} is encapsulated in classes. Using this abstraction, we were able to launch \glspl{client} and \glspl{node} in separate Docker\footnote{\url{https://www.docker.com/}} containers, so that they are as isolated as possible. All containers used in a test case are connected to a dedicated Docker network, which eliminates possible interferences with other network services.
 
-We wrote integration tests that verify that a backup is flawlessly created, restored and replicated onto other \glspl{node}.
+We wrote integration tests that verify that backups are flawlessly created, restored and replicated onto other \glspl{node}.
 
 \paragraph{Test coverage}
 
-Because Rust is still a young language with a relatively small ecosystem, tools for measuring code quality are still rare and immature. For our unit tests, we used Tarpaulin\footnote{\url{https://github.com/xd009642/tarpaulin}} to generate code coverage. Tarpaulin does not (yet) cover all language features and therefore returns a conservative coverage number. We achieved 53.5\% line coverage. This number would be significantly higher if all executed lines were counted correctly  (e.g. generated code using macros as well as compiler optimisations are not counted).
+Because Rust is still a young language with a relatively small ecosystem, tools for measuring code quality are still rare and immature. For our unit tests, we used Tarpaulin\footnote{\url{https://github.com/xd009642/tarpaulin}} to generate code coverage. Tarpaulin does not yet cover all language features and therefore returns an incomplete coverage number. We achieved 53.5\% line coverage. This number would be significantly higher if all executed lines were counted correctly  (e.g. generated code using macros as well as compiler optimisations are not counted).
 
 Code coverage achieved using the integration tests is not yet supported by any tool known to us and therefore undocumented. The integration tests do however cover all positive scenarios that were implemented.
 
@@ -34,7 +34,7 @@ Our integration testing framework allowed us to write such tests in a simple fas
 
 \subsection{Architecture}
 
-The architecture we elaborated in Chapter 2 and Appendix \ref{sec:specification} turned out to to be stable. It has proven advantageous that we did not specify too many details at the beginning (for example, the protocol) but focused on the high-level view.
+The architecture we elaborated in Chapter \ref{sec:our-approach} and Appendix \ref{sec:specification} turned out to to be stable. It has proven advantageous that we did not specify too many details at the beginning (for example, the protocol) but focused on the high-level view.
 
 \subsection{Architecture Test Results}
 
@@ -66,13 +66,13 @@ To test this scenario, we used the same underlying techniques as in our integrat
 Due to the high memory consumption, we were not able to conduct this test with a significant amount of data. A test run during which a 5MB file was replicated to 99 Nodes did not indicate a degraded performance.
 
 \subsubsection{Data Capacity Test Results}
-Our requirements (Appendix \ref{requirements}) also state, that a \gls{node} must be able to handle up to e.g. 2TB of data. To test this requirement, we planned to create large amounts of random data that has to be stored. This is a realistic requirement, as e.g. a compressed image, audio and movie collection might reach such sizes in practice.
+Our requirements (Appendix \ref{requirements}) also state, that a \gls{node} must be able to handle up to e.g. 2TB of data. To test this requirement, we planned to create large amounts of random data that has to be stored. This is a realistic requirement, as e.g. images, audio files and movie collection might reach such sizes in practice.
 
 It was not possible yet to create one single backup of 2TB at once due to the high memory consumption. Performing multiple backups in a row of a smaller dataset (i.e. 5 files with a size of 500MB) has not shown a decrease in performance.
 
 \subsubsection{Concurrent Test Results}
 
-We ran a test in which 5 \glspl{client} back up randomly generated data onto three randomly chosen \glspl{node}. On average, the entire backup process of 1MB data \gls{chunk} took 90-130ms from one docker container into another. These results clearly support our proposed architecture.
+We ran a test in which 5 \glspl{client} backup randomly generated data onto three randomly chosen \glspl{node}. On average, the entire backup process of 1MB data \gls{chunk} took 90-130ms from one docker container into another. These results clearly support our proposed architecture.
 
 In reality, where \glspl{client} and \glspl{node} are on separate physical machines, this time will be significantly higher due to network latency. Also, because the creation of backups require a lot of CPU time, running all \glspl{client} on one machine is somewhat problematic. It is likely, that running all \glspl{client} and \glspl{node} on separate machines would improve the performance slightly.
 
