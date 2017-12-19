@@ -112,17 +112,16 @@
 %   - Eigenständiger Text
 %   - Für SA: Informierende Abstracts, also Thema, Problem, Ziele, Vorgehen, Ergebnisse
 % - Siehe auch: Chapter 2.3 in https://wiki.hsr.ch/FarhadMehta/files/Writing_Scientific_Papers.pdf
-Today, most individuals and small companies have a limited choice with regards to how and where they back up their data.
+Today, most individuals and small enterprises have a limited choice of how and where they backup their data.
 
-One possibility is via local storage media, for instance using external hard disk drives. This requires manual effort and may lead to a single point of failure, since location redundancy requires extra effort. A second possibility is via some publicly provided cloud service. This may lead to issues of privacy and a high dependency on third party providers. 
+One possibility is via local storage media, for instance using external hard disk drives. This requires considerable administration and may lead to a single point of failure, since location redundancy requires extra effort. A second possibility is to use cloud backup storage. These may lead to issues of privacy and a high dependency on third-party providers. 
 
-No easy to use, distributed backup systems with private data storage is available on the market today.\\
+There are no easy-to-use distributed backup systems with private data storage on the market today.
+
+In this study project we propose a redundant distributed backup system to address this issue.\\
 \vspace*{1ex}
 
-\noindent We propose a redundant distributed backup system to address this issue.\\
-\vspace*{1ex}
-
-\noindent The architecture of this system consists of backup nodes which exchange data using a peer-to-peer protocol, as well as a client application that creates and restores backups. A management system is introduced to allow users to manage multiple backup nodes.\\
+\noindent The architecture of this system consists of backup nodes which exchange data using a peer-to-peer protocol, as well as a client application that creates and restores backups. A management system has been introduced to allow users to manage multiple backup nodes.\\
 \vspace*{1ex}
 
 \noindent As a proof of concept, a prototype of the proposed client and node applications with a reduced feature set has been implemented in the Rust programming language. 
@@ -144,21 +143,21 @@ No easy to use, distributed backup systems with private data storage is availabl
 % - Ausblick (optional)
 
 \section*{Motivation} % Auch Ausgangslage
-Today, most individuals and small to medium enterprises make backups on cloud environments or local storage media as e.g. hard disk drives or network attached storage systems (NAS).
+Today, most individuals and small to medium enterprises make backups on cloud backup storage or local storage media as e.g. hard disk drives or network attached storage systems (NAS).
 
-These solutions require either high personal efforts to maintain local storage media or a high level of trust in a third party storage provider.
+These solutions require either considerable administrative effort for local storage maintenance or a high level of trust in a third party storage provider.
 
-Currently, there are no backup systems available on the market which are both easy to use and provide the user with a high level of data security and privacy.
+Currently, there are no backup systems available on the market which are both easy-to-use and provide the user with a high level of data security and privacy.
 
 \section*{Project Goals, Approach and Technology}
-A backup system which solves this issues must not only provide a secure and reliable application to create and store backups, but also permit users without further domain knowledge to install and configure the application.
+A backup system which resolves these issues must not only provide a secure and reliable application to create and store backups, but also permit users without further domain knowledge to install and configure the application.
 
-To meet this requirements, we further analysed and created a comprehensive architectural design.
+To meet these requirements we further analysed and created a comprehensive architectural design.
 
-The subsequent implementation of an architecture prototype took place in the \emph{Rust} system programming language\footnote{For more information, see \url{https://www.rust-lang.org/}}, which we learned during the course of this project. Rust enabled us to create a very stable yet efficient backup prototype.
+The subsequent implementation of an architecture prototype took place in the \emph{Rust} system programming language\footnote{For more information, see \url{https://www.rust-lang.org/}} which we learned during the course of this project. Rust enabled us to create a very stable yet efficient backup prototype.
 
 \section*{Results}
-The architecture consists of backup nodes, which store and distribute data directly over a network connection and a client application that creates and restores backups to or from nodes. Lastly, a management system is introduced to allow users to manage multiple backup nodes.
+The architecture consists of backup nodes which store and distribute data directly over a network connection and a client application that creates and restores backups to or from nodes. Lastly, a management system is introduced to allow users to manage multiple backup nodes.
 
 The presented prototype demonstrates the viability of our proposed architecture, introducing a reduced feature set. The prototype can create, distribute and restore unencrypted backups.
 
