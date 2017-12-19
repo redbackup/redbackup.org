@@ -142,12 +142,12 @@ If all remaining aspects of the architecture have been demonstrated, an actual w
 
 \section{Conclusion}
 \paragraph{In comparison to}
-existing backup solutions presented in section \fullref{sec:state-of-the-art}, we designed a system that is both scalable yet easy to use. Our backup \gls{client} is designed similar to Borg~\cite{borg-backup} but is solely aimed at backups with our \gls{node}-backend, whereas Borg is usually used to create local backups.
+existing backup solutions presented in section \fullref{sec:state-of-the-art}, we designed a system that is both scalable yet easy to use. Our backup \gls{client} is designed similar to Borg~\cite{borg-backup} but is solely aimed at backups with the redbackup system, whereas Borg is usually used to create local backups.
 
 We decided against specifying and implementing \gls{client-m-replication} in detail, as there is existing research in this area~\cite{p2p-redundancy}~\cite{p2p-scheduling} and the  of the Study Project would not have sufficed to go into further detail.
 
 \paragraph{Our proposed Architecture}
-has proven to be well suited for the prototype, in which we implemented the main parts required to perform, restore and replicate backups. We are confident that our design also works for a full backup application, which might be implemented in the future.
+has turned out to be accurate as demonstrated with the prototype, in which we implemented the main parts required to perform, restore and replicate backups. We are confident that our design also works on a large scale and can be used to implemented an enhanced backup system for production usage.
 
 \paragraph{Rust}
 turned out to be an excellent choice for the implementation of backup software, due to its stability and modern language features.
