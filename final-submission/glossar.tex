@@ -165,5 +165,10 @@
 \newglossaryentry{system-m-replication}
 {
     name={system m-replication},
+    description={\Glspl{node} replicate \glspl{chunk} to m other \glspl{node}. The degree of redundancy is defined globally by the administrator. See \fullref{sec:fundamental-design-decisions}.}
+}
+\newglossaryentry{system-n-replication}
+{
+    name={system n-replication},
     description={\Glspl{node} replicate \glspl{chunk} to all other \glspl{node}. As a result, the degree of redundancy is equal to the number of \glspl{node} in the system. See \fullref{sec:fundamental-design-decisions}.}
 }
