@@ -1,6 +1,6 @@
 % !TeX spellcheck = en_GB
 
-\section{Specification}\label{sec:specification}
+\section{Architecture}\label{sec:specification}
 
 \subsection{Overview}
 Figure \ref{fig:architecture-overview} presents an overview over the Redbackup \gls{system}. All actors, components and interactions are described in detail in the following sections.
@@ -193,7 +193,7 @@ The \gls{client} wants to create a backup.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{resources/create_backup}
-    \caption{Create Backup Sequence Diagram}
+    \caption{Create Backup UML Sequence Diagram}
     \label{fig:create-backup}
 \end{figure}
 
@@ -253,7 +253,7 @@ The \gls{client} wants to restore specific \glspl{file}.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{resources/backup_restore.pdf}
-    \caption{Backup Restore Sequence Diagram}
+    \caption{Backup Restore UML Sequence Diagram}
     \label{fig:backup-restore}
 \end{figure}
 
@@ -291,7 +291,7 @@ A \gls{new-node} joins the \gls{system}.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{resources/node_joining.pdf}
-    \caption{Node Joining Sequence Diagram}
+    \caption{Node Joining UML Sequence Diagram}
     \label{fig:node-joining}
 \end{figure}
 
@@ -317,7 +317,7 @@ A \gls{node} leaves the \gls{system} planned (refered as \gls{leaving-node}).
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{resources/node_leaving_planned.pdf}
-    \caption{Node Leaving Planned Sequence Diagram}
+    \caption{Node Leaving Planned UML Sequence Diagram}
     \label{fig:node-leave-planned}
 \end{figure}
 
@@ -335,7 +335,7 @@ A \gls{node} leaves the \gls{system} unexpectedly.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{resources/node_leaving_unplanned.pdf}
-    \caption{Node Leaving Unplanned Sequence Diagram}
+    \caption{Node Leaving Unplanned UMLSequence Diagram}
     \label{fig:node-leave-unplanned}
 \end{figure}
 
@@ -360,7 +360,7 @@ The network distributes \glspl{chunk}.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.6\linewidth]{resources/data_replication.pdf}
-    \caption{Data Replication Sequence Diagram}
+    \caption{Data Replication UML Sequence Diagram}
     \label{fig:data-replication}
 \end{figure}
 
