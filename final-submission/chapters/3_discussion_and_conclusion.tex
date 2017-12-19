@@ -45,7 +45,7 @@ To ensure the validity of the proposed architecture, we manually ran architectur
 The conducted architecture tests on the prototype have shown a solid overall performance. Unfortunately, we observed significant memory consumption and CPU utilisation during most test scenarios.
 
 \paragraph{CPU Utilisation}
-Replication and the creation of a backup require a lot of CPU time on the \gls{node} and \gls{client} components. The \gls{client} components must execute many hash functions during the creation of chunks. A \gls{node} must verify that the provided chunk identifiers can be derived from the sent chunk contents during backup creation and replication.
+Replication and the creation of a backup require a lot of CPU time on the \gls{node} and \gls{client} components. The \gls{client} components must execute many hash functions during the creation of \glspl{chunk}. A \gls{node} must verify that the provided \glspl{chunk-identifier} can be derived from the sent \glspl{chunk-content} during backup creation and replication.
 
 Intensive CPU utilisation can be problematic, especially on a \gls{node}. This is somewhat an inherit problem of the propsed architecture because these calculation are required to ensure the integrity of the data stored in the system.
 
@@ -63,7 +63,7 @@ As per our requirements in Appendix \ref{requirements}, the architecture should 
 
 To test this scenario, we used the same underlying techniques as in our integration tests, but scaled the infrastructure up to 100 \glspl{node}.
 
-Due to the high memory consumption, we were not able to conduct this test with a significant amount of data. A test run during which a 5MB file was replicated to 99 Nodes did not indicate a degraded performance.
+Due to the high memory consumption, we were not able to conduct this test with a significant amount of data. A test run during which a 5MB file was replicated to 99 \glspl{node} did not indicate a degraded performance.
 
 \subsubsection{Data Capacity Test Results}
 Our requirements (Appendix \ref{requirements}) also state, that a \gls{node} must be able to handle up to e.g. 2TB of data. To test this requirement, we planned to create large amounts of random data that has to be stored. This is a realistic requirement, as e.g. images, audio files and movie collection might reach such sizes in practice.
