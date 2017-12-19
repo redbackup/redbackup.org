@@ -73,7 +73,7 @@ An \gls{administrator} wants to interact with the \gls{system} as seldom as poss
     \begin{itemize}
         \item Fetch \glspl{root-handle} from \glspl{node}
         \item Fetch \glspl{chunk} from \glspl{node}
-        \item Deserialize \glspl{chunk-index}
+        \item Deserialise \glspl{chunk-index}
         \item Reassemble \glspl{chunk} into \glspl{file} (not required for the study project)
         \item Let the \gls{user} choose which \glspl{file} from which \gls{chunk-index} shall be restored.
     \end{itemize}
@@ -335,7 +335,7 @@ A \gls{node} leaves the \gls{system} unexpectedly.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{resources/node_leaving_unplanned.pdf}
-    \caption{Node Leaving Unplanned UMLSequence Diagram}
+    \caption{Node Leaving Unplanned UML Sequence Diagram}
     \label{fig:node-leave-unplanned}
 \end{figure}
 
@@ -347,7 +347,7 @@ This scenario is described as it is implemented in the study project. It might b
 \end{enumerate}
 
 \begin{itemize}
-    \item If the \gls{node} returns, it carries on as if nothing happend.
+    \item If the \gls{node} returns, it carries on as if nothing had happened.
     \item If the \gls{node} does not return, the \gls{administrator} marks the \gls{node} as \emph{left}, which is propagated to all \glspl{node} via the \emph{post nodes metadata} message.
         \begin{itemize}
             \item \glspl{chunk-content}, which were not previously replicated from the \gls{node} are lost.
@@ -419,7 +419,7 @@ This scenario is described as it is implemented in the study project. It might b
 
 \subsubsection{Network Availability Problems}\label{sec:scenario-network-errors}
 \paragraph{Behaviour in case a node can reach only some nodes directly}
-The still available \glspl{node} should try to fulfill redundancy needs as good as possible.
+The still available \glspl{node} should try to fulfil redundancy needs as good as possible.
 If a \gls{node} cannot reach other \glspl{node}, it notifies the \gls{management} with the next \emph{post nodes metadata}
 
 \paragraph{Behaviour in case the network gets partitioned}
