@@ -45,16 +45,16 @@ To ensure the validity of the proposed architecture, we manually ran architectur
 The conducted architecture tests on the prototype have shown a solid overall performance. Unfortunately, we observed significant memory consumption and CPU utilisation during most test scenarios.
 
 \paragraph{CPU Utilisation}
-Replication and the creation of a backup require a lot of CPU time on the \gls{node} and \gls{client} components. The \gls{client} components must execute many hash functions during the creation of \glspl{chunk}. A \gls{node} must verify that the provided \glspl{chunk-identifier} can be derived from the sent \glspl{chunk-content} during backup creation and replication.
+Replication and the creation of a backup require a lot of CPU time on the \gls{node} and \gls{client} components. The \gls{client} component must execute many hash functions during the creation of \glspl{chunk}. A \gls{node} must verify that the provided \glspl{chunk-identifier} can be derived from the sent \glspl{chunk-content} during backup creation and replication.
 
 Intensive CPU utilisation can be problematic, especially on a \gls{node}. This is somewhat an inherit problem of the proposed architecture because these calculation are required to ensure the integrity of the data stored in the system.
 
-To mitigate this issue, a queuing mechanism can be implemented on the \gls{node} component that temporarily accepts chunks without performing integrity checks. These integrity checks can be performed in the near future and the sent chunks can afterwards be added definitely to the chunk table. The backup and replication protocol need to be adapted to signal this temporary queuing on a \gls{node} to \glspl{client} or other \glspl{node}. A new state (e.g. queuing) could be sent instead of an acknowledgement that instructs \glspl{client} and \glspl{node} to ask again for acknowledgement later.
+To mitigate this issue, a queuing mechanism could be implemented on the \gls{node} component that temporarily accepts \glspl{chunk} without performing integrity checks. These integrity checks could then be performed in the near future and the sent \glspl{chunk} would afterwards be added definitely to the chunk table. The backup and replication protocol needs to be adapted to signal such a temporary queuing on a \gls{node} to \glspl{client} or other \glspl{node}. A new state (e.g. queuing) could be sent instead of an acknowledgement that instructs \glspl{client} and \glspl{node} to ask again for acknowledgement later.
 
 It has to be investigated whether specific CPU acceleration for hash calculation could mitigate this problem as well.
 
 \paragraph{Memory Consumption}
-To prevent premature optimisation, which Donald Knuth famously pointed out is the root of all evil \cite{knuth-optimise}, we implemented \glspl{message} without streaming support. We implemented the high-level redbackup protocol as framed Message Pack\footnote{\url{https://msgpack.org/}} encoded \glspl{message} based directly on TCP. Such a Message Pack \gls{message} is (de-)serialised at once. In other words, whenever a \gls{message} is created or received, all its contents including the payload is loaded into memory. This decision, in combination with the design decision to not split up large files into multiple chunks, has led to significant memory consumption.
+To prevent premature optimisation, which Donald Knuth famously pointed out is the root of all evil \cite{knuth-optimise}, we implemented \glspl{message} without streaming support. We implemented the high-level redbackup protocol as framed Message Pack\footnote{\url{https://msgpack.org/}} encoded \glspl{message} based directly on TCP. Such a Message Pack \gls{message} is (de-)serialised in a single piece. In other words, whenever a \gls{message} is created or received, all its contents including the payload is loaded into memory. This decision, in combination with the design decision to not split up large files into multiple \glspl{chunk}, has led to significant memory consumption.
 
 The protocol details must be clarified in the future to allow \gls{message} streaming. Refactoring the protocol component to use streaming mechanisms is feasible since tokio provides these mechanisms\cite{tokio-streaming}.
 
@@ -66,21 +66,18 @@ To test this scenario, we used the same underlying techniques as in our integrat
 Due to the high memory consumption, we were not able to conduct this test with a significant amount of data. A test run during which a 5MB file was replicated to 99 \glspl{node} did not indicate a degraded performance.
 
 \subsubsection{Data Capacity Test Results}
-Our requirements (Appendix \ref{requirements}) also state, that a \gls{node} must be able to handle up to e.g. 2TB of data. To test this requirement, we planned to create large amounts of random data that has to be stored. This is a realistic requirement, as e.g. images, audio files and film collections might reach such sizes in practice.
+Our requirements (Appendix \ref{requirements}) also state, that a \gls{node} must be able to handle up to 2TB of data. To test this requirement, we planned to create large amounts of random data that has to be stored. This is a realistic requirement, as e.g. images, audio files and film collections might reach such sizes in practice.
 
 It was not possible yet to create one single backup of 2TB at once due to the high memory consumption. Performing multiple backups in a row of a smaller dataset (i.e. 5 files with a size of 500MB) has not shown a decrease in performance.
 
 \subsubsection{Concurrent Test Results}
 
-We ran a test in which 5 \glspl{client} backup randomly generated data onto three randomly chosen \glspl{node}. On average, the entire backup process of 1MB data \gls{chunk} took 90-130ms from one docker container into another. These results clearly support our proposed architecture.
+We ran a test in which 5 \glspl{client} backup randomly generated data onto three randomly chosen \glspl{node}. On average, the entire backup process of a 1MB \gls{chunk} took 90-130ms from one docker container into another. These results clearly support our proposed architecture.
 
 In reality, where \glspl{client} and \glspl{node} are on separate physical machines, this time will be significantly higher due to network latency. Also, because the creation of backups require a lot of CPU time, running all \glspl{client} on one machine is somewhat problematic. It is likely, that running all \glspl{client} and \glspl{node} on separate machines would improve the performance slightly.
 
 \subsection{Requirements and Intentions}
-We started this study project by analysing the interactions of all actors with the system.
-As we aimed for fully automated backups, we also specified all actor intentions.
-
-Many of these intentions only describe expectations of the system and are therefore not always measurable. For this reason, we were only able to derive a limited set of specific requirements. Both, the requirements and the intentions, were instrumental during the design phase to make several architecture decisions.
+Because we aim for fully automated backups with ideally no user interaction at all, we specified the intentions of actors instead of their interactions with the system. Many of these intentions only describe the actors expectations of the system and are therefore not precisely measurable. We therefore only derived a limited set of measurable requirements from the intentions. Both, the requirements and the intentions, were instrumental during the design phase to make several architecture decisions.
 
 The intentions and requirements are listed in Appendix~\fullref{requirements}.
 
@@ -98,30 +95,30 @@ In this section, we describe unexpected project events and the lessons we learne
 \subsubsection{Documentation}
 While discussing the documentation efforts in mini-retrospective two, we noted that some terms like metadata or chunks were not defined unambiguously and therefore used for different concepts in varying contexts. To standardise these, we decided to introduce a glossary that uniquely and precisely defines each of these terms.
 
-While elaborating the architecture, we started researching advanced data distribution mechanisms and consensus algorithms. We were both very interested in these topics, but after a discussion with Prof.~Mehta and retrospective one, we realised that the time frame of the study project would not suffice to realise such advanced algorithms.
+While elaborating the architecture, we started researching advanced data distribution mechanisms and consensus algorithms. We were both very interested in these topics, but after a discussion with Prof.~Mehta and retrospective one, we realised that the time frame of the study project would not suffice to implement such advanced algorithms.
 
 We frequently underestimated the documentation efforts, particularly the time required for reviewing. We responded by estimating more time and increase the risk reserve time for documentation issues. Besides, we also agreed we would stop and reassess earlier on issues that took longer than expected.
 
 \subsubsection{Rust Formatting and Documentation}
-During retrospective two, we noted that the source code was not fully formatted according to the Rust Style Guide\footnote{https://github.com/rust-lang-nursery/fmt-rfcs/blob/master/guide/guide.md} and that the source code documentation was not complete. To ensure a consistent code formatting, we added the RustFmt\footnote{https://github.com/rust-lang-nursery/rustfmt\#rustfmt---} tool as acceptance criterion to our Definition of Done (Appendix \ref{sec:project-plan}) and created a task to complete the documentation.
+During retrospective two, we noted that the source code was not fully formatted according to the Rust Style Guide\footnote{https://github.com/rust-lang-nursery/fmt-rfcs/blob/master/guide/guide.md} and that the source code documentation was not complete. To ensure consistent code formatting, we added the RustFmt\footnote{https://github.com/rust-lang-nursery/rustfmt\#rustfmt---} tool as acceptance criterion to our Definition of Done (Appendix \ref{sec:project-plan}) and created a task to complete the documentation.
 
 \subsubsection{Project management}
-During the first mini-retrospective and first full retrospective, we discussed several small improvements regarding the task management and how, respectively, where we would work together. During the second sprint, we also neglected to plan time for the supervision meetings and infrastructure updates, which we met by creating a checklist for sprint planning.
+During mini-retrospective one and the first full retrospective, we discussed several small improvements regarding the task management and how, respectively, where we would work together. During the second sprint, we also neglected to plan time for the supervision meeting and infrastructure updates, which we met by creating a checklist for sprint planning.
 
 A month into the project during the second mini-retrospective, we agreed that we should create more issues with shorter running times and make sure that we review issues as soon as possible. Also, the reported working hours were incomplete and only narrowly fulfilled the planned sprint goals. Therefore, we decided to log the working hours more precisely and intensify the work efforts.
 
 
 \subsection{Decisions}
 \subsubsection{Redundancy: \gls{system-n-replication}}
-For the prototype, we decided to implement a \gls{system-n-replication} replication. This decision worked out as we expected and allowed us to create a straightforward yet efficient way to replicate \glspl{chunk}.
+For the prototype, we decided to implement \gls{system-n-replication}. This decision worked out as we expected and allowed us to create a straightforward yet efficient way to replicate \glspl{chunk}.
 
 \subsubsection{Programming Language and Ecosystem}
 During the language evaluation, we decided for using Rust to implement the prototype (See \fullref{sec:language-evaluation} for details on this decision).
 
-While we still think, that Rust is the right choice for the implementation of a backup application as presented in this report, we would have been more productive with a language we already had experience in, like Python or Java. For a prototype, these languages would also have sufficed, despite possibly not being as stable and fast as a Rust implementation.
+While we still think that Rust is the right choice for the implementation of a backup application as presented in this report, we would have been more productive with a language we already had experience in, like Python or Java. For a prototype, these languages would also have sufficed, despite possibly not being as stable and fast as a Rust implementation.
 
 \subsubsection{Frameworks: Tokio and Diesel}
-As discussed in Chapter \fullref{sec:our-approach}, we utilised the tokio and Diesel frameworks. While offering an advanced feature set considered the relative young Rust environment, we found that the documentation for both frameworks was not sufficiently comprehensible.
+As discussed in Chapter \fullref{sec:our-approach}, we utilised the tokio and Diesel frameworks. While offering an advanced feature set considered the relative young Rust ecosystem, we found that the documentation for both frameworks were not sufficiently comprehensible.
 
 Also, the Diesel framework offers an insufficient set of type implementations for SQLite and lacks extensibility e.g.~adding support for timezone timestamps.
 
@@ -143,7 +140,7 @@ As already stated in section \fullref{sec:overall-performance}, the memory consu
 
 \subsection{Further demonstrate the architecture}
 
-As discussed in section \fullref{sec:prototype}, we did not yet implement all functionality as described in the architecture specification. Some crucial aspects that we left out still have to be demonstrated, especially joining and leaving of nodes as well as chunk encryption and splitting.
+As discussed in section \fullref{sec:prototype}, we did not yet implement all functionality as described in the architecture concept paper. Some crucial aspects that we left out still have to be demonstrated, especially joining and leaving of nodes as well as chunk encryption and splitting.
 
 \subsection{Client-m-replication}
 As carried out in chapter \ref{sec:our-approach}, the details of \gls{client-m-replication} are unresolved and have to be carried out.
@@ -155,17 +152,17 @@ If all remaining aspects of the architecture have been demonstrated, an actual w
 \paragraph{In comparison to}
 existing backup solutions presented in section \fullref{sec:state-of-the-art}, we designed a system that is both scalable yet easy to use. Our backup \gls{client} is designed similar to Borg~\cite{borg-backup} but is solely aimed at backups with the redbackup system, whereas Borg is usually used to create local backups.
 
-We decided against specifying and implementing \gls{client-m-replication} in detail, as there is existing research in this area~\cite{p2p-redundancy}~\cite{p2p-scheduling} and the  of the Study Project would not have sufficed to go into further detail.
+We decided against specifying and implementing \gls{client-m-replication} in detail, as there is existing research in this area~\cite{p2p-redundancy}~\cite{p2p-scheduling} and the time frame of the Study Project would not have sufficed to go into further detail.
 
 \paragraph{Our proposed Architecture}
 has turned out to be accurate as demonstrated with the prototype, in which we implemented the main parts required to perform, restore and replicate backups. We are confident that our design also works on a large scale and can be used to implemented an enhanced backup system for production usage.
 
 \paragraph{Rust}
-turned out to be an excellent choice for the implementation of backup software, due to its stability and modern language features.
+turned out to be an excellent choice for implementing a backup software due to its stability, speed and modern language features.
 Nevertheless, the very steep learning curve resulted in more learning efforts than anticipated.
 
 \paragraph{The Study Project}
 went well from our point of view. Not only were we able to reach most of our ambitious goals, but we also had the opportunity to learn a lot during the project. Our initial planning and the \nameref{sec:project-plan} turned out to be mostly accurate.
 
 \paragraph{In the Future,}
-we intend to implement a full backup system based on the architecture and prototype elaborated during this study project. The initial vision of an easy to use distributed backup system with private data storage has not only turned out to be realistic but has also been positively received and led to stimulating discussions.
+we intend to implement a full backup system based on the architecture and prototype elaborated in this study project. The initial vision of an easy to use distributed backup system with private data storage has not only turned out to be realistic but has also been positively received and led to stimulating discussions.

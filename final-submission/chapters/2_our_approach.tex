@@ -1,4 +1,4 @@
-\chapter{Our Approach}
+\chapter{Architecture Concept Paper}
 \label{sec:our-approach}
 
 In the first section of this chapter, we propose and discuss a system architecture for a backup system. In the second section, we explain the underlying design decisions. The third section presents the structure and test results of our prototype, which implements a subset of the proposed system.
@@ -292,7 +292,7 @@ The \gls{client} executable bundles three components as shown in Figure \ref{fig
 
 The \emph{client} component contains the actual logic for creating and restoring backups. It is organised as a library so that it can be used from other projects as well, e.g. if we provide a graphical user interface in the future. The \gls{client} component creates the \gls{chunk-index} for every backup in a separate \emph{SQlite-database}. For database access, we used the Diesel\footnote{\url{https://diesel.rs/}} ORM-library.
 
-The \gls{client} components make heavy use of a networking library called tokio\cite{tokio-rs} that provides an efficient event loop similar to the Reactor pattern \cite{POSA1}. Although tokio supports highly parallel networking code, we decided to implement all interactions on the \gls{client} serial to maintain readability.
+The \gls{client} component makes heavy use of a networking library called tokio\cite{tokio-rs} that provides an efficient event loop similar to the Reactor pattern \cite{POSA1}. Although tokio supports highly parallel networking code, we decided to implement all interactions on the \gls{client} serial to maintain readability.
 
 The (de-) serialisation mechanisms for messages sent to and received from \glspl{node} are encapsulated in the \emph{protocol} component, following the Forwarder Receiver Pattern \cite{POSA1}.
 
