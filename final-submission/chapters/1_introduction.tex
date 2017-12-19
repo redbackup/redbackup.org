@@ -4,7 +4,7 @@
 
 \section{Motivation}
 % Rough introduction of the topic. Details are covered in Chapter "Background"
-In this section, we legitimate this work and explain the value and applicability of our proposed solution.
+In this section, we legitimate this study project and explain the value and applicability of our proposed solution.
 
 \subsection{Present situation}
 % What (free) backup solutions exist and why do we need another one?
@@ -13,7 +13,7 @@ With the ongoing fast digitisation, the demand for reliable and easy-to-use back
 
 Today, most individuals and small enterprises have limited choice with regards to data backup storage.
 
-\paragraph{Cloud backup storage} offers many users high quantities of comfortable, easy to use backup storage. In most cases, these solutions post either a encrypted or unencrypted copies of data into a public cloud environment using specialised software.
+\paragraph{Cloud backup storage} offers many users high quantities of comfortable, easy to use backup storage. In most cases, these solutions post either encrypted or unencrypted copies of the user data into a public cloud environment using specialised software.
 
 Examples for such cloud backup storage providers are Dropbox\footnote{\url{https://www.dropbox.com/}} and Crashplan\footnote{\url{https://www.crashplan.com/}}.
 
@@ -35,32 +35,31 @@ Furthermore, such solutions may raise privacy concerns or even legal issues, as 
 
 \paragraph{Local backup solutions} require considerable administrative effort, e.g. by managing and exchanging hard disk drives.
 
-Another problem that is often encountered is missing backup copies. For instance, backups are only stored on a hard disk drive in one location - which might lead to data loss, e.g. in case of a fire.
+Another problem that is often encountered is missing backup copies. For instance, backups are only stored on a hard disk drive in one location - which might lead to data loss, e.g. in case of fire.
 
 Safe and reliable solutions are non-trivial to set up and require a high level of knowledge to operate.
 
-Secondly, most of these solutions create backups directly to a writeable storage medium from the client computer and do not prevent data loss in case of ransomware infections~\cite{young-cryptovirology}.
+Secondly, most of these solutions create backups directly to a writeable storage medium from the client computer and do therefore not prevent data loss in case of ransomware infections~\cite{young-cryptovirology}.
 
 \subsection{Solution}
 
-The problems listed in the previous sections should be solved by a fast, easy to use, and secure backup system. Such a system should combine privacy benefits of local backups with automated data distribution, to provide high safety guarantees.
+The problems listed in the previous sections must be addressed in the form of a fast, easy to use, and secure backup system. Such a system must combine privacy benefits of local backups with automated data distribution, to provide high safety guarantees.
 
 The target users of such a system are individuals (e.g. families) and small enterprises.
 
 \section{Goals and Tasks}
-% TODO: Rephrase, this paragraph was copied from https://eprints.hsr.ch/523/1/Data%20over%20DAB.pdf !
 This section presents the revised goals and provides a rationale for the deviations from the original goals.
 
 \subsection{Initial Goals}
 The initial goals of this study project where specified by us in cooperation with Prof.~Farhad~Mehta in the \nameref{sec:task-description}.
 
 \subsection{Revised Goals}
-This section lists the revised goals that were specified during the beginning of the project. All deviations from the \nameref{sec:task-description} are noted in the following Chapter \fullref{sec:deviations-from-original-goals}.
+This section lists the revised goals that were specified during the beginning of the project. All deviations from the \nameref{sec:task-description} are noted in the following section \fullref{sec:deviations-from-original-goals}.
 % leicht angepasst, beschreibung im nächsten abschnitt
 % sehr früh im projekt angepasst, sobald abgezeichnet
 
 \begin{enumerate}
-    \item Elaboration of following issues in a theoretical concept and architecture:
+    \item Elaboration of the following issues in a theoretical concept and architecture:
         \begin{enumerate}
             \item joining of nodes
             \item planned and unplanned leaving of nodes
@@ -77,10 +76,10 @@ This section lists the revised goals that were specified during the beginning of
 \subsection{Deviations from the Original Goals}\label{sec:deviations-from-original-goals}
 
 \subsubsection{Degree of Redundancy}
-While researching data redundancy strategies, we realised that the full specification and implementation of \gls{client-m-replication} is not a feasible goal during the study project. The reason for this is its complexity and the limited time of the study project, as discussed in Chapter \fullref{sec:fundamental-design-decisions}.
+While researching data redundancy strategies, we realised that the full specification and implementation of \gls{client-m-replication} is not a feasible goal during the study project. The reason for this is its complexity and the limited time frame of the study project, as discussed in section \fullref{sec:fundamental-design-decisions}.
 
 \subsubsection{Simplifications for Prototype}
-Due to time constrains of the study project, it was not possible to implement the full specified architecture in the prototype. Hence, we decided to implement the core backup, restore and distribution mechanisms, to prove that the concept works.
+Due to time constrains of the study project, it was not possible to implement the full specified architecture in the prototype. Hence, we decided to implement the core backup, restore and distribution mechanisms, to demonstrate that the concept works.
 
 Simplifications for the prototype are discussed in Chapter~\fullref{sec:our-approach}.
 
@@ -91,9 +90,9 @@ In this section, we describe previous work and existing applications in this are
 \subsection{Backup Applications}
 During our research, we primarily focused on software that was either described in academic papers or available under open source licenses.
 
-\paragraph{Borg Backup} \cite{borg-backup} was the most promising candidate of a deduplicating, encrypting backup system, providing most of the described features.
+\paragraph{Borg Backup} \cite{borg-backup} is the most promising candidate of a deduplicating, encrypting backup system, providing most of the described features.
 
-Borg can also create backups to remote locations (e.g. over SSH) where a server-mode Borg instance is running on the remote location. The downside of this implementation is that the \gls{client} still needs full write access to the backup server and hence would permit malware to delete backups possibly.
+Borg can also create backups to remote locations (e.g. over SSH) where a server-mode Borg instance is running on the remote location. The downside of this implementation is that the client still needs full write access to the backup server and hence would permit malware to delete backups possibly.
 
 \paragraph{Rdedup} \cite{rdedup} is an implementation of a backup software similar to Borg in Rust. It is still in an early development stage and is not yet able to create backups to remote destinations.
 

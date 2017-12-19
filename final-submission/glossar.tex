@@ -6,7 +6,7 @@
 \newglossaryentry{user}
 {
     name={user},
-    description={A registered user with valid credentials who wants to back up and restore its data. Has a client installed on his local computer.}
+    description={A registered user with valid credentials who wants to backup and restore its data. Has a client installed on his local computer.}
 }
 \newglossaryentry{node}
 {
@@ -41,7 +41,7 @@
 \newglossaryentry{location}
 {
     name={location},
-    description={Multiple \glspl{node} can be associated with a (physical) location to ensure redundancy is met over multiple physical locations.}
+    description={\Glspl{node} can be associated with a (physical) location to ensure redundancy is met over multiple physical locations.}
 }
 \newglossaryentry{node-metadata}
 {
@@ -66,7 +66,7 @@
 \newglossaryentry{chunk}
 {
     name={chunk},
-    description={A piece of data in the system, consisting of binary data (\gls{chunk-content}), a unique identifier (\gls{chunk-identifier}) and an \gls{expiration-date}.}
+    description={A piece of data in the system consisting of binary data (\gls{chunk-content}), a unique identifier (\gls{chunk-identifier}) and an \gls{expiration-date}.}
 }
 \newglossaryentry{root-handle}
 {
@@ -82,7 +82,7 @@
 \newglossaryentry{chunk-index}
 {
     name={chunk index},
-    description={A \gls{client}-side data structure that stores file attributes, folders and the file to \glspl{chunk} mapping.}
+    description={A \gls{client}-side data structure that stores file attributes, folders and file to \glspl{chunk} mappings.}
 }
 \newglossaryentry{chunk-table}
 {
@@ -92,7 +92,7 @@
 \newglossaryentry{file}
 {
     name={file},
-    description={A document on a client system that shall be backed up. A file is represented in the system by one or more \glspl{chunk}.}
+    description={A document on a client system that shall be backed up. A file is represented in the redbackup system by one or more \glspl{chunk}.}
 }
 \newglossaryentry{expiration-date}
 {

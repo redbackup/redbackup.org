@@ -1,6 +1,6 @@
 % !TeX spellcheck = en_GB
 
-\section{Specification}\label{sec:specification}
+\section{Architecture}\label{sec:specification}
 
 \subsection{Overview}
 Figure \ref{fig:architecture-overview} presents an overview over the Redbackup \gls{system}. All actors, components and interactions are described in detail in the following sections.
@@ -27,7 +27,7 @@ To simplify the implementation for the study project, the \gls{user} must instru
 
 
 \subsubsection{Administrator}
-An \gls{administrator} wants to interact with the \gls{system} as less as possible. He/She wants to be sure that the \gls{system} runs smoothly. If something goes wrong, he/she wants to be able to fix it within a few minutes.
+An \gls{administrator} wants to interact with the \gls{system} as seldom as possible. He/She wants to be sure that the \gls{system} runs smoothly. If something goes wrong, he/she wants to be able to fix it within a few minutes.
 
 \paragraph{Responsibilities}
 \begin{itemize}
@@ -193,7 +193,7 @@ The \gls{client} wants to create a backup.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{resources/create_backup}
-    \caption{Create Backup Sequence Diagram}
+    \caption{Create Backup UML Sequence Diagram}
     \label{fig:create-backup}
 \end{figure}
 
@@ -253,7 +253,7 @@ The \gls{client} wants to restore specific \glspl{file}.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{resources/backup_restore.pdf}
-    \caption{Backup Restore Sequence Diagram}
+    \caption{Backup Restore UML Sequence Diagram}
     \label{fig:backup-restore}
 \end{figure}
 
@@ -291,7 +291,7 @@ A \gls{new-node} joins the \gls{system}.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{resources/node_joining.pdf}
-    \caption{Node Joining Sequence Diagram}
+    \caption{Node Joining UML Sequence Diagram}
     \label{fig:node-joining}
 \end{figure}
 
@@ -317,7 +317,7 @@ A \gls{node} leaves the \gls{system} planned (refered as \gls{leaving-node}).
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{resources/node_leaving_planned.pdf}
-    \caption{Node Leaving Planned Sequence Diagram}
+    \caption{Node Leaving Planned UML Sequence Diagram}
     \label{fig:node-leave-planned}
 \end{figure}
 
@@ -335,7 +335,7 @@ A \gls{node} leaves the \gls{system} unexpectedly.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{resources/node_leaving_unplanned.pdf}
-    \caption{Node Leaving Unplanned Sequence Diagram}
+    \caption{Node Leaving Unplanned UMLSequence Diagram}
     \label{fig:node-leave-unplanned}
 \end{figure}
 
@@ -360,7 +360,7 @@ The network distributes \glspl{chunk}.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.6\linewidth]{resources/data_replication.pdf}
-    \caption{Data Replication Sequence Diagram}
+    \caption{Data Replication UML Sequence Diagram}
     \label{fig:data-replication}
 \end{figure}
 
@@ -419,7 +419,7 @@ This scenario is described as it is implemented in the study project. It might b
 
 \subsubsection{Network Availability Problems}\label{sec:scenario-network-errors}
 \paragraph{Behaviour in case a node can reach only some nodes directly}
-The still available \glspl{node} should try to satisfy redundancy needs as good as possible.
+The still available \glspl{node} should try to fulfill redundancy needs as good as possible.
 If a \gls{node} cannot reach other \glspl{node}, it notifies the \gls{management} with the next \emph{post nodes metadata}
 
 \paragraph{Behaviour in case the network gets partitioned}
@@ -472,7 +472,7 @@ A \gls{message} is separated into a \gls{message-header} and \gls{message-payloa
 
     \hline
 \end{tabu}
-\caption{Structure of a \gls{header-field} element}
+\caption{Structure of a \gls{header-field} Element}
 \label{tab:message-field-header}
 \end{table}
 
@@ -488,7 +488,7 @@ A \gls{message} is separated into a \gls{message-header} and \gls{message-payloa
         & A string representation of the message type, as described in subsections \fullref{sec:messages}. \\
         \hline
     \end{tabu}
-    \caption{Core set of \glspl{header-field} sent with every request}
+    \caption{Core set of \glspl{header-field} sent with every Request}
     \label{tab:core-header-fields}
 \end{table}
 
@@ -517,7 +517,7 @@ A \gls{message} is separated into a \gls{message-header} and \gls{message-payloa
         Response
         & \fullref{sec:return-target-nodes} (compulsory) \\
     \end{tabu}
-    \caption{\texttt{get target nodes} message specification}
+    \caption{\texttt{get target nodes} Message Specification}
 \end{table}
 
 \subsubsection{return target nodes}\label{sec:return-target-nodes}

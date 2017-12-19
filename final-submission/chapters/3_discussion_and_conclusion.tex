@@ -16,17 +16,17 @@ Nevertheless, our implementation is solid and proves that the proposed architect
 \paragraph{Unit Tests}
 We used test driven development (TDD) to develop the prototype as much as possible, which turned out to work great in the Rust ecosystem.
 
-Some unit tests written for the prototype are not pure unit tests but minimal integration tests. Because Rust is not a traditional object-oriented language, it is not possible to introduce and use interfaces (Traits) in the same way as we were used to from other languages such as Java or C\#. Due to the steep learning curve Rust has, we were not able to fully utilise the corresponding mechanisms.
+Some unit tests written for the prototype are not pure unit tests but minimal integration tests. Because Rust is not a traditional object-oriented language, it is not possible to introduce and use interfaces (Traits) in the same way as we were used to from other languages such as Java or C\#. Due to the steep learning curve of Rust, we were not able to fully utilise the corresponding mechanisms.
 
 \paragraph{Integration Tests}
 
-To write comprehensive black box integration tests, we created a testing library written in Python\footnote{\url{https://www.python.org/}}. In this framework, the internals on how to launch and configure \glspl{client} and \glspl{node} is encapsulated in classes. Using this abstraction, we decided to launch \glspl{client} and \glspl{node} in separate Docker\footnote{\url{https://www.docker.com/}} containers, so that they are as isolated as possible. All containers used in a test case are connected to a dedicated Docker network, which eliminates possible interferences with other network services.
+To write comprehensive black box integration tests, we implemented a testing library written in Python\footnote{\url{https://www.python.org/}}. In this framework, the internals on how to launch and configure \glspl{client} and \glspl{node} is encapsulated in classes. Using this abstraction, we were able to launch \glspl{client} and \glspl{node} in separate Docker\footnote{\url{https://www.docker.com/}} containers, so that they are as isolated as possible. All containers used in a test case are connected to a dedicated Docker network, which eliminates possible interferences with other network services.
 
-We wrote integration tests that verify that a backup is flawlessly created, restored and replicated onto other \glspl{node}.
+We wrote integration tests that verify that backups are flawlessly created, restored and replicated onto other \glspl{node}.
 
 \paragraph{Test coverage}
 
-Because Rust is still a young language with a relatively small ecosystem, tools for measuring code quality are still rare and immature. For our unit tests, we used Tarpaulin\footnote{\url{https://github.com/xd009642/tarpaulin}} to generate code coverage. Tarpaulin does not (yet) cover all language features and therefore returns a conservative coverage number. We achieved 53.5\% line coverage. This number would be significantly higher if all executed lines were counted correctly  (e.g. generated code using macros as well as compiler optimisations are not counted).
+Because Rust is still a young language with a relatively small ecosystem, tools for measuring code quality are still rare and immature. For our unit tests, we used Tarpaulin\footnote{\url{https://github.com/xd009642/tarpaulin}} to generate code coverage. Tarpaulin does not yet cover all language features and therefore returns an incomplete coverage number. We achieved 53.5\% line coverage. This number would be significantly higher if all executed lines were counted correctly  (e.g. generated code using macros as well as compiler optimisations are not counted).
 
 Code coverage achieved using the integration tests is not yet supported by any tool known to us and therefore undocumented. The integration tests do however cover all positive scenarios that were implemented.
 
@@ -34,7 +34,7 @@ Our integration testing framework allowed us to write such tests in a simple fas
 
 \subsection{Architecture}
 
-The architecture we elaborated in Chapter 2 and Appendix \ref{sec:specification} turned out to to be stable. It has proven advantageous that we did not specify too many details at the beginning (for example, the protocol) but focused on the high-level view.
+The architecture we elaborated in Chapter \ref{sec:our-approach} and Appendix \ref{sec:specification} turned out to to be stable. It has proven advantageous that we did not specify too many details at the beginning (for example, the protocol) but focused on the high-level view.
 
 \subsection{Architecture Test Results}
 
@@ -56,7 +56,7 @@ It has to be investigated whether specific CPU acceleration for hash calculation
 \paragraph{Memory Concumption}
 To prevent premature optimisation, which Donald Knuth famously pointed out is the root of all evil \cite{knuth-optimise}, we implemented \glspl{message} without streaming support. We implemented the high-level redbackup protocol as framed Message Pack\footnote{\url{https://msgpack.org/}} encoded \glspl{message} based directly on TCP. Such a Message Pack \gls{message} is (de-)serialised at once. In other words, whenever a \gls{message} is created or received, all its contents including the payload is loaded into memory. This decision, in combination with the design decision to not split up large files into multiple chunks, has led to significant memory consumption.
 
-The protocol details must be clarified in the future to allow \gls{message} streaming. Refactoring the protocol component to use streaming mechanisms is feasible since Tokio provides these mechanisms\cite{tokio-streaming}. 
+The protocol details must be clarified in the future to allow \gls{message} streaming. Refactoring the protocol component to use streaming mechanisms is feasible since tokio provides these mechanisms\cite{tokio-streaming}.
 
 \subsubsection{Size Scalability Test Results}
 As per our requirements in Appendix \ref{requirements}, the architecture should scale up to 100~\glspl{node}.
@@ -66,13 +66,13 @@ To test this scenario, we used the same underlying techniques as in our integrat
 Due to the high memory consumption, we were not able to conduct this test with a significant amount of data. A test run during which a 5MB file was replicated to 99 Nodes did not indicate a degraded performance.
 
 \subsubsection{Data Capacity Test Results}
-Our requirements (Appendix \ref{requirements}) also state, that a \gls{node} must be able to handle up to e.g. 2TB of data. To test this requirement, we planned to create large amounts of random data that has to be stored. This is a realistic requirement, as e.g. a compressed image, audio and movie collection might reach such sizes in practice.
+Our requirements (Appendix \ref{requirements}) also state, that a \gls{node} must be able to handle up to e.g. 2TB of data. To test this requirement, we planned to create large amounts of random data that has to be stored. This is a realistic requirement, as e.g. images, audio files and movie collection might reach such sizes in practice.
 
 It was not possible yet to create one single backup of 2TB at once due to the high memory consumption. Performing multiple backups in a row of a smaller dataset (i.e. 5 files with a size of 500MB) has not shown a decrease in performance.
 
 \subsubsection{Concurrent Test Results}
 
-We ran a test in which 5 \glspl{client} back up randomly generated data onto three randomly chosen \glspl{node}. On average, the entire backup process of 1MB data \gls{chunk} took 90-130ms from one docker container into another. These results clearly support our proposed architecture.
+We ran a test in which 5 \glspl{client} backup randomly generated data onto three randomly chosen \glspl{node}. On average, the entire backup process of 1MB data \gls{chunk} took 90-130ms from one docker container into another. These results clearly support our proposed architecture.
 
 In reality, where \glspl{client} and \glspl{node} are on separate physical machines, this time will be significantly higher due to network latency. Also, because the creation of backups require a lot of CPU time, running all \glspl{client} on one machine is somewhat problematic. It is likely, that running all \glspl{client} and \glspl{node} on separate machines would improve the performance slightly.
 
@@ -112,8 +112,8 @@ A month into the project during the second mini-retrospective, we agreed that we
 
 
 \subsection{Decisions}
-\subsubsection{Redundancy: \gls{system-m-replication}}
-For the prototype, we decided to implement a \gls{system-m-replication} replication. This decision worked out as we expected and allowed us to create a straightforward yet efficient way to replicate \glspl{chunk}.
+\subsubsection{Redundancy: \gls{system-n-replication}}
+For the prototype, we decided to implement a \gls{system-n-replication} replication. This decision worked out as we expected and allowed us to create a straightforward yet efficient way to replicate \glspl{chunk}.
 
 \subsubsection{Programming Language and Ecosystem}
 During the language evaluation, we decided for using Rust to implement the prototype (See \fullref{sec:language-evaluation} for details on this decision).
@@ -121,7 +121,7 @@ During the language evaluation, we decided for using Rust to implement the proto
 While we still think, that Rust is the right choice for the implementation of a backup application as presented in this report, we would have been more productive with a language we already had experience in, like Python or Java. For a prototype, these languages would also have sufficed, despite possibly not being as stable and fast as a Rust implementation.
 
 \subsubsection{Frameworks: Tokio and Diesel}
-As discussed in Chapter \fullref{sec:our-approach}, we utilised the Tokio and Diesel frameworks. While offering an advanced feature set considered the relative young Rust environment, we found that the documentation for both frameworks was not sufficiently comprehensible.
+As discussed in Chapter \fullref{sec:our-approach}, we utilised the tokio and Diesel frameworks. While offering an advanced feature set considered the relative young Rust environment, we found that the documentation for both frameworks was not sufficiently comprehensible.
 
 Also, the Diesel framework offers an insufficient set of type implementations for SQLite and lacks extensibility e.g.~adding support for timezone timestamps.
 

@@ -3,13 +3,13 @@
 
 Based on the Requirements described in Appendix \ref{requirements}, we compared three languages/technologies.
 
-\textbf{Rust} is a modern language as an alternative to the traditional ''low-level'' languages C and C++.
+\textbf{Rust} is a modern language representing an alternative to the traditional ''low-level'' languages C and C++.
 
-\textbf{Erlang} was the second candidate that it is well suited for distributed, fault-tolerant systems. It is also a functional programming language, with which we both do not have much experience but share an interest in it.
+\textbf{Erlang} was our second option since it is well suited for distributed, fault-tolerant systems. It is also a functional programming language, with which we both do not have much experience but share an interest in.
 
-\textbf{Go} came up when researching for distributed systems in Rust. Friends, as well as various blog posts, suggested Go is established in the field of distributed systems, has a diverse eco-system and is therefore well suited for the job.
+\textbf{Go} came up when we were researching for distributed systems in Rust. Friends, as well as various blog posts, suggested that Go is established in the field of distributed systems, has a diverse eco-system and is therefore well suited for the job.
 
-We grouped the criterions for our comparison into three groups: Client (See Table \ref{language-comparison-client}), Distributed System  (See Table \ref{language-comparison-ds}) and Eco System  (See Table \ref{language-comparison-eco-system}). The assessment is not entirely objective and based on a brief research as well as personal impressions.
+We grouped the criteria for our comparison into three groups: Client (See Table \ref{language-comparison-client}), Distributed System  (See Table \ref{language-comparison-ds}) and Eco System  (See Table \ref{language-comparison-eco-system}). The assessment is not entirely objective and based on brief research as well as personal impressions.
 
 \begin{sidewaystable}
 	\centering
@@ -91,7 +91,7 @@ We grouped the criterions for our comparison into three groups: Client (See Tabl
 
 \begin{sidewaystable}
 	\centering
-	\caption{Language and Ecosystem Comparison for the Eco System}
+	\caption{Ecosystem Comparison}
 	\label{language-comparison-eco-system}
 	\begin{tabu}{X|X X X}
 		\hline
@@ -151,12 +151,12 @@ We grouped the criterions for our comparison into three groups: Client (See Tabl
 \end{sidewaystable}
 
 \subsection{Decision}
-We decided to use Rust. Although it is still a rather young language, it has a very enthusiastic and welcoming community, stable releases and an excellent documentation.
+We decided to use Rust. Despite its rather young age, Rust is supported by a very enthusiastic and welcoming community and provides stable releases and an excellent language documentation.
 
 The main reason we settled for Rust was its type system as well as the concept of Ownership and Borrowing, which enables so many of Rusts features and permits us to do safe concurrency. Also, Rust has two excellent networking libraries.
 
-The most significant downside to Rust for us is the limited amount of high-quality libraries.
+The most significant downside of Rust for us is the limited amount of high-quality libraries.
 
-We ruled out Erlang because of three reasons. Firstly, since we do not have any experience with functional programming languages, we expect a much steeper learning curve and therefore slower progress. Secondly, we think that we do not need most of Erlangs key features such as Hot Swapping and strong process isolation. At last, Erlang requires to be run in the Erlang VM, which makes deployment more difficult than in Rust or Go.
+We ruled out Erlang because of three reasons. Firstly, since we do not have any experience with functional programming languages, we expect a much steeper learning curve and therefore a slower progress. Secondly, we think that we do not need most of Erlangs key features such as Hot Swapping and strong process isolation. At last, Erlang requires to be run in the Erlang VM, which makes deployment more difficult than in Rust or Go.
 
-In comparison to Rust, Go lacks various features. For example, the lack of generics, having a garbage collector and pointers lead to more memory consumption and higher parallelisation risks. An advantage of Go is a slightly more established ecosystem.
+In comparison to Rust, Go lacks various features. For example, the lack of generics, a need for garbage collection and pointers lead to more memory consumption and higher parallelisation risks. An advantage of Go is a slightly more established ecosystem.
