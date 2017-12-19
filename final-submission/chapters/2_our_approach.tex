@@ -50,8 +50,8 @@ All components including their responsibilities and interactions are described i
 \subsection{Backup creation}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\linewidth]{resources/create_backup}
-    \caption{Create Backup UML Sequence Diagram}
+    \includegraphics[width=\linewidth]{resources/create_backup_designated}
+    \caption[Create Backup UML Sequence Diagram]{UML sequence diagram illustrating the communication during the creation of a backup.}
 \end{figure}
 
 To create a backup, a \gls{client} loads \glspl{node}-metadata, that includes the addresses, from the \gls{management}. The \gls{client} caches this set and chooses one of them as \gls{designated-node}. This selection can either be random or based on heuristics, e.g. by analysing the round trip time to a \gls{node}.
@@ -72,8 +72,8 @@ The detailed backup scenario can be found in Appendix \fullref{sec:scenario-crea
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\linewidth]{resources/backup_restore.pdf}
-    \caption{Backup Restore UML Sequence Diagram}
+    \includegraphics[width=\linewidth]{resources/backup_restore_designated}
+    \caption[Backup Restore UML Sequence Diagram]{UML sequence diagram illustrating the communication during the restore of a backup.}
 \end{figure}
 
 The restore mechanism works identical to the backup process up to the point where a \gls{designated-node} is chosen.
@@ -90,8 +90,8 @@ A \gls{node} is in charge of all data stored on it. Each \gls{node} - hereafter 
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.6\linewidth]{resources/data_replication.pdf}
-    \caption{Data Replication UML Sequence Diagram}
+    \includegraphics[width=0.6\linewidth]{resources/data_replication_designation}
+    \caption[Data Replication UML Sequence Diagram]{UML sequence diagram illustrating the communication during replication.}
 \end{figure}
 
 This scenario is described in more detail in the Appendix \fullref{sec:scenario-data-replication}.
