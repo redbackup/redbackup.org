@@ -141,7 +141,7 @@ Each \gls{node} periodically checks the persisted contents for possible corrupti
 
 \section{Fundamental Design Decisions}\label{sec:fundamental-design-decisions}
 
-We used the morphological box technique to explore different possible solutions (see Table \ref{tbl:morphological-box}). The chosen option should be as simple as possible for the prototype developed in the study project but extensible for further adaption.
+We used the morphological box technique to explore different possible implementation options (see Table \ref{tbl:morphological-box}). The chosen option should be as simple as possible for the prototype developed in the study project but extensible for further adaption.
 
 The following paragraphs reason the selected entry in each dimension.
 
@@ -159,18 +159,19 @@ We chose the \emph{plain files} option for the study project to simplify the \gl
 The \emph{one in charge} option is the most straightforward option to implement, but conflicts with many intentions of the administrator (see \fullref{sec:adminstrator-intention}). We also intended to avoid a single point of failure. We chose the option \emph{autonomous replication} because it guarantees that replication is always ensured and keeps communication relatively simple.
 
 \paragraph{Storage Backend}
-Using the file system is the simplest possible solution for the study project and therefore the selected option. Adding support for other backends in the future is still possible since the storage component is an isolated part of the architecture (see \fullref{sec:component-storage}).
+Using the file system is the simplest possible solution for the study project and therefore the selected option. Adding support for other backends in the future is still possible because the storage component is an isolated part in the architecture (see \fullref{sec:component-storage}).
 
 The number of files in a folder is limited depending on the used file system, length of a filename and other factors. Some file systems (e.g. ext4) have a global limit for the maximal number of files. This limit is 4 billion files for ext4. \cite{ext4}. Therefore we use the ext4 file system to persist data in the study project.
 
 \paragraph{Removal of Old Backups}\label{sec:removal-of-old-backups}
-We propose using fixed \emph{physical time} that must be specified on backup creation. After expiration, the backup data may be removed by a garbage collector. This may be extended to allow only mutual garbage removal in the future.
+We decided to use \emph{physical time}stamps that must be specified on backup creation. After expiration, the backup data may be removed by a garbage collector running on a \gls{node}. This may be extended to allow only mutual garbage removal in the future.
 
-A significant problem that \emph{physical time} addresses is the safety of backup data in case a user computer is infected with malware. An illicit application might command the removal of backups, or create new backups to initiate a garbage collection process to free storage capacity.
+A significant problem that \emph{physical time} addresses is the safety of backup data in case a user computer is infected with malware~\cite{young-cryptovirology}. An illicit application might command the removal of backups or create new backups to initiate a garbage collection process to free storage capacity.
 
-Nevertheless, the use of \emph{physical time} has the downside of possible data loss due to wrong system times. To mitigate this risk, the system should use multiple distinct upstream time-servers. Multiple distinct upstream time-servers are used with a high probability as the proposed redundancy model motivates users to expand the system across multiple physical locations. Furthermore, the client, \glspl{node} and \gls{management} should verify a reasonable accurate time when communicating mutually.
+Nevertheless, the use of \emph{physical time} has the downside of possible data loss in case of wrong system times. To mitigate this risk, the system should use multiple distinct upstream time-servers. Multiple distinct upstream time-servers are used with a high probability as the proposed redundancy model motivates users to expand the system across multiple physical locations. Furthermore, the \gls{client}, \glspl{node} and \gls{management} should verify a reasonable accurate time when communicating mutually.
 
-\paragraph{Programming Language / Ecosystem}
+\paragraph{Programming Language \& Ecosystem}
+We chose Rust over Erlang and Go because it offers great performance and minimal overhead supported by a powerful type system.
 A complete language evaluation can be found in \fullref{sec:language-evaluation}.
 
 \begin{sidewaystable}
@@ -196,7 +197,7 @@ A complete language evaluation can be found in \fullref{sec:language-evaluation}
 
           \textbf{Role of the management}
           & One in charge: The management knows and controls everything (e.g. the location of every file/chunk).
-          & Configuration only: The management must be up for administrative tasks only. The \glspl{node} are mostly autonomous.
+          & Configuration only: The management must be available for administrative tasks only. The \glspl{node} are mostly autonomous.
           & \textbf{Autonomous replication}: The management must be available for most of the tasks but replication also works if the management is down.
           & No management: Every \gls{node} is completely autonomous.
           \\ \hline
@@ -228,22 +229,22 @@ A complete language evaluation can be found in \fullref{sec:language-evaluation}
 \end{sidewaystable}
 
 \subsection{Hash Collisions}\label{sec:hash-collisions}
-To achieve deduplication and space-efficient backups for large files, as discussed above, a file/chunk identifier must be derived from the actual file/chunk contents. 
-A common mechanism used to derive identifiers from binary data is the use of cryptographic hash functions. Most cryptographic hash functions produce a message digest having a fixed size (e.g. SHA-256\cite{sha-256} produces a 256-bit digest) for a message with an arbitrary length, which can theoretically lead to collisions.
-Perfect hash functions do not have this property because their input message size is fixed and equal to the size of the resulting message digest. A perfect hash function is not practical in our case due to the large message digests.
-With cryptographic hash functions, collisions are possible but unlikely. Assuming that the applied function does produce equally distributed results, the probability can be calculated based on the birthday problem\cite{birthday-attack} as follows, where $p$ is the number of chunks in the system and $n$ the size of the message digests:
+To achieve deduplication and space-efficient backups for large files, as discussed above, a chunk identifier must be derived from the actual chunk contents. 
+A common mechanism used to derive identifiers from binary data is the use of cryptographic hash functions. Most cryptographic hash functions produce a message digest that has a fixed length (e.g. SHA-256\cite{sha-256} produces a 256-bit digest) for a given message with an arbitrary length. The restricted lenght can theoretically lead to collisions.
+Perfect hash functions do not have this property because their input message lenght is equal to the lenght of the resulting message digest. A perfect hash function is not practical in our case due to the large message digests.
+With cryptographic hash functions, collisions are possible but unlikely. Assuming that the applied function does produce equally distributed results, the probability can be calculated based on the birthday problem\cite{birthday-attack} as follows, where $p$ is the number of chunks in the system and $n$ the lenght of the message digests:
 
 \[
 P(p, n) = \frac{p^2}{2^{n+1}}
 \]
 
-Assuming we have $p=30^{21}$ files/chunks the system (which is equivalent to two billion years of music assuming each chunk has a size of one byte\cite{seagate-zetabyte}) and using the SHA-256 algorithm, the probability of collisions is about $4.72 \cdot 10^{-16}$, which is highly improbable and may therefore be neglected.
+Assuming we have $p=30^{21}$ chunks the system (which is equivalent to two billion years of music assuming each chunk has a size of one byte\cite{seagate-zetabyte}) and using the SHA-256 algorithm, the probability of a collision is about $4.72 \cdot 10^{-16}$, which is highly improbable and may therefore be neglected.
 
 However, did a collision occur after all, for example, if the used cryptographic hash function were flawed or the unlikely event occured, it would result in data loss.
 
-In theory, we could detect collisions on the \gls{client}. To do so, every time an identifier is calculated, the \gls{client} must verify that if a file with the same identifier exists already in the system, it has the exact same contents. If the contents differ, it is a collision. This approach requires a lot of network traffic and can slow down the backup process significantly.
+In theory, we could detect collisions on the \gls{client}. To do so, every time an identifier is calculated, the \gls{client} must verify that if a chunk with the same identifier already exists in the system, it has the exact same contents. If the contents differ, it is a collision. This approach requires a lot of network traffic and can slow down the backup process significantly.
 
-Another place to detect collisions is on the \gls{node}. A \gls{node} can verify if the contents of a given file/chunk are equal to the contents already present in the system. The downside of this approach is that it requires the \gls{client} always to send the full contents of every file, which means there is a lot of additional network traffic.
+Another place to detect collisions is on the \gls{node} component. A \gls{node} can verify if the contents of a given chunk are equal to the contents already present in the system. The downside of this approach is that it requires the \gls{client} always to send the full contents of every chunk, which leads to a lot of additional network traffic.
 
 Both of the described approaches for collision detection have significant costs that are not practical.
 
