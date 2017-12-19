@@ -98,7 +98,7 @@ Borg can also create backups to remote locations (e.g. over SSH) where a server-
 
 \paragraph{Rsync,} \cite{rsync} designed initially for file synchronisation, is also often used to create backups today. By using filesystem-hardlinks, it has file-deduplicating capabilities and can also synchronise files to remote locations, so that old backup cannot be modified.
 
-The two most significant downsides of rsync are that it must be combined with several other applications (e.g. ssh, bash scripts, ceph) to provide a secure backup solution and that it is relatively complicated to set up and configure.
+The two most significant downsides of rsync are that it must be combined with several other applications (e.g. SSH, bash scripts, ceph) to provide a secure backup solution and that it is relatively complicated to set up and configure.
 
 \subsection{Peer-to-Peer Backup Storage}
 There exist different approaches to create distributed, encrypted peer-to-peer storage systems. Two notable representatives that create such a system decentralised over the internet are Tahoe-LAFS \cite{tahoe-lafs} and IPFS \cite{ipfs}.
