@@ -1,0 +1,122 @@
+\lstset{
+  basicstyle=\ttfamily,
+  columns=flexible,
+  frame=single,
+  breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+}
+
+\section{Prototype Command Line Interface}\label{sec:prototype-command-line-interface}
+\subsection{Client}
+\begin{lstlisting}
+$ redbackup-client-cli --help
+redbackup client-cli 0.1.0
+Raphael Zimmermann <dev@raphael.li>:Fabian Hauser <fabian@fh2.ch>
+redbackup client
+
+USAGE:
+    redbackup-client-cli [OPTIONS] [SUBCOMMAND]
+
+FLAGS:
+        --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+        --chunk-index-storage <chunk-index-storage>    Folder where chunk indices are stored. [default: /tmp/]
+    -h, --node-hostname <node-hostname>                hostname of the node to contact [default: 0.0.0.0]
+    -p, --node-port <node-port>                        port of the node to contact [default: 8080]
+
+SUBCOMMANDS:
+    create     Create a new backup
+    help       Prints this message or the help of the given subcommands
+    list       List available backups on the node.
+    restore    List available backups on the node.
+\end{lstlisting}
+
+\subsubsection{Create}
+
+\begin{lstlisting}
+$ redbackup-client-cli create --help
+redbackup-client-cli-create 
+Create a new backup
+
+USAGE:
+    redbackup-client-cli create [OPTIONS] <expiration-date> <local-backup-dir>
+
+FLAGS:
+    -h, --help       
+            Prints help information
+
+    -V, --version    
+            Prints version information
+
+
+OPTIONS:
+        --exclude-from <FILE>    
+            Exclude multiple glob patterns from FILE. Define one pattern per line. Patterns are relative to the backup
+            root, e.g. 'pictures/**/*.jpg'. For allowed glob syntax, see
+            https://docs.rs/glob/0/glob/struct.Pattern.html#main
+
+ARGS:
+    <expiration-date>     
+            the expiration date of this snapshot(format: %Y-%m-%dT%H:%M)
+
+    <local-backup-dir>    
+            Directories, that should be backuped
+\end{lstlisting}
+
+\subsubsection{List}
+\begin{lstlisting}
+$ redbackup-client-cli list --help
+redbackup-client-cli-list 
+List available backups on the node.
+
+USAGE:
+    redbackup-client-cli list
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+\end{lstlisting}
+
+\subsubsection{Restore}
+\begin{lstlisting}
+$ redbackup-client-cli restore --help
+redbackup-client-cli-restore 
+List available backups on the node.
+
+USAGE:
+    redbackup-client-cli restore <backup-id> <local-restore-dir>
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+ARGS:
+    <backup-id>            ID of the backup that should be restored
+    <local-restore-dir>    Destionation, where the files should be restored to.
+\end{lstlisting}
+
+\subsection{Node}
+\begin{lstlisting}
+$ redbackup-node-cli --help
+redbackup node-cli 0.1.0
+Raphael Zimmermann <dev@raphael.li>:Fabian Hauser <fabian@fh2.ch>
+redbackup node server
+
+USAGE:
+    redbackup-node-cli [OPTIONS] [--] [ARGS]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -k, --known-node <known-node>...    ip address and port (<ip-address>:<port>) of other known nodes in the network
+
+ARGS:
+    <ip>             IP to bind [default: 0.0.0.0]
+    <port>           IP to bind [default: 8080]
+    <storage-dir>    path to the storage directory [default: ./data/]
+    <db-file>        path to the database file [default: db.sqlite3]
+\end{lstlisting}
