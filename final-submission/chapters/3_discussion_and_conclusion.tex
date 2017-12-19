@@ -144,17 +144,17 @@ If all remaining aspects of the architecture have been demonstrated, an actual w
 \paragraph{In comparison to}
 existing backup solutions presented in section \fullref{sec:state-of-the-art}, we designed a system that is both scalable yet easy to use. Our backup \gls{client} is designed similar to Borg~\cite{borg-backup} but is solely aimed at backups with our \gls{node}-backend, whereas Borg is usually used to create local backups.
 
-We decided against specifying and implementing the \gls{client-m-replication} in detail, as there is existing research in this area~\cite{p2p-redundancy}~\cite{p2p-scheduling} and the duration of the Study Project would not have sufficed to go into further detail.
+We decided against specifying and implementing \gls{client-m-replication} in detail, as there is existing research in this area~\cite{p2p-redundancy}~\cite{p2p-scheduling} and the  of the Study Project would not have sufficed to go into further detail.
 
 \paragraph{Our proposed Architecture}
-has proven to be well suited for the prototype, in which we implemented the main parts required to create a backup. We are confident that our design also will work for a full backup application, which might be implemented in the future.
+has proven to be well suited for the prototype, in which we implemented the main parts required to perform, restore and replicate backups. We are confident that our design also works for a full backup application, which might be implemented in the future.
 
 \paragraph{Rust}
-turned out to be a excellent choice for the implementation of a backup software, due to its stability and modern language features.
-Nevertheless, the very steep learning curve of Rust resulted in more learning efforts than we had anticipated.
+turned out to be an excellent choice for the implementation of backup software, due to its stability and modern language features.
+Nevertheless, the very steep learning curve resulted in more learning efforts than anticipated.
 
 \paragraph{The Study Project}
-went well in our opinion. Not only were we able to reach most of our ambitious project goals, but we also had the opportunity to learn a lot during the project. Our initial planning and the project~plan~\cite{project-plan} turned out to be mostly accurate.
+went well from our point of view. Not only were we able to reach most of our ambitious goals, but we also had the opportunity to learn a lot during the project. Our initial planning and the project~plan~\cite{project-plan} turned out to be mostly accurate.
 
 \paragraph{In the Future,}
-we hope that we will be able to implement a full backup system on basis of the architecture and prototype we developed during the course of this project. The initial idea of an easy to use, distributed backup system with private data storage turned out to be not only feasible in practice, but was very well received and led to very positive reactions whenever we discussed the idea.
+we intend to implement a full backup system based on the architecture and prototype elaborated during this study project. The initial vision of an easy to use distributed backup system with private data storage has not only turned out to be realistic but has also been positively received and led to stimulating discussions.
