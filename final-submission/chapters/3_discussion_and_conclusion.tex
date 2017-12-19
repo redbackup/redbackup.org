@@ -47,13 +47,13 @@ The conducted architecture tests on the prototype have shown a solid overall per
 \paragraph{CPU Utilisation}
 Replication and the creation of a backup require a lot of CPU time on the \gls{node} and \gls{client} components. The \gls{client} components must execute many hash functions during the creation of \glspl{chunk}. A \gls{node} must verify that the provided \glspl{chunk-identifier} can be derived from the sent \glspl{chunk-content} during backup creation and replication.
 
-Intensive CPU utilisation can be problematic, especially on a \gls{node}. This is somewhat an inherit problem of the propsed architecture because these calculation are required to ensure the integrity of the data stored in the system.
+Intensive CPU utilisation can be problematic, especially on a \gls{node}. This is somewhat an inherit problem of the proposed architecture because these calculation are required to ensure the integrity of the data stored in the system.
 
-To mitigate this issue, a queuing mechanism can be implemented on the \gls{node} component that temporarly accepts chunks without performing integrity checks. These integrity checks can be performed in the near future and the sent chunks can afterwards be added definetly to the chunk table. The backup and replication protocol need to be adapted to signal this temporary queuing on a \gls{node} to \glspl{client} or other \glspl{node}. A new state (e.g. queuing) could be sent instead of an acknowledgement that instructs \glspl{client} and \glspl{node} to ask again for acknowledgement later.
+To mitigate this issue, a queuing mechanism can be implemented on the \gls{node} component that temporarily accepts chunks without performing integrity checks. These integrity checks can be performed in the near future and the sent chunks can afterwards be added definitely to the chunk table. The backup and replication protocol need to be adapted to signal this temporary queuing on a \gls{node} to \glspl{client} or other \glspl{node}. A new state (e.g. queuing) could be sent instead of an acknowledgement that instructs \glspl{client} and \glspl{node} to ask again for acknowledgement later.
 
 It has to be investigated whether specific CPU acceleration for hash calculation could mitigate this problem as well.
 
-\paragraph{Memory Concumption}
+\paragraph{Memory Consumption}
 To prevent premature optimisation, which Donald Knuth famously pointed out is the root of all evil \cite{knuth-optimise}, we implemented \glspl{message} without streaming support. We implemented the high-level redbackup protocol as framed Message Pack\footnote{\url{https://msgpack.org/}} encoded \glspl{message} based directly on TCP. Such a Message Pack \gls{message} is (de-)serialised at once. In other words, whenever a \gls{message} is created or received, all its contents including the payload is loaded into memory. This decision, in combination with the design decision to not split up large files into multiple chunks, has led to significant memory consumption.
 
 The protocol details must be clarified in the future to allow \gls{message} streaming. Refactoring the protocol component to use streaming mechanisms is feasible since tokio provides these mechanisms\cite{tokio-streaming}.
@@ -66,7 +66,7 @@ To test this scenario, we used the same underlying techniques as in our integrat
 Due to the high memory consumption, we were not able to conduct this test with a significant amount of data. A test run during which a 5MB file was replicated to 99 \glspl{node} did not indicate a degraded performance.
 
 \subsubsection{Data Capacity Test Results}
-Our requirements (Appendix \ref{requirements}) also state, that a \gls{node} must be able to handle up to e.g. 2TB of data. To test this requirement, we planned to create large amounts of random data that has to be stored. This is a realistic requirement, as e.g. images, audio files and movie collection might reach such sizes in practice.
+Our requirements (Appendix \ref{requirements}) also state, that a \gls{node} must be able to handle up to e.g. 2TB of data. To test this requirement, we planned to create large amounts of random data that has to be stored. This is a realistic requirement, as e.g. images, audio files and film collections might reach such sizes in practice.
 
 It was not possible yet to create one single backup of 2TB at once due to the high memory consumption. Performing multiple backups in a row of a smaller dataset (i.e. 5 files with a size of 500MB) has not shown a decrease in performance.
 
