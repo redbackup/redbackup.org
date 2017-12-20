@@ -66,4 +66,4 @@ _no upcoming absences_
 
 ## Next Meeting
 
-- [The next Meeting takes place on 21.11.2017 at 10:10 at MeFs office.](../2017-11-21-weekly-meeting/)
+- [The next Meeting takes place on 21.11.2017 at 10:10 at MeFs office.](../2017-11-21-weekly-meeting/index.html)

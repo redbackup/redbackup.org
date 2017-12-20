@@ -52,4 +52,4 @@ _no upcoming absences_
 
 ## Next Meeting
 
-- [The next Meeting takes place on XX.XX.2017 at XX:XX at MeFs office.](../2017-XX-XX-weekly-meeting/)
+- [The next Meeting takes place on 12.12.2017 at 11:00 at MeFs office.](../2017-12-12-weekly-meeting/index.html)

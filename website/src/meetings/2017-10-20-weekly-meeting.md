@@ -53,5 +53,5 @@ _open issues must be completed before the next meeting_
 
 ## Next Meeting
 
-- [The next Meeting takes place on 09.11.2017 at 08:15 at MeFs office.](../2017-11-09-weekly-meeting/)
+- [The next Meeting takes place on 09.11.2017 at 08:15 at MeFs office.](../2017-11-09-weekly-meeting/index.html)
 
