@@ -38,7 +38,7 @@ minute-taker: rzimmerm
 4. Discuss license of the documentation
     - AGPL and the GNU FDL are fine
     - We will additionally sign the "Vereinbarung über Urheber- und Nutzungsrechte"
-5. Questins regarding final submission
+5. Questions regarding final submission
     - Only one copy required
     - Spiral binding
     - CD with all data
@@ -56,4 +56,4 @@ _no upcoming absences_
 
 ## Next Meeting
 
-- We will discuss the study project on 09.01.2017 at 08:00 at MeFs office.
+- We will discuss the study project on 08.01.2018 at 16:15 at MeFs office.
